@@ -188,6 +188,7 @@ async function getAnimeById(animeId) {
     }
 }
 
+const vaInfoCache = {};
 async function getAnimeCharacters(animeId) {
     console.log("Anime Characters URL: ", `https://api.jikan.moe/v4/anime/${animeId}/characters`);
     try {
@@ -222,22 +223,31 @@ async function getAnimeCharacters(animeId) {
             let vaListHTML = "";
             // To get every item of "voice_actors": [...]
             voiceActors.forEach(va => {
-                const vaName = va.person.name;
                 const vaMalId = va.person.mal_id;
-                const vaImage = va.person.images.jpg.image_url;
-                const vaLang = va.language;
+
+                // Cache VA info per VA ID
+                if (!vaInfoCache[vaMalId]) {
+                    vaInfoCache[vaMalId] = {
+                        name: va.person.name,
+                        image: va.person.images.jpg.image_url,
+                        lang: va.language
+                    };
+                } 
+                //else {console.log(`Using cached VA info for: ${vaMalId} - ${vaInfoCache[vaMalId].name} (${vaInfoCache[vaMalId].lang})`);}
+
+                const { name, image, lang } = vaInfoCache[vaMalId]; // reuses the saved object from the cache.
 
                 vaListHTML += `
                     <div class="d-flex align-items-center mt-2">
-                        <img src="${vaImage}" alt="${vaName}" class="me-2 rounded" style="width: 40px; height: 40px; object-fit: cover;" loading="lazy">
+                        <img src="${image}" alt="${name}" class="me-2 rounded" style="width: 40px; height: 40px; object-fit: cover;" loading="lazy">
                         <div>
                             <div>
                                 <a href="#" class="va-link text-decoration-none" data-bs-toggle="modal" data-bs-target="#vaModal" 
-                                    data-name="${vaName}" data-image="${vaImage}" data-lang="${vaLang}" data-vamalid="${vaMalId}">
-                                    <strong>${vaName}</strong>
+                                    data-name="${name}" data-image="${image}" data-lang="${lang}" data-vamalid="${vaMalId}">
+                                    <strong>${name}</strong>
                                 </a>
                             </div>
-                            <div class="small">${vaLang}</div>
+                            <div class="small">${lang}</div>
                         </div>
                     </div>
                 `;
@@ -408,7 +418,7 @@ async function getMainCharactersVoicedBy(vaId) {
                 // If the character is not a duplicate, add it.
                 if (!seen.has(char.id)) {
                     seen.add(char.id);
-                    mainCharacters.push(char);
+                    mainCharacters.push(char); // adds the character in mainCharacters
                 }
             }
         });
