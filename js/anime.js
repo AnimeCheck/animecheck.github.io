@@ -536,24 +536,9 @@ async function updateTopCharacters(vaMalId) {
 // HTML for the char list in VA modal
 function renderTopVoiceActorCharacters(charList, totalCount, vaMalId, updatedAt = Date.now()) {
     const updatedText = timeAgoText(updatedAt);
-
-    const listHTML = charList.map((char, index) => `
-        <li class="d-flex align-items-center mb-2 custom-top-char-row">
-            <div class="me-2 text-center" style="width: 40px; flex-shrink: 0;">
-                <span class="fs-5">${index + 1}</span>
-            </div>
-            <img src="${char.image}" alt="${char.name}" class="me-2 rounded"
-                style="width: 50px; height: 50px; object-fit: cover; flex-shrink: 0;" loading="lazy">
-
-            <div class="flex-grow-1 text-start" style="min-width: 0;">
-                <div><strong class="fs-6 text-break me-1">${char.name}</strong><span class="text-secondary small">(#${char.id})</span></div>
-                <div class="text-info text-break"><em>${char.animeTitle}</em></div>
-                <div class="text-warning small">❤ ${char.favorites.toLocaleString()} favorites</div>
-            </div>
-        </li>
-    `).join('');
-
+    const listHTML = createCharacterListHTML(charList);
     const container = document.getElementById("vaModalCharacters");
+    
     container.innerHTML = `
         <div class="fs-5 fs-md-4 fs-lg-3 mb-2 text-center text-warning">
             Top 10 main role characters<br>out of ${totalCount}
@@ -575,6 +560,25 @@ function renderTopVoiceActorCharacters(charList, totalCount, vaMalId, updatedAt 
             updateTopCharacters(vaMalId);
         };
     }
+}
+
+// HTML for the row of every characters. 
+function createCharacterListHTML(charList) {
+    return charList.map((char, index) => `
+        <li class="d-flex align-items-center mb-2 custom-top-char-row">
+            <div class="me-2 text-center" style="width: 40px; flex-shrink: 0;">
+                <span class="fs-5">${index + 1}</span>
+            </div>
+            <img src="${char.image}" alt="${char.name}" class="me-2 rounded"
+                style="width: 50px; height: 50px; object-fit: cover; flex-shrink: 0;" loading="lazy">
+
+            <div class="flex-grow-1 text-start" style="min-width: 0;">
+                <div><strong class="fs-6 text-break me-1">${char.name}</strong><span class="text-secondary small">(#${char.id})</span></div>
+                <div class="text-info text-break"><em>${char.animeTitle}</em></div>
+                <div class="text-warning small">❤ ${char.favorites.toLocaleString()} favorites</div>
+            </div>
+        </li>
+    `).join('');
 }
 
 function timeAgoText(timestamp) {
