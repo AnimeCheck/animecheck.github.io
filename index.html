@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+	<title>Anime Check</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="Rixuel" content="Anime, characters">
+    <link rel="icon" type="image/png" href="img/favicon.png">
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/anime.css">
+</head>
+
+<body>
+    <main class="container">
+        <h1 class="pt-4">
+            <a href="" onclick="location.reload();" class="text-decoration-none text-light" aria-label="Anime Check">Anime Check ✅</a>
+        </h1>
+        <div class="small text-light my-3 d-flex flex-wrap gap-3 align-items-center">
+            <span>
+                <i class="bi bi-house" aria-hidden="true"></i>
+                <a href="../../" class="text-decoration-none">Home</a>
+            </span>
+            <span>
+                <i class="bi bi-code-slash" aria-hidden="true"></i>
+                <a href="../../projects.html" class="text-decoration-none">Projects</a>
+            </span>
+            <span>
+                <i class="bi bi-github" aria-hidden="true"></i>
+                <a href="https://github.com/Rixuel" class="text-decoration-none">GitHub</a>
+            </span>
+            <span>
+                <i class="bi bi-discord" aria-hidden="true"></i>
+                <a href="https://discord.gg/qhCsvqT" class="text-decoration-none">Discord</a>
+            </span>
+            <span>
+                Data from <a href="https://jikan.moe/" class="text-decoration-none fw-bold">Jikan API</a>
+            </span>
+        </div>
+        
+        <div class="sticky-top z-1">
+            <div class="position-relative">
+                <div class="input-group">
+                    <button id="settings-btn" class="input-group-text btn-outline-dark" data-bs-toggle="modal" data-bs-target="#settingsModal" aria-label="Settings" data-bs-theme="dark">
+                        <i class="bi bi-gear"></i>
+                    </button>
+                    <input type="text" id="search" class="form-control bg-dark text-light fs-5 px-3 py-2" placeholder="Search Anime..." data-bs-theme="dark">
+                    <button id="clear-btn" class="input-group-text btn-outline-dark text-light border-start-0 rounded-end" type="button" aria-label="Clear search" data-bs-theme="dark">
+                        <i class="bi bi-backspace"></i>
+                    </button>
+                </div>
+                <ul id="suggestions" class="list-group" aria-live="polite"></ul>
+            </div>
+        </div>
+
+
+        <div class="container my-4">
+            <div id="animeDetailsWrapper"></div>
+            <div id="animeCharacters" class="row g-3 mt-3"></div>
+        </div>
+
+
+        <!-- Modal for VA -->
+        <div class="modal fade" id="vaModal" tabindex="-1" aria-labelledby="vaModalLabel" aria-hidden="true" data-bs-theme="dark">
+            <div class="modal-dialog">
+                <div class="modal-content bg-dark text-light">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="vaModalLabel">Voice Actor</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <a id="vaModalImageLink" href="#" target="_blank" rel="noopener noreferrer">
+                            <img id="vaModalImage" src="" alt="" class="rounded mb-3 va-modal-image">
+                        </a>
+                        <h5 id="vaModalName"></h5>
+                        <p id="vaModalLang" class="text-secondary small mb-0"></p>
+                        <div class="mt-3">
+                            <button type="button" id="triggerTopCharacters" class="btn btn-sm btn-outline-warning">
+                                <i class="bi bi-star me-1"></i> Show Top 10 Main Role Characters
+                            </button>
+                        </div>
+                        <div id="vaModalCharacters" class="mt-2 small"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for Settings -->
+        <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true"
+            data-bs-theme="dark">
+            <div class="modal-dialog">
+                <div class="modal-content bg-dark text-light">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="settingsModalLabel">
+                            <i class="bi bi-gear me-1"></i> Settings
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            Compiling the top 10 main role characters
+                            of a voice actor
+                            will save data in the browser local storage
+                            for 1 year. 
+                            This allows for a faster load the second time 
+                            you check the same voice actor's top 10 main characters.
+                        </p>
+                        <p>
+                            If you want to delete these data, click "Clear Local Storage".
+                        </p>
+                        <p>
+                            Note: <b>Jikan</b> API rate limit is <b>60 requests/minute</b>.
+                        </p>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <div>
+                            <button id="checkStorageBtn" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-hdd me-1"></i> Check Local Storage Size
+                            </button>
+                        </div>
+                        <div>
+                            <button id="clearCacheBtn" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash me-1"></i> Clear Local Storage
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toasts -->
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100; max-width: 90vw;">
+            <div id="storageToast" class="toast text-bg-dark border-0" role="alert" aria-live="polite" aria-atomic="true">
+                <div class="d-flex">
+                    <div id="storageToastBody" class="toast-body">
+                        <!-- Filled dynamically -->
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100; max-width: 90vw;">
+            <div id="clearToast" class="toast align-items-center text-bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        Local storage cleared successfully.
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100; max-width: 90vw;">
+            <div id="rateLimitToast" class="toast text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        Jikan API rate limit hit. Progressing slowly...
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/anime.js" defer></script>
+</body>
+</html>
