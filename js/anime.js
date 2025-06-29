@@ -287,8 +287,9 @@ const observer = new IntersectionObserver((entries) => {
 });
 
 /*
-    For Modal
+    For Modals
 */
+// Modal for voice actors
 document.addEventListener('click', function (e) {
     if (e.target.closest('.va-link')) {
         const link = e.target.closest('.va-link');
@@ -315,6 +316,87 @@ document.addEventListener('click', function (e) {
 
     }
 });
+
+// Modal for top anime characters
+let isTop50AnimeCharModalSession = false;
+let top50AnimeCharCache = null;
+document.getElementById("loadTopAnimeCharacters").addEventListener("click", async () => {
+    isTop50AnimeCharModalSession = true;
+
+    const topAnimeCharListEl = document.getElementById("topAnimeCharactersList");
+
+    // Use cache if available
+    if (top50AnimeCharCache) {
+        console.log("Using in-memory cache for Top 50");
+        const html = createCharacterListHTML(top50AnimeCharCache);
+        topAnimeCharListEl.innerHTML = `<ul class="list-unstyled small">${html}</ul>`;
+        return;
+    }
+
+    topAnimeCharListEl.innerHTML = `
+        <div class="d-flex justify-content-center align-items-center">
+            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+            <span id="top50Count">Showing top 50 anime characters... (0/50)</span>
+        </div>
+    `;
+
+    try {
+        // Fetch page 1 (1–25)
+        const res1 = await throttledFetch("https://api.jikan.moe/v4/characters?order_by=favorites&sort=desc&page=1");
+        const data1 = await res1.json();
+        // Fetch page 2 (26–50)
+        const res2 = await throttledFetch("https://api.jikan.moe/v4/characters?order_by=favorites&sort=desc&page=2");
+        const data2 = await res2.json();
+        // Combine data1 and data2 together
+        const charactersData = [...data1.data, ...data2.data];
+
+        // Reshape the data to use createCharacterListHTML
+        const processedData = charactersData.map(char => ({
+            id: char.mal_id,
+            name: char.name,
+            image: char.images.jpg.image_url,
+            animeTitle: "", // this endpoint doesn't include it
+            favorites: char.favorites ?? 0
+        }));
+
+        const enriched = [];
+        const top50Count = document.getElementById("top50Count");
+        let index = 0;
+
+        for (const char of processedData) {
+            if (!isTop50AnimeCharModalSession) break;
+            console.log(`Fetching anime title for: ${char.name} (#${char.id})`);
+
+            top50Count.textContent = `Showing top 50 anime characters... (${index + 1}/50)`;
+            await smartDelayForTop50();
+            const updatedChar = await getAnimeTitleOfCharacter(char);
+            enriched.push(updatedChar);
+            index++;
+        }
+
+        const html = createCharacterListHTML(enriched);
+        topAnimeCharListEl.innerHTML = `<ul class="list-unstyled small">${html}</ul>`;
+        // Only cache if user didn't cancel
+        if (isTop50AnimeCharModalSession) {
+            top50AnimeCharCache = enriched;
+        }
+    } catch (err) {
+        console.error("Failed to fetch top characters:", err);
+        topAnimeCharListEl.innerHTML = "<div class='text-danger'>Failed to load top characters.</div>";
+    }
+});
+
+async function getAnimeTitleOfCharacter(char) {
+    try {
+        const res = await fetch(`https://api.jikan.moe/v4/characters/${char.id}/anime`);
+        const data = await res.json();
+        const animeEntry = data.data[0];
+        char.animeTitle = animeEntry?.anime?.title || "-";
+    } catch {
+        char.animeTitle = "-";
+    }
+    return char;
+}
 
 async function checkTopCharacters(vaMalId) {
     // For closing and opening another modal.
@@ -491,7 +573,7 @@ async function getCharacterFavorites(charMalId, retry = 2) {
     }
 }
 
-async function updateTopCharacters(vaMalId) {
+async function updateTopVoiceActorCharacters(vaMalId) {
     activeModalSession = Date.now(); // new session to avoid overlap
     const session = activeModalSession;
     const mainCharacters = await getMainCharactersVoicedBy(vaMalId);
@@ -538,13 +620,13 @@ function renderTopVoiceActorCharacters(charList, totalCount, vaMalId, updatedAt 
     const updatedText = timeAgoText(updatedAt);
     const listHTML = createCharacterListHTML(charList);
     const container = document.getElementById("vaModalCharacters");
-    
+
     container.innerHTML = `
         <div class="fs-5 fs-md-4 fs-lg-3 mb-2 text-center text-warning">
             Top 10 main role characters<br>out of ${totalCount}
         </div>
         <ul class="list-unstyled small">${listHTML}</ul>
-        <button type="button" id="updateTopCharactersBtn" class="btn btn-sm btn-outline-info d-none">
+        <button type="button" id="updateTopVoiceActorCharactersBtn" class="btn btn-sm btn-outline-info d-none">
             <i class="bi bi-arrow-clockwise me-1"></i> Update Top 10 again?
         </button>
         <div class="text-muted small text-center mt-2" title="${new Date(updatedAt).toLocaleString()}">
@@ -553,11 +635,11 @@ function renderTopVoiceActorCharacters(charList, totalCount, vaMalId, updatedAt 
     `;
 
     // Setting up the "Update" button
-    const updateBtn = document.getElementById('updateTopCharactersBtn');
+    const updateBtn = document.getElementById('updateTopVoiceActorCharactersBtn');
     if (updateBtn) {
         updateBtn.classList.remove('d-none');
         updateBtn.onclick = () => {
-            updateTopCharacters(vaMalId);
+            updateTopVoiceActorCharacters(vaMalId);
         };
     }
 }
@@ -627,6 +709,23 @@ async function smartDelay() {
     requestTimestamps.push(Date.now());
 }
 
+// Similar to smartDelay() but for the top 50 list
+const top50RequestTimestamps = [];
+async function smartDelayForTop50() {
+    const now = Date.now();
+
+    // Remove timestamps older than 60 seconds
+    while (top50RequestTimestamps.length && now - top50RequestTimestamps[0] > 60000) {
+        top50RequestTimestamps.shift();
+    }
+
+    top50RequestTimestamps.push(now);
+
+    const delayTime = top50RequestTimestamps.length >= 50 ? 1000 : 350;
+    console.log(`[Delay: ${delayTime}ms] Requests in last 60s: ${top50RequestTimestamps.length}`);
+    await delay(delayTime);
+}
+
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -640,10 +739,16 @@ vaModal.addEventListener('hide.bs.modal', () => {
     }
 });
 
-// When the bootstrap modal is closed, making sure nothing in the background is still running.
-document.getElementById('vaModal').addEventListener('hidden.bs.modal', () => {
+// When the bootstrap modal is closed, making sure nothing in the background is running.
+vaModal.addEventListener('hidden.bs.modal', () => {
     activeModalSession = null;
     document.getElementById('vaModalCharacters').innerHTML = ""; // clear old content
+});
+
+// When the top 50 anime characters modal closes, making sure nothing in the background is running
+document.getElementById("topAnimeCharactersModal").addEventListener("hidden.bs.modal", () => {
+    isTop50AnimeCharModalSession = false; // cancel the loop
+    document.getElementById("topAnimeCharactersList").innerHTML = ""; // clear old content
 });
 
 // Toast for the button Clear Local Storage

@@ -39,6 +39,11 @@
                 <a href="https://discord.gg/qhCsvqT" class="text-decoration-none">Discord</a>
             </span>
             <span>
+                <i class="bi bi-bar-chart-fill" aria-hidden="true"></i>
+                <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#topAnimeCharactersModal" id="loadTopAnimeCharacters">Top 50 anime characters</a>
+            </span>
+            <span>
+                <i class="bi bi-server" aria-hidden="true"></i>
                 Data from <a href="https://jikan.moe/" class="text-decoration-none fw-bold">Jikan API</a>
             </span>
         </div>
@@ -86,6 +91,21 @@
                             </button>
                         </div>
                         <div id="vaModalCharacters" class="mt-2 small"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top anime Characters Modal -->
+        <div class="modal fade" id="topAnimeCharactersModal" tabindex="-1" aria-labelledby="topAnimeCharactersModalLabel" aria-hidden="true" data-bs-theme="dark">
+            <div class="modal-dialog">
+                <div class="modal-content bg-dark text-light">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="topAnimeCharactersModalLabel">Top 50 Anime Characters</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <div id="topAnimeCharactersList" class="small"></div>
                     </div>
                 </div>
             </div>
