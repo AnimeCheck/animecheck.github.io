@@ -379,7 +379,7 @@ async function checkTopCharacters(vaMalId) {
             const updatedAt = latestUpdate || Date.now();
             
             // Generate Top Main Char row HTML
-            renderTopCharacters(top10char, mainCharacters.length, vaMalId, updatedAt);
+            renderTopVoiceActorCharacters(top10char, mainCharacters.length, vaMalId, updatedAt);
         }
         
     } catch (err) {
@@ -529,12 +529,12 @@ async function updateTopCharacters(vaMalId) {
             .sort((a, b) => b.favorites - a.favorites)
             .slice(0, 10);
             
-        renderTopCharacters(sorted, mainCharacters.length, vaMalId, session);
+        renderTopVoiceActorCharacters(sorted, mainCharacters.length, vaMalId, session);
     }
 }
 
 // HTML for the char list in VA modal
-function renderTopCharacters(charList, totalCount, vaMalId, updatedAt = Date.now()) {
+function renderTopVoiceActorCharacters(charList, totalCount, vaMalId, updatedAt = Date.now()) {
     const updatedText = timeAgoText(updatedAt);
 
     const listHTML = charList.map((char, index) => `
