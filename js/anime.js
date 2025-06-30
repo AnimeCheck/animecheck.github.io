@@ -386,7 +386,7 @@ document.getElementById("loadTopAnimeCharacters").addEventListener("click", asyn
         for (const char of remainingData) {
             if (!isTop50AnimeCharModalSession) break;
 
-            console.log(`Fetching anime title for: ${char.name} (#${char.id})`);
+            //console.log(`Fetching anime title for: ${char.name} (#${char.id})`);
             top50Count.textContent = `Showing top 50 anime characters... (${index + 1}/50)`;
             
             await smartDelayForTop50();
@@ -751,7 +751,7 @@ async function smartDelayForTop50() {
     top50RequestTimestamps.push(now);
 
     const delayTime = top50RequestTimestamps.length >= 50 ? 1000 : 350;
-    console.log(`[Delay: ${delayTime}ms] Requests in last 60s: ${top50RequestTimestamps.length}`);
+    //console.log(`[Delay: ${delayTime}ms] Requests in last 60s: ${top50RequestTimestamps.length}`);
     await delay(delayTime);
 }
 
@@ -774,8 +774,17 @@ vaModal.addEventListener('hidden.bs.modal', () => {
     document.getElementById('vaModalCharacters').innerHTML = ""; // clear old content
 });
 
+const topAnimeModal = document.getElementById('topAnimeCharactersModal');
+// Fix accessibility warning by blurring the focused element before hiding
+topAnimeModal.addEventListener('hide.bs.modal', () => {
+    // Blur the focused element if it's inside the modal
+    if (document.activeElement && topAnimeModal.contains(document.activeElement)) {
+        document.activeElement.blur();
+    }
+});
+
 // When the top 50 anime characters modal closes, making sure nothing in the background is running
-document.getElementById("topAnimeCharactersModal").addEventListener("hidden.bs.modal", () => {
+topAnimeModal.addEventListener("hidden.bs.modal", () => {
     isTop50AnimeCharModalSession = false; // cancel the loop
     document.getElementById("topAnimeCharactersList").innerHTML = ""; // clear old content
 });
