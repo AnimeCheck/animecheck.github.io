@@ -31,8 +31,16 @@ async function smartDelay() {
             break; // safe to proceed
         }
 
-        // Wait just a little before retrying
-        await delay(100);
+        // Calculate next safe window
+        const oldestTimestamp = smartDelayTimestamps[0];
+        const waitUntil = Math.max(
+            requestsLastSecond >= 3 ? oldestTimestamp + 1000 : 0,
+            requestsLastMinute >= 60 ? oldestTimestamp + 60000 : 0
+        );
+
+        const waitTime = Math.max(50, waitUntil - now); // minimum 50ms
+        console.warn(`[smartDelay] Too fast — delaying ${waitTime}ms`);
+        await delay(waitTime);
     }
 
     //console.log(`[smartDelay] Delay: ${delayTime}ms — 1s: ${requestsLastSecond}, 60s: ${requestsLastMinute}`);
