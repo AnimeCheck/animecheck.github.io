@@ -5,48 +5,42 @@ function delay(ms) {
 // Goal is to not hit the API rate limit. Need to go a bit faster than await delay(1000)
 const smartDelayTimestamps = [];
 async function smartDelay() {
-    const now = Date.now();
-
-    // Remove timestamps older than 60 seconds
-    while (smartDelayTimestamps.length > 0 && now - smartDelayTimestamps[0] > 60000) {
-        smartDelayTimestamps.shift();
-    }
-
-    // Check and wait if over minute or second limit
     while (true) {
-        const currentTime = Date.now();
+        const now = Date.now();
 
-        // Remove old entries again
-        while (smartDelayTimestamps.length > 0 && currentTime - smartDelayTimestamps[0] > 60000) {
+        // Remove timestamps older than 60 seconds
+        while (smartDelayTimestamps.length && now - smartDelayTimestamps[0] > 60000) {
             smartDelayTimestamps.shift();
         }
 
         const requestsLastMinute = smartDelayTimestamps.length;
-        const requestsLastSecond = smartDelayTimestamps.filter(t => currentTime - t <= 1000).length;
+        const requestsLastSecond = smartDelayTimestamps.filter(t => now - t <= 1000).length;
 
-        // Log current rate usage
         console.log(`[smartDelay] 1s: ${requestsLastSecond} / 3 | 60s: ${requestsLastMinute} / 60`);
 
         if (requestsLastMinute < 60 && requestsLastSecond < 3) {
             break; // safe to proceed
         }
 
-        // Calculate next safe window
-        const oldestTimestamp = smartDelayTimestamps[0];
-        const waitUntil = Math.max(
-            requestsLastSecond >= 3 ? oldestTimestamp + 1000 : 0,
-            requestsLastMinute >= 60 ? oldestTimestamp + 60000 : 0
-        );
+        let waitUntil = now + 100; // fallback minimum wait
 
-        const waitTime = Math.max(50, waitUntil - now); // minimum 50ms
+        // If over 3/sec, wait until 1st of the last 3 drops out of the 1s window
+        if (requestsLastSecond >= 3) {
+            const thirdMostRecent = smartDelayTimestamps.filter(t => now - t <= 1000)[0];
+            waitUntil = Math.max(waitUntil, thirdMostRecent + 1000);
+        }
+
+        // If over 60/min, wait until oldest timestamp drops off
+        if (requestsLastMinute >= 60) {
+            const oldest = smartDelayTimestamps[0];
+            waitUntil = Math.max(waitUntil, oldest + 60000);
+        }
+
+        const waitTime = waitUntil - now;
         console.warn(`[smartDelay] Too fast — delaying ${waitTime}ms`);
         await delay(waitTime);
     }
 
-    //console.log(`[smartDelay] Delay: ${delayTime}ms — 1s: ${requestsLastSecond}, 60s: ${requestsLastMinute}`);
-    //await delay(delayTime);
-
-    // Add timestamp when we actually proceed with request
     smartDelayTimestamps.push(Date.now());
 }
 
