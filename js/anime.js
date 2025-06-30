@@ -322,7 +322,7 @@ let isTop50AnimeCharModalSession = false;
 let top50AnimeCharCache = null;
 const TOP50_STORAGE_KEY = "top50AnimeCharCache";
 const TOP50_UPDATED_AT_KEY = "top50AnimeCharUpdatedAt";
-const TOP50_COMPLETE_COUNT = 10; // You expect exactly 50 characters
+const TOP50_COMPLETE_COUNT = 50; // You expect exactly 50 characters
 
 async function loadTopAnimeCharacters(forceRefresh = false) {
     isTop50AnimeCharModalSession = true;
