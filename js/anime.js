@@ -321,12 +321,20 @@ document.addEventListener('click', function (e) {
 let isTop50AnimeCharModalSession = false;
 let top50AnimeCharCache = null;
 const TOP50_STORAGE_KEY = "top50AnimeCharCache";
-const TOP50_COMPLETE_COUNT = 50; // You expect exactly 50 characters
+const TOP50_UPDATED_AT_KEY = "top50AnimeCharUpdatedAt";
+const TOP50_COMPLETE_COUNT = 10; // You expect exactly 50 characters
 
-document.getElementById("loadTopAnimeCharacters").addEventListener("click", async () => {
+async function loadTopAnimeCharacters(forceRefresh = false) {
     isTop50AnimeCharModalSession = true;
 
     const topAnimeCharListEl = document.getElementById("topAnimeCharactersList");
+    const storedUpdatedAt = parseInt(localStorage.getItem(TOP50_UPDATED_AT_KEY)) || Date.now();
+
+    // If Update Top 50 button was clicked, delete cache and localStorage
+    if (forceRefresh) {
+        localStorage.removeItem(TOP50_STORAGE_KEY);
+        top50AnimeCharCache = null;
+    }
 
     // Load from localStorage
     const stored = localStorage.getItem(TOP50_STORAGE_KEY);
@@ -342,7 +350,7 @@ document.getElementById("loadTopAnimeCharacters").addEventListener("click", asyn
     // Use full cache immediately
     if (top50AnimeCharCache?.length === TOP50_COMPLETE_COUNT) {
         console.log("Using full Top 50 from localStorage");
-        topAnimeCharListEl.innerHTML = `<ul class="list-unstyled small">${createCharacterListHTML(top50AnimeCharCache)}</ul>`;
+        renderTopAnimeCharacters(top50AnimeCharCache, storedUpdatedAt);
         return;
     }
  
@@ -363,7 +371,7 @@ document.getElementById("loadTopAnimeCharacters").addEventListener("click", asyn
         const res2 = await throttledFetch("https://api.jikan.moe/v4/characters?order_by=favorites&sort=desc&page=2");
         const data2 = await res2.json();
         // Combine data1 and data2 together
-        const charactersData = [...data1.data, ...data2.data];
+        const charactersData = [...data1.data, ...data2.data].slice(0, TOP50_COMPLETE_COUNT); // .slice part for debugging
 
         // Reshape the data to use createCharacterListHTML
         const processedData = charactersData.map(char => ({
@@ -401,18 +409,25 @@ document.getElementById("loadTopAnimeCharacters").addEventListener("click", asyn
             index++;
         }
 
-        const html = createCharacterListHTML(enriched);
-        topAnimeCharListEl.innerHTML = `<ul class="list-unstyled small">${html}</ul>`;
+        // Create the HTML of top 50 anime char list with refresh button
+        renderTopAnimeCharacters(enriched);
+
         // Only cache if user didn't cancel
         if (isTop50AnimeCharModalSession && enriched.length === TOP50_COMPLETE_COUNT) {
             top50AnimeCharCache = enriched;
             localStorage.setItem(TOP50_STORAGE_KEY, JSON.stringify(enriched));
+            const now = Date.now();
+            localStorage.setItem(TOP50_UPDATED_AT_KEY, now);
             console.log("Saved Top 50 to localStorage");
         }
     } catch (err) {
         console.error("Failed to fetch top characters:", err);
         topAnimeCharListEl.innerHTML = "<div class='text-danger'>Failed to load top characters.</div>";
     }
+}
+
+document.getElementById("loadTopAnimeCharacters").addEventListener("click", () => {
+    loadTopAnimeCharacters();
 });
 
 async function getAnimeTitleOfCharacter(char) {
@@ -655,7 +670,7 @@ function renderTopVoiceActorCharacters(charList, totalCount, vaMalId, updatedAt 
             Top 10 main role characters<br>out of ${totalCount}
         </div>
         <ul class="list-unstyled small">${listHTML}</ul>
-        <button type="button" id="updateTopVoiceActorCharactersBtn" class="btn btn-sm btn-outline-info d-none">
+        <button type="button" id="updateTopVoiceActorCharactersBtn" class="btn btn-sm btn-outline-info">
             <i class="bi bi-arrow-clockwise me-1"></i> Update Top 10 again?
         </button>
         <div class="text-muted small text-center mt-2" title="${new Date(updatedAt).toLocaleString()}">
@@ -666,11 +681,32 @@ function renderTopVoiceActorCharacters(charList, totalCount, vaMalId, updatedAt 
     // Setting up the "Update" button
     const updateBtn = document.getElementById('updateTopVoiceActorCharactersBtn');
     if (updateBtn) {
-        updateBtn.classList.remove('d-none');
         updateBtn.onclick = () => {
             updateTopVoiceActorCharacters(vaMalId);
         };
     }
+}
+
+// HTML for the top 50 anime characters
+function renderTopAnimeCharacters(charList, updatedAt = Date.now()) {
+    const listHTML = createCharacterListHTML(charList);
+    const updatedText = timeAgoText(updatedAt);
+    const topAnimeCharListEl = document.getElementById("topAnimeCharactersList");
+
+    topAnimeCharListEl.innerHTML = `
+        <ul class="list-unstyled small">${listHTML}</ul>
+        <button type="button" id="refreshTopAnimeCharacters" class="btn btn-sm btn-outline-info mt-2">
+            <i class="bi bi-arrow-clockwise me-1"></i> Update Top 50 again?
+        </button>
+        <div class="text-muted small text-center mt-2" title="${new Date(updatedAt).toLocaleString()}">
+            Updated ${updatedText}
+        </div>
+    `;
+
+    // Attach refresh button listener
+    document.getElementById("refreshTopAnimeCharacters")?.addEventListener("click", () => {
+        loadTopAnimeCharacters(true); // force refresh
+    });
 }
 
 // HTML for the row of every characters. 
