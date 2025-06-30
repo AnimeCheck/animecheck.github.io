@@ -19,48 +19,29 @@ async function processQueue() {
 
     while (requestQueue.length > 0) {
         console.log(`[processQueue] Requests left in queue: ${requestQueue.length}`);
-        const currentTime = Date.now();
+        const { args, resolve, reject } = requestQueue.shift();
 
-        timestamps = timestamps.filter(ts => currentTime - ts < 60000);
-
-        if (timestamps.length >= maxRequestsPerMinute) {
-            const waitTime = 60000 - (currentTime - timestamps[0]);
-            console.warn(`[processQueue] Rate limit per minute hit, delaying for ${waitTime} ms`);
-            await delay(waitTime);
-            continue;
-        }
-
-        const lastSecondRequests = timestamps.filter(ts => currentTime - ts < 1000);
-        if (lastSecondRequests.length >= maxRequestsPerSecond) {
-            const waitTime = 1000 - (currentTime - lastSecondRequests[0]);
-            console.warn(`[processQueue] Rate limit per second hit, delaying for ${waitTime} ms`);
-            await delay(waitTime);
-            continue;
-        }
-
-        const { args, resolve, reject, retryCount = 0 } = requestQueue.shift();
-
+        // Ensure we are below rate limit
         await smartDelay();
-        console.log(`[processQueue] Executing fetch:`, args[0]);
+
+        const url = args[0];
+        console.log(`[processQueue] Executing fetch: ${url}`);
 
         try {
             const res = await fetch(...args);
 
             if (res.status === 429) {
-                const backoff = Math.pow(2, retryCount) * 1000; // 1s, 2s, 4s...
-                console.warn(`[processQueue] 429 Too Many Requests — retrying in ${backoff}ms:`, args[0]);
-
-                // Requeue with increased retry count
-                requestQueue.unshift({ args, resolve, reject, retryCount: retryCount + 1 });
-                await delay(backoff);
+                console.warn(`[processQueue] 429 Too Many Requests — retrying in 1000ms: ${url}`);
+                await delay(1000);
+                requestQueue.unshift({ args, resolve, reject });
                 continue;
             }
 
-            timestamps.push(Date.now());
+            timestamps.push(Date.now()); // Only push if it didn’t 429
             resolve(res);
-            console.log(`[processQueue] Fetch completed:`, args[0]);
+            console.log(`[processQueue] Fetch completed: ${url}`);
         } catch (err) {
-            console.error(`[processQueue] Fetch failed:`, args[0], err);
+            console.error(`[processQueue] Fetch failed: ${url}`, err);
             reject(err);
         }
     }
@@ -72,12 +53,10 @@ async function processQueue() {
 async function smartDelay() {
     while (true) {
         const now = Date.now();
-
-        // Clean old entries
         timestamps = timestamps.filter(ts => now - ts < 60000);
 
         const requestsLastMinute = timestamps.length;
-        const requestsLastSecond = timestamps.filter(t => now - t <= 1000).length;
+        const requestsLastSecond = timestamps.filter(t => now - t < 1000).length;
 
         console.log(`[smartDelay] 1s: ${requestsLastSecond} / ${maxRequestsPerSecond} | 60s: ${requestsLastMinute} / ${maxRequestsPerMinute}`);
 
@@ -88,25 +67,29 @@ async function smartDelay() {
         let waitUntil = now + 100;
 
         if (requestsLastSecond >= maxRequestsPerSecond) {
-            const thirdMostRecent = timestamps.find(t => now - t <= 1000);
-            if (thirdMostRecent) waitUntil = Math.max(waitUntil, thirdMostRecent + 1000);
+            const oldestSecond = timestamps.filter(t => now - t < 1000)[0];
+            waitUntil = Math.max(waitUntil, oldestSecond + 1000);
         }
 
         if (requestsLastMinute >= maxRequestsPerMinute) {
-            const oldest = timestamps[0];
-            waitUntil = Math.max(waitUntil, oldest + 60000);
+            const oldestMinute = timestamps[0];
+            waitUntil = Math.max(waitUntil, oldestMinute + 60000);
         }
 
         const waitTime = waitUntil - now;
         console.warn(`[smartDelay] Too fast — delaying ${waitTime}ms`);
         await delay(waitTime);
     }
+
+    // Add a small spacing to spread out requests just in case
+    await delay(350); // ~3 per second safely
 }
 
 function throttledFetch(...args) {
     return new Promise((resolve, reject) => {
-        console.log(`[throttledFetch] Queueing request:`, args[0]);
+        console.log(`[throttledFetch] Queueing request: ${args[0]}`);
         requestQueue.push({ args, resolve, reject });
+
         console.log(`[throttledFetch] Queue length: ${requestQueue.length}`);
 
         if (!isProcessing) {
@@ -116,7 +99,6 @@ function throttledFetch(...args) {
     });
 }
 
-// Optional: Fancy time formatting utility
 function timeAgoText(timestamp) {
     const diff = Date.now() - timestamp;
 
@@ -140,8 +122,9 @@ function timeAgoText(timestamp) {
     return `${years} year${years !== 1 ? 's' : ''} ago`;
 }
 
-// Optional: Show toast when rate limit is exceeded
+// Toast for API Rate limit
 let lastRateLimitToast = 0;
+
 function showRateLimitToast() {
     const now = Date.now();
     if (now - lastRateLimitToast > 5000) {
