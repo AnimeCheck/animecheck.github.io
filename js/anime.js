@@ -784,7 +784,7 @@ async function smartDelay() {
     const requestsLastMinute = smartDelayTimestamps.length;
 
     // Default delay
-    let delayTime = 335;
+    let delayTime = 100;
 
     // If too many requests in the last second OR minute, slow down
     if (requestsLastSecond >= 3 || requestsLastMinute >= 60) {
