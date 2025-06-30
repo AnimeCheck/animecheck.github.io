@@ -1,53 +1,10 @@
 /*
-    For Modals
+    Handling hide.bs.modal / hidden.bs.modal events
+    Cleaning up activeModalSession or isTop50AnimeCharModalSession
+    "Clear Local Storage" and "Check Storage Size" buttons
 */
-// Modal for voice actors
-document.addEventListener('click', function (e) {
-    if (e.target.closest('.va-link')) {
-        const link = e.target.closest('.va-link');
-        const name = link.dataset.name;
-        const vaMalId = link.dataset.vamalid;
-        const image = link.dataset.image;
-        const lang = link.dataset.lang;
 
-        // Update modal info
-        document.getElementById('vaModalLabel').textContent = `${name} (${vaMalId})`;
-        document.getElementById('vaModalName').textContent = name;
-        document.getElementById('vaModalImage').src = image;
-        document.getElementById("vaModalImageLink").href = image;
-        document.getElementById('vaModalLang').textContent = `Dub: ${lang}`;
-        document.getElementById('vaModalCharacters').innerHTML = ""; // Clear any old content
-
-        // Show the button
-        const topCharButton = document.getElementById('triggerTopCharacters');
-        topCharButton.style.display = "inline-block";
-        topCharButton.onclick = function () {
-            topCharButton.style.display = "none"; // hide it after click
-            checkTopCharacters(vaMalId); // Call your function
-        };
-
-    }
-});
-
-// HTML for the row of every characters. 
-function createCharacterListHTML(charList) {
-    return charList.map((char, index) => `
-        <li class="d-flex align-items-center mb-2 custom-top-char-row">
-            <div class="me-2 text-center" style="width: 40px; flex-shrink: 0;">
-                <span class="fs-5">${index + 1}</span>
-            </div>
-            <img src="${char.image}" alt="${char.name}" class="me-2 rounded"
-                style="width: 50px; height: 50px; object-fit: cover; flex-shrink: 0;" loading="lazy">
-
-            <div class="flex-grow-1 text-start" style="min-width: 0;">
-                <div><strong class="fs-6 text-break me-1">${char.name}</strong><span class="text-secondary small">(#${char.id})</span></div>
-                <div class="text-info text-break"><em>${char.animeTitle}</em></div>
-                <div class="text-warning small">❤ ${char.favorites.toLocaleString()} favorites</div>
-            </div>
-        </li>
-    `).join('');
-}
-
+// VA modal accessibility + cleanup
 const vaModal = document.getElementById('vaModal');
 // Fix accessibility warning by blurring the focused element before hiding
 vaModal.addEventListener('hide.bs.modal', () => {
@@ -63,6 +20,7 @@ vaModal.addEventListener('hidden.bs.modal', () => {
     document.getElementById('vaModalCharacters').innerHTML = ""; // clear old content
 });
 
+// Top 50 Anime modal accessibility + cleanup
 const topAnimeModal = document.getElementById('topAnimeCharactersModal');
 // Fix accessibility warning by blurring the focused element before hiding
 topAnimeModal.addEventListener('hide.bs.modal', () => {

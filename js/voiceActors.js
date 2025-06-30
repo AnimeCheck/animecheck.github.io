@@ -241,3 +241,30 @@ function renderTopVoiceActorCharacters(charList, totalCount, vaMalId, updatedAt 
         };
     }
 }
+
+document.addEventListener('click', function (e) {
+    if (e.target.closest('.va-link')) {
+        const link = e.target.closest('.va-link');
+        const name = link.dataset.name;
+        const vaMalId = link.dataset.vamalid;
+        const image = link.dataset.image;
+        const lang = link.dataset.lang;
+
+        // Update modal info
+        document.getElementById('vaModalLabel').textContent = `${name} (${vaMalId})`;
+        document.getElementById('vaModalName').textContent = name;
+        document.getElementById('vaModalImage').src = image;
+        document.getElementById("vaModalImageLink").href = image;
+        document.getElementById('vaModalLang').textContent = `Dub: ${lang}`;
+        document.getElementById('vaModalCharacters').innerHTML = ""; // Clear any old content
+
+        // Show the button
+        const topCharButton = document.getElementById('triggerTopCharacters');
+        topCharButton.style.display = "inline-block";
+        topCharButton.onclick = function () {
+            topCharButton.style.display = "none"; // hide it after click
+            checkTopCharacters(vaMalId); // Call your function
+        };
+
+    }
+});
