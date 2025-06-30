@@ -1,5 +1,54 @@
+const maxRequestsPerSecond = 3;
+const maxRequestsPerMinute = 60;
+
+const requestQueue = [];
+let timestamps = [];
+
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function processQueue() {
+    if (requestQueue.length === 0) return;
+
+    const currentTime = Date.now();
+
+    // Remove timestamps older than 60 seconds
+    timestamps = timestamps.filter(ts => currentTime - ts < 60000);
+
+    // Check if max per minute reached
+    if (timestamps.length >= maxRequestsPerMinute) {
+        const waitTime = 60000 - (currentTime - timestamps[0]);
+        await delay(waitTime);
+        return processQueue();
+    }
+
+    // Check requests in last 1 second
+    const lastSecondRequests = timestamps.filter(ts => currentTime - ts < 1000);
+    if (lastSecondRequests.length >= maxRequestsPerSecond) {
+        const earliestLastSecond = lastSecondRequests[0];
+        const waitTime = 1000 - (currentTime - earliestLastSecond);
+        await delay(waitTime);
+        return processQueue();
+    }
+
+    // Dequeue request and execute
+    const {
+        args,
+        resolve,
+        reject
+    } = requestQueue.shift();
+
+    try {
+        const res = await fetch(...args);
+        timestamps.push(Date.now());
+        resolve(res);
+    } catch (err) {
+        reject(err);
+    }
+
+    // Process next in queue
+    processQueue();
 }
 
 // Goal is to not hit the API rate limit. Need to go a bit faster than await delay(1000)
@@ -45,16 +94,17 @@ async function smartDelay() {
 }
 
 // Goal is to not hit the API rate limit
-let fetchLock = Promise.resolve();
-async function throttledFetch(...args) {
-    // Queue this request behind the last one
-    const run = async () => {
-        await smartDelay();
-        return fetch(...args);
-    };
-
-    fetchLock = fetchLock.then(run);
-    return fetchLock;
+function throttledFetch(...args) {
+    return new Promise((resolve, reject) => {
+        requestQueue.push({
+            args,
+            resolve,
+            reject
+        });
+        if (requestQueue.length === 1) {
+            processQueue();
+        }
+    });
 }
 
 function timeAgoText(timestamp) {
