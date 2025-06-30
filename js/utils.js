@@ -12,21 +12,33 @@ async function smartDelay() {
         smartDelayTimestamps.shift();
     }
 
-    // Calculate number of recent requests in last second
-    const requestsLastSecond = smartDelayTimestamps.filter(t => now - t <= 1000).length;
-    const requestsLastMinute = smartDelayTimestamps.length;
+    // Check and wait if over minute or second limit
+    while (true) {
+        const currentTime = Date.now();
 
-    // Default delay
-    let delayTime = 335;
+        // Remove old entries again
+        while (smartDelayTimestamps.length > 0 && currentTime - smartDelayTimestamps[0] > 60000) {
+            smartDelayTimestamps.shift();
+        }
 
-    // If too many requests in the last second OR minute, slow down
-    if (requestsLastSecond >= 3 || requestsLastMinute >= 60) {
-        delayTime = 1000;
+        const requestsLastMinute = smartDelayTimestamps.length;
+        const requestsLastSecond = smartDelayTimestamps.filter(t => currentTime - t <= 1000).length;
+
+        // Log current rate usage
+        console.log(`[smartDelay] 1s: ${requestsLastSecond} / 3 | 60s: ${requestsLastMinute} / 60`);
+
+        if (requestsLastMinute < 60 && requestsLastSecond < 3) {
+            break; // safe to proceed
+        }
+
+        // Wait just a little before retrying
+        await delay(100);
     }
 
     //console.log(`[smartDelay] Delay: ${delayTime}ms — 1s: ${requestsLastSecond}, 60s: ${requestsLastMinute}`);
-    await delay(delayTime);
+    //await delay(delayTime);
 
+    // Add timestamp when we actually proceed with request
     smartDelayTimestamps.push(Date.now());
 }
 
