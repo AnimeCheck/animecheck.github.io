@@ -58,15 +58,16 @@ async function smartDelay() {
         const requestsLastMinute = timestamps.length;
         const requestsLastSecond = timestamps.filter(t => now - t < 1000).length;
 
-        console.log(`[smartDelay] 1s: ${requestsLastSecond} / ${maxRequestsPerSecond} | 60s: ${requestsLastMinute} / ${maxRequestsPerMinute}`);
+        console.log(`[smartDelay] 1s: ${requestsLastSecond} / 2 | 60s: ${requestsLastMinute} / ${maxRequestsPerMinute}`);
 
-        if (requestsLastMinute < maxRequestsPerMinute && requestsLastSecond < maxRequestsPerSecond) {
+        // Use max 2 requests per second to be safer (lower than your original 3)
+        if (requestsLastMinute < maxRequestsPerMinute && requestsLastSecond < 2) {
             break;
         }
 
         let waitUntil = now + 100;
 
-        if (requestsLastSecond >= maxRequestsPerSecond) {
+        if (requestsLastSecond >= 2) {
             const oldestSecond = timestamps.filter(t => now - t < 1000)[0];
             waitUntil = Math.max(waitUntil, oldestSecond + 1000);
         }
@@ -81,8 +82,8 @@ async function smartDelay() {
         await delay(waitTime);
     }
 
-    // Add a small spacing to spread out requests just in case
-    await delay(350); // ~3 per second safely
+    // Add a slightly longer spacing to reduce burst risk
+    await delay(500);
 }
 
 function throttledFetch(...args) {
