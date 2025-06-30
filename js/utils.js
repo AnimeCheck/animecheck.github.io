@@ -8,47 +8,52 @@ function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+let isProcessing = false;
 async function processQueue() {
-    if (requestQueue.length === 0) return;
+    if (isProcessing) {
+        console.log("[processQueue] Already processing queue, returning");
+        return;
+    }
+    isProcessing = true;
 
-    const currentTime = Date.now();
+    while (requestQueue.length > 0) {
+        console.log(`[processQueue] Requests left in queue: ${requestQueue.length}`);
+        const currentTime = Date.now();
 
-    // Remove timestamps older than 60 seconds
-    timestamps = timestamps.filter(ts => currentTime - ts < 60000);
+        timestamps = timestamps.filter(ts => currentTime - ts < 60000);
 
-    // Check if max per minute reached
-    if (timestamps.length >= maxRequestsPerMinute) {
-        const waitTime = 60000 - (currentTime - timestamps[0]);
-        await delay(waitTime);
-        return processQueue();
+        if (timestamps.length >= maxRequestsPerMinute) {
+            const waitTime = 60000 - (currentTime - timestamps[0]);
+            console.warn(`[processQueue] Rate limit per minute hit, delaying for ${waitTime} ms`);
+            await delay(waitTime);
+            continue;
+        }
+
+        const lastSecondRequests = timestamps.filter(ts => currentTime - ts < 1000);
+        if (lastSecondRequests.length >= maxRequestsPerSecond) {
+            const earliestLastSecond = lastSecondRequests[0];
+            const waitTime = 1000 - (currentTime - earliestLastSecond);
+            console.warn(`[processQueue] Rate limit per second hit, delaying for ${waitTime} ms`);
+            await delay(waitTime);
+            continue;
+        }
+
+        const { args, resolve, reject } = requestQueue.shift();
+        console.log(`[processQueue] Executing fetch:`, args[0]);
+
+        try {
+            const res = await fetch(...args);
+            timestamps.push(Date.now());
+            resolve(res);
+            console.log(`[processQueue] Fetch completed:`, args[0]);
+        } catch (err) {
+            console.error(`[processQueue] Fetch failed:`, args[0], err);
+            reject(err);
+        }
     }
 
-    // Check requests in last 1 second
-    const lastSecondRequests = timestamps.filter(ts => currentTime - ts < 1000);
-    if (lastSecondRequests.length >= maxRequestsPerSecond) {
-        const earliestLastSecond = lastSecondRequests[0];
-        const waitTime = 1000 - (currentTime - earliestLastSecond);
-        await delay(waitTime);
-        return processQueue();
-    }
-
-    // Dequeue request and execute
-    const {
-        args,
-        resolve,
-        reject
-    } = requestQueue.shift();
-
-    try {
-        const res = await fetch(...args);
-        timestamps.push(Date.now());
-        resolve(res);
-    } catch (err) {
-        reject(err);
-    }
-
-    // Process next in queue
-    processQueue();
+    isProcessing = false;
+    console.log("[processQueue] Queue processing complete");
 }
 
 // Goal is to not hit the API rate limit. Need to go a bit faster than await delay(1000)
@@ -96,12 +101,13 @@ async function smartDelay() {
 // Goal is to not hit the API rate limit
 function throttledFetch(...args) {
     return new Promise((resolve, reject) => {
-        requestQueue.push({
-            args,
-            resolve,
-            reject
-        });
+        console.log(`[throttledFetch] Queueing request:`, args[0]);
+        requestQueue.push({ args, resolve, reject });
+
+        console.log(`[throttledFetch] Queue length: ${requestQueue.length}`);
+
         if (requestQueue.length === 1) {
+            console.log("[throttledFetch] Starting to process queue");
             processQueue();
         }
     });
