@@ -600,7 +600,7 @@ async function getCharacterFavorites(charMalId, retry = 2) {
         // Check for 429 Too Many Requests
         if (response.status === 429) {
             showRateLimitToast();
-            await smartDelay();
+            await delay(335);
             if (retry > 0) return getCharacterFavorites(charMalId, retry - 1);
             return 0;
         }
