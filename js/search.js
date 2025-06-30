@@ -1,3 +1,5 @@
+// Contains search input, autocomplete suggestions, and arrow key navigation.
+
 const searchInput = document.getElementById('search');
 const suggestions = document.getElementById('suggestions');
 const clearBtn = document.getElementById('clear-btn');

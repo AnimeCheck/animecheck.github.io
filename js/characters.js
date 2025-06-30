@@ -1,3 +1,9 @@
+/*
+    Character cards for an anime
+    Voice actor rendering inside each card
+    IntersectionObserver for fade-in
+*/
+
 const vaInfoCache = {};
 async function getAnimeCharacters(animeId) {
     console.log("Anime Characters URL: ", `https://api.jikan.moe/v4/anime/${animeId}/characters`);

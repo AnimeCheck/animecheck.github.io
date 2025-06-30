@@ -1,3 +1,5 @@
+// Logic for fetching and displaying anime info (title, studio, genre, score, etc.).
+
 async function getAnimeById(animeId) {
     console.log("Anime by id URL: ", `https://api.jikan.moe/v4/anime/${animeId}`);
     try {
