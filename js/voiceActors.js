@@ -12,13 +12,19 @@ async function checkTopCharacters(vaMalId) {
         const mainCharacters = await getMainCharactersVoicedBy(vaMalId);
         // Fetch favorites in parallel
         const charactersWithFavorites = [];
-        const vaModalCharactersProgress = document.getElementById("vaModalCharacters");
+        /*const vaModalCharactersProgress = document.getElementById("vaModalCharacters");
         vaModalCharactersProgress.innerHTML = `
             <div class="d-flex justify-content-center align-items-center">
                 <div class="spinner-border spinner-border-sm me-2" role="status"></div>
                 <span id="progressCount">Compiling top 10 main role characters... (0/${mainCharacters.length})</span>
             </div>
-        `;
+        `;*/
+        renderTopCharactersProgress(
+            "vaModalCharacters",
+            "Compiling top 10 main role characters...",
+            mainCharacters.length
+        );
+
         const progressCount = document.getElementById("progressCount");
 
         for (const char of mainCharacters) {
@@ -179,15 +185,20 @@ async function updateTopVoiceActorCharacters(vaMalId) {
     const mainCharacters = await getMainCharactersVoicedBy(vaMalId);
     const updatedCharacters = [];
 
-    const vaModalCharactersProgress = document.getElementById("vaModalCharacters");
+    /*const vaModalCharactersProgress = document.getElementById("vaModalCharacters");
     vaModalCharactersProgress.innerHTML = `
         <div class="d-flex justify-content-center align-items-center text-info py-3">
             <div class="spinner-border spinner-border-sm me-2" role="status"></div>
             <span id="updateProgress">Updating for Top 10... (0/${mainCharacters.length})</span>
         </div>
-    `;
+    `;*/
+    renderTopCharactersProgress(
+        "vaModalCharacters",
+        "Compiling top 10 main role characters...",
+        mainCharacters.length
+    );
 
-    const updateProgress = document.getElementById("updateProgress");
+    const updateProgress = document.getElementById("progressCount");
 
     for (const char of mainCharacters) {
         if (session !== activeModalSession) {
@@ -202,7 +213,7 @@ async function updateTopVoiceActorCharacters(vaMalId) {
         const favorites = await getCharacterFavorites(char.id);
         updatedCharacters.push({ ...char, favorites });
 
-        updateProgress.textContent = `Updating for Top 10... (${updatedCharacters.length}/${mainCharacters.length})`;
+        updateProgress.textContent = `Compiling top 10 main role characters.. (${updatedCharacters.length}/${mainCharacters.length})`;
     }
 
     // Final sorting and render
@@ -240,6 +251,16 @@ function renderTopVoiceActorCharacters(charList, totalCount, vaMalId, updatedAt 
             updateTopVoiceActorCharacters(vaMalId);
         };
     }
+}
+
+function renderTopCharactersProgress(containerId, message, totalCount) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = `
+        <div class="d-flex justify-content-center align-items-center">
+            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+            <span id="progressCount">${message} (0/${totalCount})</span>
+        </div>
+    `;
 }
 
 document.addEventListener('click', function (e) {
