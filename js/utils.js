@@ -9,6 +9,7 @@ function delay(ms) {
 }
 
 let isProcessing = false;
+
 async function processQueue() {
     if (isProcessing) {
         console.log("[processQueue] Already processing queue, returning");
@@ -31,22 +32,31 @@ async function processQueue() {
 
         const lastSecondRequests = timestamps.filter(ts => currentTime - ts < 1000);
         if (lastSecondRequests.length >= maxRequestsPerSecond) {
-            const earliestLastSecond = lastSecondRequests[0];
-            const waitTime = 1000 - (currentTime - earliestLastSecond);
+            const waitTime = 1000 - (currentTime - lastSecondRequests[0]);
             console.warn(`[processQueue] Rate limit per second hit, delaying for ${waitTime} ms`);
             await delay(waitTime);
             continue;
         }
 
-        const { args, resolve, reject } = requestQueue.shift();
+        const { args, resolve, reject, retryCount = 0 } = requestQueue.shift();
 
-        // Wait for safe timing
         await smartDelay();
-
         console.log(`[processQueue] Executing fetch:`, args[0]);
 
         try {
             const res = await fetch(...args);
+
+            if (res.status === 429) {
+                const backoff = Math.pow(2, retryCount) * 1000; // 1s, 2s, 4s...
+                console.warn(`[processQueue] 429 Too Many Requests — retrying in ${backoff}ms:`, args[0]);
+
+                // Requeue with increased retry count
+                requestQueue.unshift({ args, resolve, reject, retryCount: retryCount + 1 });
+                await delay(backoff);
+                continue;
+            }
+
+            timestamps.push(Date.now());
             resolve(res);
             console.log(`[processQueue] Fetch completed:`, args[0]);
         } catch (err) {
@@ -59,7 +69,6 @@ async function processQueue() {
     console.log("[processQueue] Queue processing complete");
 }
 
-// Goal is to not hit the API rate limit. Need to go a bit faster than await delay(1000)
 async function smartDelay() {
     while (true) {
         const now = Date.now();
@@ -79,8 +88,8 @@ async function smartDelay() {
         let waitUntil = now + 100;
 
         if (requestsLastSecond >= maxRequestsPerSecond) {
-            const thirdMostRecent = timestamps.filter(t => now - t <= 1000)[0];
-            waitUntil = Math.max(waitUntil, thirdMostRecent + 1000);
+            const thirdMostRecent = timestamps.find(t => now - t <= 1000);
+            if (thirdMostRecent) waitUntil = Math.max(waitUntil, thirdMostRecent + 1000);
         }
 
         if (requestsLastMinute >= maxRequestsPerMinute) {
@@ -92,25 +101,22 @@ async function smartDelay() {
         console.warn(`[smartDelay] Too fast — delaying ${waitTime}ms`);
         await delay(waitTime);
     }
-
-    timestamps.push(Date.now());
 }
 
-// Goal is to not hit the API rate limit
 function throttledFetch(...args) {
     return new Promise((resolve, reject) => {
         console.log(`[throttledFetch] Queueing request:`, args[0]);
         requestQueue.push({ args, resolve, reject });
-
         console.log(`[throttledFetch] Queue length: ${requestQueue.length}`);
 
-        if (requestQueue.length === 1) {
+        if (!isProcessing) {
             console.log("[throttledFetch] Starting to process queue");
             processQueue();
         }
     });
 }
 
+// Optional: Fancy time formatting utility
 function timeAgoText(timestamp) {
     const diff = Date.now() - timestamp;
 
@@ -134,12 +140,11 @@ function timeAgoText(timestamp) {
     return `${years} year${years !== 1 ? 's' : ''} ago`;
 }
 
-// Toast for API Rate limit
+// Optional: Show toast when rate limit is exceeded
 let lastRateLimitToast = 0;
-
 function showRateLimitToast() {
     const now = Date.now();
-    if (now - lastRateLimitToast > 5000) { // Only show once every 5 seconds
+    if (now - lastRateLimitToast > 5000) {
         lastRateLimitToast = now;
         const toastRateLimit = document.getElementById("rateLimitToast");
         if (toastRateLimit) {
