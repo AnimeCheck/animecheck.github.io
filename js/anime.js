@@ -594,7 +594,7 @@ async function getCharacterFavorites(charMalId, retry = 2) {
     }
 
     //console.log("Characters Info URL: ", `https://api.jikan.moe/v4/characters/${charMalId}`);
-    console.log("Getting Character with favorites...");
+    //console.log("Getting Character with favorites...");
     try {
         const response = await throttledFetch(`https://api.jikan.moe/v4/characters/${charMalId}`);
         // Check for 429 Too Many Requests
@@ -782,14 +782,14 @@ async function smartDelay() {
     const requestsLastMinute = smartDelayTimestamps.length;
 
     // Default delay
-    let delayTime = 135;
+    let delayTime = 335;
 
     // If too many requests in the last second OR minute, slow down
     if (requestsLastSecond >= 3 || requestsLastMinute >= 60) {
-        delayTime = 500;
+        delayTime = 1000;
     }
 
-    console.log(`[smartDelay] Delay: ${delayTime}ms — 1s: ${requestsLastSecond}, 60s: ${requestsLastMinute}`);
+    //console.log(`[smartDelay] Delay: ${delayTime}ms — 1s: ${requestsLastSecond}, 60s: ${requestsLastMinute}`);
     await delay(delayTime);
 
     smartDelayTimestamps.push(Date.now());
