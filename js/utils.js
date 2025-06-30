@@ -78,6 +78,11 @@ async function smartDelay() {
         }
 
         const waitTime = waitUntil - now;
+
+        if (waitTime > 5000) {
+            showRateLimitWarningToast();
+        }
+
         console.warn(`[smartDelay] Too fast — delaying ${waitTime}ms`);
         await delay(waitTime);
     }
@@ -133,6 +138,21 @@ function showRateLimitToast() {
         const toastRateLimit = document.getElementById("rateLimitToast");
         if (toastRateLimit) {
             const toast = new bootstrap.Toast(toastRateLimit);
+            toast.show();
+        }
+    }
+}
+
+// Toast for warning about slowing down to avoid API Rate limit
+let lastRateLimitWarningToast = 0;
+
+function showRateLimitWarningToast() {
+    const now = Date.now();
+    if (now - lastRateLimitWarningToast > 5000) { // throttle toast to show max once every 5 sec
+        lastRateLimitWarningToast = now;
+        const toastEl = document.getElementById("rateLimitWarningToast");
+        if (toastEl) {
+            const toast = new bootstrap.Toast(toastEl);
             toast.show();
         }
     }
