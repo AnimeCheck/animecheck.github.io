@@ -322,7 +322,7 @@ let isTop50AnimeCharModalSession = false;
 let top50AnimeCharCache = null;
 const TOP50_STORAGE_KEY = "top50AnimeCharCache";
 const TOP50_UPDATED_AT_KEY = "top50AnimeCharUpdatedAt";
-const TOP50_COMPLETE_COUNT = 50; // You expect exactly 50 characters
+const TOP50_COMPLETE_COUNT = 5; // You expect exactly 50 characters
 
 async function loadTopAnimeCharacters(forceRefresh = false) {
     isTop50AnimeCharModalSession = true;
@@ -442,6 +442,8 @@ async function getAnimeTitleOfCharacter(char) {
     return char;
 }
 
+const FAV_OF_CHARACTER_KEY_PREFIX = "fav_of_character_";
+
 async function checkTopCharacters(vaMalId) {
     // For closing and opening another modal.
     activeModalSession = Date.now(); // create a new session token
@@ -493,7 +495,7 @@ async function checkTopCharacters(vaMalId) {
             let latestUpdate = 0;
 
             for (const char of top10char) {
-                const cached = localStorage.getItem(`fav_of_character_${char.id}`);
+                const cached = localStorage.getItem(`${FAV_OF_CHARACTER_KEY_PREFIX}${char.id}`);
                 if (cached) {
                     const { timestamp } = JSON.parse(cached);
                     if (timestamp > latestUpdate) latestUpdate = timestamp;
@@ -567,7 +569,7 @@ async function getCharacterFavorites(charMalId, retry = 2) {
 
     // Check localStorage
     try {
-        const stored = localStorage.getItem(`fav_of_character_${charMalId}`);
+        const stored = localStorage.getItem(`${FAV_OF_CHARACTER_KEY_PREFIX}${charMalId}`);
         if (stored) {
             const { value, timestamp } = JSON.parse(stored);
             const notExpired = Date.now() - timestamp < LOCAL_STORAGE_EXPIRE_TIME;
@@ -575,10 +577,10 @@ async function getCharacterFavorites(charMalId, retry = 2) {
                 favoritesCache[charMalId] = value;
                 return value;
             }
-            localStorage.removeItem(`fav_of_character_${charMalId}`);
+            localStorage.removeItem(`${FAV_OF_CHARACTER_KEY_PREFIX}${charMalId}`);
         }
     } catch {
-        localStorage.removeItem(`fav_of_character_${charMalId}`);
+        localStorage.removeItem(`${FAV_OF_CHARACTER_KEY_PREFIX}${charMalId}`);
     }
 
     //console.log("Characters Info URL: ", `https://api.jikan.moe/v4/characters/${charMalId}`);
@@ -603,7 +605,7 @@ async function getCharacterFavorites(charMalId, retry = 2) {
         favoritesCache[charMalId] = fav;
         // Store in localStorage
         const now = activeModalSession || Date.now();
-        localStorage.setItem(`fav_of_character_${charMalId}`,
+        localStorage.setItem(`${FAV_OF_CHARACTER_KEY_PREFIX}${charMalId}`,
             JSON.stringify({ value: fav, timestamp: now })
         );
         return fav;
@@ -639,7 +641,7 @@ async function updateTopVoiceActorCharacters(vaMalId) {
             return;
         }
 
-        const key = `fav_of_character_${char.id}`;
+        const key = `${FAV_OF_CHARACTER_KEY_PREFIX}${char.id}`;
         localStorage.removeItem(key);       // remove from localStorage
         delete favoritesCache[char.id];     // clear in-memory
 
@@ -825,24 +827,26 @@ topAnimeModal.addEventListener("hidden.bs.modal", () => {
     document.getElementById("topAnimeCharactersList").innerHTML = ""; // clear old content
 });
 
-// Toast for the button Clear Local Storage
+// Clear Local Storage button
 document.getElementById("clearCacheBtn").addEventListener("click", () => {
+    // Clear top favorites VA main role characters
     Object.keys(localStorage).forEach(key => {
-        if (key.startsWith("fav_of_character_")) {
+        if (key.startsWith(FAV_OF_CHARACTER_KEY_PREFIX)) {
             localStorage.removeItem(key);
         }
     });
-    Object.keys(localStorage).forEach(key => {
-        if (key.startsWith(TOP50_STORAGE_KEY)) {
-            localStorage.removeItem(key);
-        }
-    });
+
+    // Clear top anime character list and timestamp
+    localStorage.removeItem(TOP50_STORAGE_KEY);
+    localStorage.removeItem(TOP50_UPDATED_AT_KEY);
+
+    // Toast for the button Clear Local Storage
     const toastEl = document.getElementById("clearToast");
     const toast = new bootstrap.Toast(toastEl);
     toast.show();
 });
 
-// Toast for the button Check Local Storage Size
+// Check Local Storage Size button
 document.getElementById("checkStorageBtn").addEventListener("click", () => {
     let totalBytes = 0;
     for (let key in localStorage) {
@@ -861,6 +865,7 @@ document.getElementById("checkStorageBtn").addEventListener("click", () => {
         </div>
     `;
 
+    // Toast for the button Check Local Storage Size
     const toast = new bootstrap.Toast(document.getElementById("storageToast"));
     toast.show();
 });
