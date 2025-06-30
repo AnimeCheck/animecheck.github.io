@@ -396,7 +396,8 @@ async function loadTopAnimeCharacters(forceRefresh = false) {
             //console.log(`Fetching anime title for: ${char.name} (#${char.id})`);
             top50Count.textContent = `Showing top 50 anime characters... (${index + 1}/50)`;
             
-            await smartDelayForTop50();
+            //await smartDelayForTop50();
+            await smartDelay();
             const updatedChar = await getAnimeTitleOfCharacter(char);
             
             enriched.push(updatedChar);
@@ -756,7 +757,7 @@ async function throttledFetch(...args) {
 }
 
 // Goal is to not hit the API rate limit. Need to go a bit faster than await delay(1000)
-const requestTimestamps = [];
+/*const requestTimestamps = [];
 async function smartDelay() {
     const now = Date.now();
 
@@ -773,6 +774,23 @@ async function smartDelay() {
 
     // Record this request timestamp
     requestTimestamps.push(Date.now());
+}*/
+const requestTimestamps = [];
+async function smartDelay() {
+  const now = Date.now();
+
+  // Remove timestamps older than 60 seconds
+  while (requestTimestamps.length && now - requestTimestamps[0] > 60000) {
+    requestTimestamps.shift();
+  }
+
+  const recentCount = requestTimestamps.length;
+  const delayTime = recentCount >= 60 ? 1000 : 350;
+
+  console.log(`[smartDelay] Delay: ${delayTime}ms — Requests in last 60s: ${recentCount}`);
+  await delay(delayTime);
+
+  requestTimestamps.push(Date.now());
 }
 
 // Similar to smartDelay() but for the top 50 list
