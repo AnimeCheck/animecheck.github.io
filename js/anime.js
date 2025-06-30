@@ -430,11 +430,24 @@ document.getElementById("loadTopAnimeCharacters").addEventListener("click", () =
     loadTopAnimeCharacters();
 });
 
-async function getAnimeTitleOfCharacter(char) {
+async function getAnimeTitleOfCharacter(char, retry = 1) {
     try {
         const res = await fetch(`https://api.jikan.moe/v4/characters/${char.id}/anime`);
-        const data = await res.json();
-        const animeEntry = data.data[0];
+        if (res.status === 429) {
+            showRateLimitToast(); // Inform the user
+            await smartDelay();    // Wait and retry
+
+            if (retry > 0) {
+                return getAnimeTitleOfCharacter(char, retry - 1);
+            }
+            return char; // Fallback with no anime title
+        }
+        if (!res.ok) {
+            throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+
+        const dataJSON = await res.json();
+        const animeEntry = dataJSON.data[0];
         char.animeTitle = animeEntry?.anime?.title || "-";
     } catch {
         char.animeTitle = "-";
@@ -757,25 +770,6 @@ async function throttledFetch(...args) {
 }
 
 // Goal is to not hit the API rate limit. Need to go a bit faster than await delay(1000)
-/*const requestTimestamps = [];
-async function smartDelay() {
-    const now = Date.now();
-
-    // Clean up old timestamps older than 60 seconds
-    while (requestTimestamps.length && now - requestTimestamps[0] > 60000) {
-        requestTimestamps.shift();
-    }
-
-    // Decide delay based on request count
-    // If there are 60+ requests, delay is 1000ms. Otherwise 350ms.
-    const delayTime = requestTimestamps.length >= 60 ? 1000 : 350;
-    //console.log(`[Delay: ${delayTime}ms] Requests in last 60s: ${requestTimestamps.length} at ${new Date().toLocaleTimeString()}`);
-    await delay(delayTime);
-
-    // Record this request timestamp
-    requestTimestamps.push(Date.now());
-}*/
-
 const smartDelayTimestamps = [];
 async function smartDelay() {
     const now = Date.now();
@@ -790,7 +784,7 @@ async function smartDelay() {
     const requestsLastMinute = smartDelayTimestamps.length;
 
     // Default delay
-    let delayTime = 350;
+    let delayTime = 335;
 
     // If too many requests in the last second OR minute, slow down
     if (requestsLastSecond >= 3 || requestsLastMinute >= 60) {
@@ -801,23 +795,6 @@ async function smartDelay() {
     await delay(delayTime);
 
     smartDelayTimestamps.push(Date.now());
-}
-
-// Similar to smartDelay() but for the top 50 list
-const top50RequestTimestamps = [];
-async function smartDelayForTop50() {
-    const now = Date.now();
-
-    // Remove timestamps older than 60 seconds
-    while (top50RequestTimestamps.length && now - top50RequestTimestamps[0] > 60000) {
-        top50RequestTimestamps.shift();
-    }
-
-    top50RequestTimestamps.push(now);
-
-    const delayTime = top50RequestTimestamps.length >= 50 ? 1000 : 350;
-    //console.log(`[Delay: ${delayTime}ms] Requests in last 60s: ${top50RequestTimestamps.length}`);
-    await delay(delayTime);
 }
 
 function delay(ms) {
