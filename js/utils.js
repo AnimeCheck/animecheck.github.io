@@ -39,6 +39,10 @@ async function processQueue() {
         }
 
         const { args, resolve, reject } = requestQueue.shift();
+
+        // Wait for safe timing
+        await smartDelay();
+
         console.log(`[processQueue] Executing fetch:`, args[0]);
 
         try {
