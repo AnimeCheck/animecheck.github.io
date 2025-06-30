@@ -320,23 +320,38 @@ document.addEventListener('click', function (e) {
 // Modal for top anime characters
 let isTop50AnimeCharModalSession = false;
 let top50AnimeCharCache = null;
+const TOP50_STORAGE_KEY = "top50AnimeCharCache";
+const TOP50_COMPLETE_COUNT = 50; // You expect exactly 50 characters
+
 document.getElementById("loadTopAnimeCharacters").addEventListener("click", async () => {
     isTop50AnimeCharModalSession = true;
 
     const topAnimeCharListEl = document.getElementById("topAnimeCharactersList");
 
-    // Use cache if available
-    if (top50AnimeCharCache) {
-        console.log("Using in-memory cache for Top 50");
-        const html = createCharacterListHTML(top50AnimeCharCache);
-        topAnimeCharListEl.innerHTML = `<ul class="list-unstyled small">${html}</ul>`;
-        return;
+    // Load from localStorage
+    const stored = localStorage.getItem(TOP50_STORAGE_KEY);
+    if (!top50AnimeCharCache && stored) {
+        try {
+            const parsed = JSON.parse(stored);
+            if (Array.isArray(parsed)) top50AnimeCharCache = parsed;
+        } catch (e) {
+            console.warn("Failed to parse Top 50 from localStorage:", e);
+        }
     }
 
+    // Use full cache immediately
+    if (top50AnimeCharCache?.length === TOP50_COMPLETE_COUNT) {
+        console.log("Using full Top 50 from localStorage");
+        topAnimeCharListEl.innerHTML = `<ul class="list-unstyled small">${createCharacterListHTML(top50AnimeCharCache)}</ul>`;
+        return;
+    }
+ 
+    // Show loading UI
+    let index = Array.isArray(top50AnimeCharCache) ? top50AnimeCharCache.length : 0;
     topAnimeCharListEl.innerHTML = `
         <div class="d-flex justify-content-center align-items-center">
             <div class="spinner-border spinner-border-sm me-2" role="status"></div>
-            <span id="top50Count">Showing top 50 anime characters... (0/50)</span>
+            <span id="top50Count">Showing top 50 anime characters... (${index}/50)</span>
         </div>
     `;
 
@@ -359,26 +374,40 @@ document.getElementById("loadTopAnimeCharacters").addEventListener("click", asyn
             favorites: char.favorites ?? 0
         }));
 
-        const enriched = [];
         const top50Count = document.getElementById("top50Count");
-        let index = 0;
+        const enriched = top50AnimeCharCache ? [...top50AnimeCharCache] : []; // Pre-fill with cached results
+        const remainingData = processedData.slice(enriched.length); // Skip already-fetched ones
 
-        for (const char of processedData) {
+        // Only reset cache if it wasn't loaded
+        if (top50AnimeCharCache == null) {
+            top50AnimeCharCache = [];
+        }
+
+        for (const char of remainingData) {
             if (!isTop50AnimeCharModalSession) break;
-            console.log(`Fetching anime title for: ${char.name} (#${char.id})`);
 
+            console.log(`Fetching anime title for: ${char.name} (#${char.id})`);
             top50Count.textContent = `Showing top 50 anime characters... (${index + 1}/50)`;
+            
             await smartDelayForTop50();
             const updatedChar = await getAnimeTitleOfCharacter(char);
+            
             enriched.push(updatedChar);
+            // Save to in-memory cache
+            top50AnimeCharCache.push(updatedChar);
+            // Save partial cache to localStorage
+            localStorage.setItem(TOP50_STORAGE_KEY, JSON.stringify(top50AnimeCharCache));
+
             index++;
         }
 
         const html = createCharacterListHTML(enriched);
         topAnimeCharListEl.innerHTML = `<ul class="list-unstyled small">${html}</ul>`;
         // Only cache if user didn't cancel
-        if (isTop50AnimeCharModalSession) {
+        if (isTop50AnimeCharModalSession && enriched.length === TOP50_COMPLETE_COUNT) {
             top50AnimeCharCache = enriched;
+            localStorage.setItem(TOP50_STORAGE_KEY, JSON.stringify(enriched));
+            console.log("Saved Top 50 to localStorage");
         }
     } catch (err) {
         console.error("Failed to fetch top characters:", err);
@@ -755,6 +784,11 @@ document.getElementById("topAnimeCharactersModal").addEventListener("hidden.bs.m
 document.getElementById("clearCacheBtn").addEventListener("click", () => {
     Object.keys(localStorage).forEach(key => {
         if (key.startsWith("fav_of_character_")) {
+            localStorage.removeItem(key);
+        }
+    });
+    Object.keys(localStorage).forEach(key => {
+        if (key.startsWith(TOP50_STORAGE_KEY)) {
             localStorage.removeItem(key);
         }
     });
