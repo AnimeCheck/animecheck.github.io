@@ -45,9 +45,16 @@ async function smartDelay() {
 }
 
 // Goal is to not hit the API rate limit
+let fetchLock = Promise.resolve();
 async function throttledFetch(...args) {
-    await smartDelay();
-    return fetch(...args);
+    // Queue this request behind the last one
+    const run = async () => {
+        await smartDelay();
+        return fetch(...args);
+    };
+
+    fetchLock = fetchLock.then(run);
+    return fetchLock;
 }
 
 function timeAgoText(timestamp) {
