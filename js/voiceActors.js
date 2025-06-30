@@ -214,3 +214,30 @@ async function updateTopVoiceActorCharacters(vaMalId) {
         renderTopVoiceActorCharacters(sorted, mainCharacters.length, vaMalId, session);
     }
 }
+
+function renderTopVoiceActorCharacters(charList, totalCount, vaMalId, updatedAt = Date.now()) {
+    const updatedText = timeAgoText(updatedAt);
+    const listHTML = createCharacterListHTML(charList);
+    const container = document.getElementById("vaModalCharacters");
+
+    container.innerHTML = `
+        <div class="fs-5 fs-md-4 fs-lg-3 mb-2 text-center text-warning">
+            Top 10 main role characters<br>out of ${totalCount}
+        </div>
+        <ul class="list-unstyled small">${listHTML}</ul>
+        <button type="button" id="updateTopVoiceActorCharactersBtn" class="btn btn-sm btn-outline-info">
+            <i class="bi bi-arrow-clockwise me-1"></i> Update Top 10 again?
+        </button>
+        <div class="text-muted small text-center mt-2" title="${new Date(updatedAt).toLocaleString()}">
+            Updated ${updatedText}
+        </div>
+    `;
+
+    // Setting up the "Update" button
+    const updateBtn = document.getElementById('updateTopVoiceActorCharactersBtn');
+    if (updateBtn) {
+        updateBtn.onclick = () => {
+            updateTopVoiceActorCharacters(vaMalId);
+        };
+    }
+}
