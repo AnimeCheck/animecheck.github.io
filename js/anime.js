@@ -4,7 +4,6 @@ const clearBtn = document.getElementById('clear-btn');
 let debounceTimeout;
 let selectedIndex = -1 // For Up and Down arrow keys in suggestion list
 let activeModalSession = null;
-const LOCAL_STORAGE_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 365;
 
 searchInput.addEventListener('input', () => {
     const query = searchInput.value.trim();
@@ -322,7 +321,7 @@ let isTop50AnimeCharModalSession = false;
 let top50AnimeCharCache = null;
 const TOP50_STORAGE_KEY = "top50AnimeCharCache";
 const TOP50_UPDATED_AT_KEY = "top50AnimeCharUpdatedAt";
-const TOP50_COMPLETE_COUNT = 5; // You expect exactly 50 characters
+const TOP50_COMPLETE_COUNT = 50; // You expect exactly 50 characters
 
 async function loadTopAnimeCharacters(forceRefresh = false) {
     isTop50AnimeCharModalSession = true;
@@ -571,15 +570,12 @@ async function getCharacterFavorites(charMalId, retry = 2) {
     try {
         const stored = localStorage.getItem(`${FAV_OF_CHARACTER_KEY_PREFIX}${charMalId}`);
         if (stored) {
-            const { value, timestamp } = JSON.parse(stored);
-            const notExpired = Date.now() - timestamp < LOCAL_STORAGE_EXPIRE_TIME;
-            if (notExpired) {
-                favoritesCache[charMalId] = value;
-                return value;
-            }
-            localStorage.removeItem(`${FAV_OF_CHARACTER_KEY_PREFIX}${charMalId}`);
+            const { value } = JSON.parse(stored);
+            favoritesCache[charMalId] = value;
+            return value;
         }
     } catch {
+        console.warn(`Invalid cache for character #${charMalId}, clearing.`, e);
         localStorage.removeItem(`${FAV_OF_CHARACTER_KEY_PREFIX}${charMalId}`);
     }
 
