@@ -47,7 +47,6 @@ async function processQueue() {
 
         try {
             const res = await fetch(...args);
-            timestamps.push(Date.now());
             resolve(res);
             console.log(`[processQueue] Fetch completed:`, args[0]);
         } catch (err) {
@@ -61,36 +60,31 @@ async function processQueue() {
 }
 
 // Goal is to not hit the API rate limit. Need to go a bit faster than await delay(1000)
-const smartDelayTimestamps = [];
 async function smartDelay() {
     while (true) {
         const now = Date.now();
 
-        // Remove timestamps older than 60 seconds
-        while (smartDelayTimestamps.length && now - smartDelayTimestamps[0] > 60000) {
-            smartDelayTimestamps.shift();
+        // Clean old entries
+        timestamps = timestamps.filter(ts => now - ts < 60000);
+
+        const requestsLastMinute = timestamps.length;
+        const requestsLastSecond = timestamps.filter(t => now - t <= 1000).length;
+
+        console.log(`[smartDelay] 1s: ${requestsLastSecond} / ${maxRequestsPerSecond} | 60s: ${requestsLastMinute} / ${maxRequestsPerMinute}`);
+
+        if (requestsLastMinute < maxRequestsPerMinute && requestsLastSecond < maxRequestsPerSecond) {
+            break;
         }
 
-        const requestsLastMinute = smartDelayTimestamps.length;
-        const requestsLastSecond = smartDelayTimestamps.filter(t => now - t <= 1000).length;
+        let waitUntil = now + 100;
 
-        console.log(`[smartDelay] 1s: ${requestsLastSecond} / 3 | 60s: ${requestsLastMinute} / 60`);
-
-        if (requestsLastMinute < 60 && requestsLastSecond < 3) {
-            break; // safe to proceed
-        }
-
-        let waitUntil = now + 100; // fallback minimum wait
-
-        // If over 3/sec, wait until 1st of the last 3 drops out of the 1s window
-        if (requestsLastSecond >= 3) {
-            const thirdMostRecent = smartDelayTimestamps.filter(t => now - t <= 1000)[0];
+        if (requestsLastSecond >= maxRequestsPerSecond) {
+            const thirdMostRecent = timestamps.filter(t => now - t <= 1000)[0];
             waitUntil = Math.max(waitUntil, thirdMostRecent + 1000);
         }
 
-        // If over 60/min, wait until oldest timestamp drops off
-        if (requestsLastMinute >= 60) {
-            const oldest = smartDelayTimestamps[0];
+        if (requestsLastMinute >= maxRequestsPerMinute) {
+            const oldest = timestamps[0];
             waitUntil = Math.max(waitUntil, oldest + 60000);
         }
 
@@ -99,7 +93,7 @@ async function smartDelay() {
         await delay(waitTime);
     }
 
-    smartDelayTimestamps.push(Date.now());
+    timestamps.push(Date.now());
 }
 
 // Goal is to not hit the API rate limit
