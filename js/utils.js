@@ -12,25 +12,26 @@ let isProcessing = false;
 
 async function processQueue() {
     if (isProcessing) {
-        console.log("[processQueue] Already processing queue, returning");
+        //console.log("[processQueue] Already processing queue, returning");
         return;
     }
     isProcessing = true;
 
     while (requestQueue.length > 0) {
-        console.log(`[processQueue] Requests left in queue: ${requestQueue.length}`);
+        //console.log(`[processQueue] Requests left in queue: ${requestQueue.length}`);
         const { args, resolve, reject } = requestQueue.shift();
 
         // Ensure we are below rate limit
         await smartDelay();
 
         const url = args[0];
-        console.log(`[processQueue] Executing fetch: ${url}`);
+        //console.log(`[processQueue] Executing fetch: ${url}`);
 
         try {
             const res = await fetch(...args);
 
             if (res.status === 429) {
+                showRateLimitToast();
                 console.warn(`[processQueue] 429 Too Many Requests — retrying in 1000ms: ${url}`);
                 await delay(1000);
                 requestQueue.unshift({ args, resolve, reject });
@@ -39,15 +40,15 @@ async function processQueue() {
 
             timestamps.push(Date.now()); // Only push if it didn’t 429
             resolve(res);
-            console.log(`[processQueue] Fetch completed: ${url}`);
+            //console.log(`[processQueue] Fetch completed: ${url}`);
         } catch (err) {
-            console.error(`[processQueue] Fetch failed: ${url}`, err);
+            //console.error(`[processQueue] Fetch failed: ${url}`, err);
             reject(err);
         }
     }
 
     isProcessing = false;
-    console.log("[processQueue] Queue processing complete");
+    //console.log("[processQueue] Queue processing complete");
 }
 
 async function smartDelay() {
@@ -58,7 +59,7 @@ async function smartDelay() {
         const requestsLastMinute = timestamps.length;
         const requestsLastSecond = timestamps.filter(t => now - t < 1000).length;
 
-        console.log(`[smartDelay] 1s: ${requestsLastSecond} / 2 | 60s: ${requestsLastMinute} / ${maxRequestsPerMinute}`);
+        //console.log(`[smartDelay] 1s: ${requestsLastSecond} / 2 | 60s: ${requestsLastMinute} / ${maxRequestsPerMinute}`);
 
         // Use max 2 requests per second to be safer (lower than your original 3)
         if (requestsLastMinute < maxRequestsPerMinute && requestsLastSecond < 2) {
@@ -83,7 +84,7 @@ async function smartDelay() {
             showRateLimitWarningToast();
         }
 
-        console.warn(`[smartDelay] Too fast — delaying ${waitTime}ms`);
+        //console.warn(`[smartDelay] Too fast — delaying ${waitTime}ms`);
         await delay(waitTime);
     }
 
@@ -93,13 +94,13 @@ async function smartDelay() {
 
 function throttledFetch(...args) {
     return new Promise((resolve, reject) => {
-        console.log(`[throttledFetch] Queueing request: ${args[0]}`);
+        //console.log(`[throttledFetch] Queueing request: ${args[0]}`);
         requestQueue.push({ args, resolve, reject });
 
-        console.log(`[throttledFetch] Queue length: ${requestQueue.length}`);
+        //console.log(`[throttledFetch] Queue length: ${requestQueue.length}`);
 
         if (!isProcessing) {
-            console.log("[throttledFetch] Starting to process queue");
+            //console.log("[throttledFetch] Starting to process queue");
             processQueue();
         }
     });
