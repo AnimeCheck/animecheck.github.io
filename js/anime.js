@@ -743,7 +743,10 @@ function timeAgoText(timestamp) {
     if (weeks < 4) return `${weeks} week${weeks !== 1 ? 's' : ''} ago`;
 
     const months = Math.floor(days / 30);
-    return `${months} month${months !== 1 ? 's' : ''} ago`;
+    if (months < 12) return `${months} month${months !== 1 ? 's' : ''} ago`;
+
+    const years = Math.floor(months / 12);
+    return `${years} year${years !== 1 ? 's' : ''} ago`;
 }
 
 // Goal is to not hit the API rate limit
