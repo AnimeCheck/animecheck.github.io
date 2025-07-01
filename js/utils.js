@@ -49,10 +49,10 @@ async function smartDelay() {
         const requestsLastMinute = timestamps.length;
         const requestsLastSecond = timestamps.filter(t => now - t < 1000).length;
 
-        console.log(`[smartDelay] Requests in last 1s: ${requestsLastSecond} / ${maxRequestsPerSecond}, last 60s: ${requestsLastMinute} / ${maxRequestsPerMinute}`);
+        //console.log(`[smartDelay] Requests in last 1s: ${requestsLastSecond} / ${maxRequestsPerSecond}, last 60s: ${requestsLastMinute} / ${maxRequestsPerMinute}`);
 
         if (requestsLastMinute < maxRequestsPerMinute && requestsLastSecond < maxRequestsPerSecond) {
-            console.log(`[smartDelay] Under limits, proceeding with request.`);
+            //console.log(`[smartDelay] Under limits, proceeding with request.`);
             break;
         }
 
@@ -61,13 +61,13 @@ async function smartDelay() {
         if (requestsLastSecond >= maxRequestsPerSecond) {
             const oldestSecond = timestamps.filter(t => now - t < 1000)[0];
             waitUntil = Math.max(waitUntil, oldestSecond + 1000);
-            console.log(`[smartDelay] Reached per-second limit, waiting until ${new Date(waitUntil).toISOString()}`);
+            //console.log(`[smartDelay] Reached per-second limit, waiting until ${new Date(waitUntil).toISOString()}`);
         }
 
         if (requestsLastMinute >= maxRequestsPerMinute) {
             const oldestMinute = timestamps[0];
             waitUntil = Math.max(waitUntil, oldestMinute + 60000);
-            console.log(`[smartDelay] Reached per-minute limit, waiting until ${new Date(waitUntil).toISOString()}`);
+            //console.log(`[smartDelay] Reached per-minute limit, waiting until ${new Date(waitUntil).toISOString()}`);
         }
 
         const waitTime = waitUntil - now;
@@ -76,12 +76,12 @@ async function smartDelay() {
             showRateLimitWarningToast();
         }
 
-        console.log(`[smartDelay] Delaying for ${waitTime} ms to avoid hitting rate limit.`);
+        //console.log(`[smartDelay] Delaying for ${waitTime} ms to avoid hitting rate limit.`);
         await delay(waitTime);
     }
 
     // Slight extra delay to avoid bursting right on the limit edge
-    console.log(`[smartDelay] Adding extra 400ms delay to spread out requests.`);
+    //console.log(`[smartDelay] Adding extra 400ms delay to spread out requests.`);
     await delay(400);
 }
 
