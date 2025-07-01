@@ -26,8 +26,20 @@ searchInput.addEventListener('input', () => {
 
                     // Highlight matching part
                     const regex = new RegExp(`(${query})`, 'i');
-                    const highlighted = anime.title.replace(regex, '<strong>$1</strong>');
-                    li.innerHTML = highlighted;
+                    const englishTitle = anime.title_english || '';
+                    const originalTitle = anime.title || '';
+                    const displayTitle = englishTitle || originalTitle;
+                    // Highlighting
+                    const highlighted = displayTitle.replace(regex, '<strong>$1</strong>');
+                    const highlightedOriginal = originalTitle.replace(regex, '<strong>$1</strong>');
+                    const animeYear = anime.year || anime.aired?.prop?.from?.year || 'N/A';
+                    // Titles in suggestion list 
+                    li.innerHTML = `
+                        ${highlighted} <span class="text-primary">(${animeYear})</span>
+                        ${englishTitle && originalTitle && englishTitle !== originalTitle
+                            ? `<div class="text-secondary small">${highlightedOriginal} <span class="text-primary">(${animeYear})</span></div>`
+                            : `<div class="text-secondary small">${highlighted} <span class="text-primary">(${animeYear})</span></div>`}
+                    `;
                     
                     li.dataset.index = index;
                     li.addEventListener('click', () => {
