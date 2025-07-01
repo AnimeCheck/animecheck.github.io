@@ -26,8 +26,14 @@ async function processQueue() {
 
             if (res.status === 429) {
                 showRateLimitToast();
-                console.warn(`[processQueue] 429 Too Many Requests — retrying in 1000ms: ${url}`);
-                await delay(1000);
+                const now = Date.now();
+                const recent = timestamps.filter(t => now - t < 1000);
+                const oldestSecond = recent[0] || now;
+                const waitUntil = oldestSecond + 1000;
+                const waitTime = Math.max(waitUntil - now, 100);
+
+                console.warn(`[processQueue] 429 Too Many Requests — waiting ${waitTime}ms: ${url}`);
+                await delay(waitTime);
                 requestQueue.unshift({ args, resolve, reject });
                 continue;
             }
