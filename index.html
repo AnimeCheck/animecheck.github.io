@@ -25,14 +25,18 @@
         integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" 
         crossorigin="anonymous">
     <link rel="stylesheet" href="css/anime.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&family=Jost:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 
 <body>
     <main class="container">
         <h1 class="pt-4">
-            <a href="" onclick="location.reload();" class="text-decoration-none text-light" aria-label="Anime Check">Anime Check ✅</a>
+            <a href="" onclick="location.reload();" class="text-decoration-none text-light user-select-none font-brunoacesc" aria-label="Anime Check">Anime Check ✅</a>
         </h1>
-        <div class="small text-light my-3 d-flex flex-wrap gap-3 align-items-center">
+        <div class="small text-light my-3 d-flex flex-wrap gap-3 align-items-center font-jost">
             <span>
                 <i class="bi bi-github" aria-hidden="true"></i>
                 <a href="https://github.com/Rixuel" class="text-decoration-none">GitHub</a>
@@ -57,7 +61,7 @@
                     <button id="settings-btn" class="input-group-text btn-outline-dark" data-bs-toggle="modal" data-bs-target="#settingsModal" aria-label="Settings" data-bs-theme="dark">
                         <i class="bi bi-gear"></i>
                     </button>
-                    <input type="text" id="search" class="form-control bg-dark text-light fs-5 px-3 py-2" placeholder="Search Anime..." data-bs-theme="dark">
+                    <input type="text" id="search" class="form-control bg-dark text-light fs-5 px-3 py-2 font-jost" placeholder="Search Anime..." data-bs-theme="dark">
                     <button id="clear-btn" class="input-group-text btn-outline-dark text-light border-start-0 rounded-end" type="button" aria-label="Clear search" data-bs-theme="dark">
                         <i class="bi bi-backspace"></i>
                     </button>

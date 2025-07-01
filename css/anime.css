@@ -63,6 +63,14 @@ a:hover {
     background-color: #454545
 }
 
+.font-brunoacesc {
+    font-family: 'Bruno Ace SC';
+}
+
+.font-jost {
+    font-family: 'Jost';
+}
+
 /* Hovering with cursor */
 .suggestion-item:hover {
     background-color: #454545 !important;
