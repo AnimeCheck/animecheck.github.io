@@ -19,6 +19,7 @@ async function processQueue() {
         await smartDelay();
 
         const url = args[0];
+        console.log(`[processQueue] Fetching: ${url}`);
 
         try {
             const res = await fetch(...args);
@@ -87,7 +88,7 @@ async function smartDelay() {
 
 function throttledFetch(...args) {
     return new Promise((resolve, reject) => {
-        //console.log(`[throttledFetch] Queueing request: ${args[0]}`);
+        console.log(`[throttledFetch] Queued: ${args[0]}`);
         requestQueue.push({ args, resolve, reject });
 
         //console.log(`[throttledFetch] Queue length: ${requestQueue.length}`);
