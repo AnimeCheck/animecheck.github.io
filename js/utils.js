@@ -81,8 +81,8 @@ async function smartDelay() {
     }
 
     // Slight extra delay to avoid bursting right on the limit edge
-    //console.log(`[smartDelay] Adding extra 400ms delay to spread out requests.`);
-    await delay(400);
+    //console.log(`[smartDelay] Adding extra 500ms delay to spread out requests.`);
+    await delay(500);
 }
 
 function throttledFetch(...args) {
