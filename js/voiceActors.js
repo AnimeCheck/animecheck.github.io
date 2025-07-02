@@ -12,13 +12,7 @@ async function checkTopCharacters(vaMalId) {
         const mainCharacters = await getMainCharactersVoicedBy(vaMalId);
         // Fetch favorites in parallel
         const charactersWithFavorites = [];
-        /*const vaModalCharactersProgress = document.getElementById("vaModalCharacters");
-        vaModalCharactersProgress.innerHTML = `
-            <div class="d-flex justify-content-center align-items-center">
-                <div class="spinner-border spinner-border-sm me-2" role="status"></div>
-                <span id="progressCount">Compiling top 10 main role characters... (0/${mainCharacters.length})</span>
-            </div>
-        `;*/
+
         renderTopCharactersProgress(
             "vaModalCharacters",
             "Compiling top 10 main role characters...",
@@ -184,14 +178,7 @@ async function updateTopVoiceActorCharacters(vaMalId) {
     const session = activeModalSession;
     const mainCharacters = await getMainCharactersVoicedBy(vaMalId);
     const updatedCharacters = [];
-
-    /*const vaModalCharactersProgress = document.getElementById("vaModalCharacters");
-    vaModalCharactersProgress.innerHTML = `
-        <div class="d-flex justify-content-center align-items-center text-info py-3">
-            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
-            <span id="updateProgress">Updating for Top 10... (0/${mainCharacters.length})</span>
-        </div>
-    `;*/
+    
     renderTopCharactersProgress(
         "vaModalCharacters",
         "Compiling top 10 main role characters...",
@@ -210,7 +197,7 @@ async function updateTopVoiceActorCharacters(vaMalId) {
         localStorage.removeItem(key);       // remove from localStorage
         delete favoritesCache[char.id];     // clear in-memory
 
-        const favorites = await getCharacterFavorites(char.id);
+        const favorites = await getCharacterFavorites(char.id);  // getCharacterFavorites setItem in localStorage
         updatedCharacters.push({ ...char, favorites });
 
         updateProgress.textContent = `Compiling top 10 main role characters.. (${updatedCharacters.length}/${mainCharacters.length})`;
