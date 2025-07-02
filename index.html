@@ -55,19 +55,20 @@
             </span>
         </div>
         
-        <div class="position-relative">
-            <div class="input-group">
-                <button id="settings-btn" class="input-group-text btn-outline-dark" data-bs-toggle="modal" data-bs-target="#settingsModal" aria-label="Settings" data-bs-theme="dark">
-                    <i class="bi bi-gear"></i>
-                </button>
-                <input type="text" id="search" class="form-control bg-dark text-light fs-5 px-3 py-2 font-jost" placeholder="Search Anime..." data-bs-theme="dark">
-                <button id="clear-btn" class="input-group-text btn-outline-dark text-light border-start-0 rounded-end" type="button" aria-label="Clear search" data-bs-theme="dark">
-                    <i class="bi bi-backspace"></i>
-                </button>
+        <div class="sticky-top z-1">
+            <div class="position-relative">
+                <div class="input-group">
+                    <button id="settings-btn" class="input-group-text btn-outline-dark" data-bs-toggle="modal" data-bs-target="#settingsModal" aria-label="Settings" data-bs-theme="dark">
+                        <i class="bi bi-gear"></i>
+                    </button>
+                    <input type="text" id="search" class="form-control bg-dark text-light fs-5 px-3 py-2 font-jost" placeholder="Search Anime..." data-bs-theme="dark">
+                    <button id="clear-btn" class="input-group-text btn-outline-dark text-light border-start-0 rounded-end" type="button" aria-label="Clear search" data-bs-theme="dark">
+                        <i class="bi bi-backspace"></i>
+                    </button>
+                </div>
+                <ul id="suggestions" class="list-group" aria-live="polite"></ul>
             </div>
-            <ul id="suggestions" class="list-group" aria-live="polite"></ul>
         </div>
-
 
         <div class="container my-4">
             <div id="animeDetailsWrapper"></div>

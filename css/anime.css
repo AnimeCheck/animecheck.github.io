@@ -4,7 +4,6 @@ body {
     position: relative;
     z-index: 0;
     min-height: 100vh;
-    z-index: 0;
 }
 
 body::before {
@@ -33,6 +32,7 @@ a:hover {
     position: absolute;
     z-index: 1000;
     width: 100%;
+    border-radius: 0px;
 }
 
 #suggestions strong {
@@ -46,6 +46,25 @@ a:hover {
     border: 0px solid #0f0;
     margin: 0px;
     color: white;
+}
+
+@media (max-width: 450px), (max-height: 500px) {
+    #suggestions {
+        max-height: 200px; /* Adjust as needed */
+        overflow-y: auto;
+        overflow-x: hidden;
+        scrollbar-width: thin; /* Firefox */
+        scrollbar-color: #468 #222; /* thumb and track */
+    }
+
+    #suggestions::-webkit-scrollbar {
+        width: 6px;
+        background-color: #222; /* scrollbar track */
+    }
+
+    #suggestions::-webkit-scrollbar-thumb {
+        background-color: #468;
+    }
 }
 
 #clear-btn {
