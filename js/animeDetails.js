@@ -52,7 +52,7 @@ async function getAnimeById(animeId) {
         console.log("studioName:", studioName);*/
         const animeDetailsHTML = `
             <div class="row mb-3 align-items-center">
-                <div class="col-md-2">
+                <div class="col-md-2 text-center my-2">
                     <a href="${imageURL}" target="_blank" rel="noopener noreferrer">
                         <img src="${imageURL}" class="img-fluid rounded">
                     </a>
