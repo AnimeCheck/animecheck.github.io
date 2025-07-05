@@ -20,6 +20,8 @@ searchInput.addEventListener('input', () => {
             .then(data => {
                 suggestions.innerHTML = ''; // To avoid a duplicated list when you enter a title and you press backspace.
                 selectedIndex = -1; // to reset state
+                const seenTitles = new Set(); // To avoid duplicate anime title
+                
                 data.data.forEach((anime, index) => {
                     const li = document.createElement('li');
                     li.className = 'list-group-item bg-dark text-light suggestion-item custom-suggestion-list';
@@ -29,6 +31,8 @@ searchInput.addEventListener('input', () => {
                     const englishTitle = anime.title_english || '';
                     const originalTitle = anime.title || '';
                     const displayTitle = englishTitle || originalTitle;
+                    if (seenTitles.has(displayTitle)) return; // skip duplicate
+                    seenTitles.add(displayTitle);
                     // Highlighting
                     const highlighted = displayTitle.replace(regex, '<strong>$1</strong>');
                     const highlightedOriginal = originalTitle.replace(regex, '<strong>$1</strong>');
