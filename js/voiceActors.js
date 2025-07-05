@@ -260,7 +260,7 @@ document.addEventListener('click', function (e) {
         const formattedName = firstLastNameFormat(name);
 
         // Update modal info
-        document.getElementById('vaModalLabel').textContent = `${formattedName} (${vaMalId})`;
+        document.getElementById('vaModalLabel').innerHTML = `${formattedName} <span class="text-secondary">(${vaMalId})</span>`;
         document.getElementById('vaModalName').textContent = formattedName;
         document.getElementById('vaModalImage').src = image;
         document.getElementById("vaModalImageLink").href = image;
