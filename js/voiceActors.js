@@ -257,10 +257,11 @@ document.addEventListener('click', function (e) {
         const vaMalId = link.dataset.vamalid;
         const image = link.dataset.image;
         const lang = link.dataset.lang;
+        const formattedName = firstLastNameFormat(name);
 
         // Update modal info
-        document.getElementById('vaModalLabel').textContent = `${firstLastNameFormat(name)} (${vaMalId})`;
-        document.getElementById('vaModalName').textContent = firstLastNameFormat(name);
+        document.getElementById('vaModalLabel').textContent = `${formattedName} (${vaMalId})`;
+        document.getElementById('vaModalName').textContent = formattedName;
         document.getElementById('vaModalImage').src = image;
         document.getElementById("vaModalImageLink").href = image;
         document.getElementById('vaModalLang').textContent = `Dub: ${lang}`;
