@@ -17,7 +17,7 @@ function createCharacterListHTML(charList) {
     `).join('');
 }
 
-function formatName(name) {
+function firstLastNameFormat(name) {
     if (!name.includes(',')) return name; // No comma, return as-is
 
     const [last, first] = name.split(',').map(part => part.trim());
