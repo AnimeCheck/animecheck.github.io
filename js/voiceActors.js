@@ -259,8 +259,8 @@ document.addEventListener('click', function (e) {
         const lang = link.dataset.lang;
 
         // Update modal info
-        document.getElementById('vaModalLabel').textContent = `${name} (${vaMalId})`;
-        document.getElementById('vaModalName').textContent = name;
+        document.getElementById('vaModalLabel').textContent = `${formatName(name)} (${vaMalId})`;
+        document.getElementById('vaModalName').textContent = formatName(name);
         document.getElementById('vaModalImage').src = image;
         document.getElementById("vaModalImageLink").href = image;
         document.getElementById('vaModalLang').textContent = `Dub: ${lang}`;

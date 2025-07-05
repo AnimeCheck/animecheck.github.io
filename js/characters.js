@@ -60,7 +60,7 @@ async function getAnimeCharacters(animeId) {
                             <div>
                                 <a href="#" class="va-link text-decoration-none" data-bs-toggle="modal" data-bs-target="#vaModal" 
                                     data-name="${name}" data-image="${image}" data-lang="${lang}" data-vamalid="${vaMalId}">
-                                    <strong>${name}</strong>
+                                    <strong>${formatName(name)}</strong>
                                 </a>
                             </div>
                             <div class="small">${lang}</div>

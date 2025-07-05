@@ -16,3 +16,10 @@ function createCharacterListHTML(charList) {
         </li>
     `).join('');
 }
+
+function formatName(name) {
+    if (!name.includes(',')) return name; // No comma, return as-is
+
+    const [last, first] = name.split(',').map(part => part.trim());
+    return `${first} ${last}`; // First name Last name format
+}
