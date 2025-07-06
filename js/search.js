@@ -106,7 +106,7 @@ function updateHighlight(items) {
 }
 
 function selectSuggestion(anime) {
-    searchInput.value = anime.title;
+    searchInput.value = anime.title_english;
     suggestions.innerHTML = '';
     // Optional: do something with anime.mal_id
     console.log("Anime MAL id:", anime.mal_id);
