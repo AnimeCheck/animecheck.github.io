@@ -31,8 +31,9 @@ searchInput.addEventListener('input', () => {
                     const englishTitle = anime.title_english || '';
                     const originalTitle = anime.title || '';
                     const displayTitle = englishTitle || originalTitle;
-                    if (seenTitles.has(displayTitle)) return; // skip duplicate
-                    seenTitles.add(displayTitle);
+                    if (seenTitles.has(englishTitle) && seenTitles.has(originalTitle)) return; // skip duplicate
+                    seenTitles.add(englishTitle);
+                    seenTitles.add(originalTitle);
                     // Highlighting
                     const highlighted = displayTitle.replace(regex, '<strong>$1</strong>');
                     const highlightedOriginal = originalTitle.replace(regex, '<strong>$1</strong>');
