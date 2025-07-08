@@ -75,7 +75,7 @@ async function getAnimeById(animeId) {
                                 <i>by ${MALscoreUsers} users</i> | 
                             </div>
                             <div>
-                                Rank <span class="badge bg-secondary fs-6 rounded-pill">#${MALrank}</span> | 
+                                Rank: <span class="badge bg-secondary fs-6 rounded-pill">#${MALrank}</span> | 
                             </div>
                             <div>
                                 Popularity: <span class="badge bg-secondary fs-6 rounded-pill">#${MALpopularity}</span>
