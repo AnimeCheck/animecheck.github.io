@@ -12,7 +12,7 @@ searchInput.addEventListener('input', () => {
     clearTimeout(debounceTimeout);
     suggestions.innerHTML = '';
 
-    if (query.length < 2) return;
+    if (query.length < 2) return; // Less than 2 shows no suggestion list
 
     debounceTimeout = setTimeout(() => {
         fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=5`)
