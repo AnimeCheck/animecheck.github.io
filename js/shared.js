@@ -23,3 +23,54 @@ function firstLastNameFormat(name) {
     const [last, first] = name.split(',').map(part => part.trim());
     return `${first} ${last}`; // First name Last name format
 }
+
+// localStorage helper
+const StorageHelper = {
+    get(key) {
+        try {
+            const item = localStorage.getItem(key);
+            if (!item) return null;
+            return JSON.parse(item);
+        } catch (e) {
+            console.warn(`Error parsing localStorage for key "${key}"`, e);
+            return null;
+        }
+    },
+
+    set(key, value) {
+        try {
+            const json = JSON.stringify(value);
+            localStorage.setItem(key, json);
+        } catch (e) {
+            console.error(`Error storing localStorage key "${key}"`, e);
+        }
+    },
+
+    remove(key) {
+        localStorage.removeItem(key);
+    },
+
+    has(key) {
+        return localStorage.getItem(key) !== null;
+    },
+
+    clear() {
+        localStorage.clear();
+    },
+
+    keys() {
+        return Object.keys(localStorage);
+    },
+
+    size() {
+        let totalBytes = 0;
+        for (const key in localStorage) {
+            if (localStorage.hasOwnProperty(key)) {
+                const item = localStorage.getItem(key);
+                totalBytes += key.length + (item?.length || 0);
+            }
+        }
+        const mb = (totalBytes / (1024 * 1024)).toFixed(2);
+        return `${mb}`;
+    }
+};

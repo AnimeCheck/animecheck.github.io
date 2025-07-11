@@ -12,23 +12,18 @@ async function loadTopAnimeCharacters(forceRefresh = false) {
 
     // Get Modal for top anime characters
     const topAnimeCharListEl = document.getElementById("topAnimeCharactersList");
-    const storedUpdatedAt = parseInt(localStorage.getItem(TOP50_UPDATED_AT_KEY)) || Date.now();
+    const storedUpdatedAt = StorageHelper.get(TOP50_UPDATED_AT_KEY) || Date.now();
 
     // Clicking on Update button will refresh
     if (forceRefresh) {
-        localStorage.removeItem(TOP50_STORAGE_KEY);
+        StorageHelper.remove(TOP50_STORAGE_KEY);
         top50AnimeCharCache = null;
     }
     
     // localStorage
-    const stored = localStorage.getItem(TOP50_STORAGE_KEY);
-    if (!top50AnimeCharCache && stored) {
-        try {
-            const parsed = JSON.parse(stored);
-            if (Array.isArray(parsed)) top50AnimeCharCache = parsed;
-        } catch (e) {
-            console.warn("Failed to parse Top 50 from localStorage:", e);
-        }
+    const stored = StorageHelper.get(TOP50_STORAGE_KEY);
+    if (!top50AnimeCharCache && Array.isArray(stored)) {
+        top50AnimeCharCache = stored;
     }
 
     if (top50AnimeCharCache?.length === TOP50_COMPLETE_COUNT) {
@@ -75,7 +70,7 @@ async function loadTopAnimeCharacters(forceRefresh = false) {
 
             enriched.push(updatedChar);
             top50AnimeCharCache.push(updatedChar);
-            localStorage.setItem(TOP50_STORAGE_KEY, JSON.stringify(top50AnimeCharCache));
+            StorageHelper.set(TOP50_STORAGE_KEY, top50AnimeCharCache);
 
             index++;
         }
@@ -84,8 +79,8 @@ async function loadTopAnimeCharacters(forceRefresh = false) {
 
         if (isTop50AnimeCharModalSession && enriched.length === TOP50_COMPLETE_COUNT) {
             top50AnimeCharCache = enriched;
-            localStorage.setItem(TOP50_STORAGE_KEY, JSON.stringify(enriched));
-            localStorage.setItem(TOP50_UPDATED_AT_KEY, Date.now());
+            StorageHelper.set(TOP50_STORAGE_KEY, enriched);
+            StorageHelper.set(TOP50_UPDATED_AT_KEY, Date.now());
             console.log("Saved Top 50 to localStorage");
         }
 

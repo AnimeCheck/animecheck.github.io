@@ -41,13 +41,13 @@ document.getElementById("clearCacheBtn").addEventListener("click", () => {
     // Clear top favorites VA main role characters
     Object.keys(localStorage).forEach(key => {
         if (key.startsWith(FAV_OF_CHARACTER_KEY_PREFIX)) {
-            localStorage.removeItem(key);
+            StorageHelper.remove(key);
         }
     });
 
     // Clear top anime character list and timestamp
-    localStorage.removeItem(TOP50_STORAGE_KEY);
-    localStorage.removeItem(TOP50_UPDATED_AT_KEY);
+    StorageHelper.remove(TOP50_STORAGE_KEY);
+    StorageHelper.remove(TOP50_UPDATED_AT_KEY);
 
     // Toast for the button Clear Local Storage
     const toastEl = document.getElementById("clearToast");
@@ -57,14 +57,7 @@ document.getElementById("clearCacheBtn").addEventListener("click", () => {
 
 // Check Local Storage Size button
 document.getElementById("checkStorageBtn").addEventListener("click", () => {
-    let totalBytes = 0;
-    for (let key in localStorage) {
-        if (localStorage.hasOwnProperty(key)) {
-            const item = localStorage.getItem(key);
-            totalBytes += key.length + item.length;
-        }
-    }
-    const mb = (totalBytes / (1024 * 1024)).toFixed(2);
+    const mb = StorageHelper.size(); // Centralized size calculation
 
     const body = document.getElementById("storageToastBody");
     body.innerHTML = `

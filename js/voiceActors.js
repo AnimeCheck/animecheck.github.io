@@ -54,10 +54,10 @@ async function checkTopCharacters(vaMalId) {
             let latestUpdate = 0;
 
             for (const char of top10char) {
-                const cached = localStorage.getItem(`${FAV_OF_CHARACTER_KEY_PREFIX}${char.id}`);
-                if (cached) {
-                    const { timestamp } = JSON.parse(cached);
-                    if (timestamp > latestUpdate) latestUpdate = timestamp;
+                const cached = StorageHelper.get(`${FAV_OF_CHARACTER_KEY_PREFIX}${char.id}`);
+                // StorageHelper parses cached already
+                if (cached && cached.timestamp > latestUpdate) {
+                    latestUpdate = cached.timestamp;
                 }
             }
 
@@ -127,16 +127,13 @@ async function getCharacterFavorites(charMalId, retry = 2) {
     }
 
     // Check localStorage
-    try {
-        const stored = localStorage.getItem(`${FAV_OF_CHARACTER_KEY_PREFIX}${charMalId}`);
-        if (stored) {
-            const { value } = JSON.parse(stored);
-            favoritesCache[charMalId] = value;
-            return value;
-        }
-    } catch {
-        console.warn(`Invalid cache for character #${charMalId}, clearing.`, e);
-        localStorage.removeItem(`${FAV_OF_CHARACTER_KEY_PREFIX}${charMalId}`);
+    const cached = StorageHelper.get(`${FAV_OF_CHARACTER_KEY_PREFIX}${charMalId}`);
+    if (cached && typeof cached.value === 'number') {
+        favoritesCache[charMalId] = cached.value;
+        return cached.value;
+    } else if (cached !== null) {
+        console.warn(`Invalid cache for character #${charMalId}, clearing.`);
+        StorageHelper.remove(`${FAV_OF_CHARACTER_KEY_PREFIX}${charMalId}`);
     }
 
     //console.log("Characters Info URL: ", `https://api.jikan.moe/v4/characters/${charMalId}`);
@@ -160,9 +157,9 @@ async function getCharacterFavorites(charMalId, retry = 2) {
         favoritesCache[charMalId] = fav;
         // Store in localStorage
         const now = activeModalSession || Date.now();
-        localStorage.setItem(`${FAV_OF_CHARACTER_KEY_PREFIX}${charMalId}`,
-            JSON.stringify({ value: fav, timestamp: now })
-        );
+        StorageHelper.set(`${FAV_OF_CHARACTER_KEY_PREFIX}${charMalId}`, {
+            value: fav, timestamp: now
+        });
         return fav;
     } catch (error) {
         console.error("Error fetching favorites:", error.message);
@@ -194,8 +191,8 @@ async function updateTopVoiceActorCharacters(vaMalId) {
         }
 
         const key = `${FAV_OF_CHARACTER_KEY_PREFIX}${char.id}`;
-        localStorage.removeItem(key);       // remove from localStorage
-        delete favoritesCache[char.id];     // clear in-memory
+        StorageHelper.remove(key);      // remove from localStorage
+        delete favoritesCache[char.id]; // clear in-memory
 
         const favorites = await getCharacterFavorites(char.id);  // getCharacterFavorites setItem in localStorage
         updatedCharacters.push({ ...char, favorites });
