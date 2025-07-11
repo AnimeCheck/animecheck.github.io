@@ -38,16 +38,23 @@ topAnimeModal.addEventListener("hidden.bs.modal", () => {
 
 // Clear Local Storage button
 document.getElementById("clearCacheBtn").addEventListener("click", () => {
+    const clearTop50 = document.getElementById("toggleClearTop50").checked;
+    const clearVATop10 = document.getElementById("toggleClearVATop10").checked;
+
     // Clear top favorites VA main role characters
-    Object.keys(localStorage).forEach(key => {
-        if (key.startsWith(FAV_OF_CHARACTER_KEY_PREFIX)) {
-            StorageHelper.remove(key);
-        }
-    });
+    if (clearVATop10) {
+        Object.keys(localStorage).forEach(key => {
+            if (key.startsWith(FAV_OF_CHARACTER_KEY_PREFIX)) {
+                StorageHelper.remove(key);
+            }
+        });
+    }
 
     // Clear top anime character list and timestamp
-    StorageHelper.remove(TOP50_STORAGE_KEY);
-    StorageHelper.remove(TOP50_UPDATED_AT_KEY);
+    if (clearTop50) {
+        StorageHelper.remove(TOP50_STORAGE_KEY);
+        StorageHelper.remove(TOP50_UPDATED_AT_KEY);
+    }
 
     // Toast for the button Clear Local Storage
     const toastEl = document.getElementById("clearToast");
