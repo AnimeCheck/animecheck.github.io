@@ -131,29 +131,37 @@
                     </div>
                     <div class="modal-body">
                         <p>
-                            Fetching top 50 animes characters or 
-                            the top 10 main role character of voice actors 
-                            will save the data in the browser local storage.
-                        </p>
-                        <p>
-                            If you want to delete these data, click "Clear Local Storage".
-                        </p>
-                        <p>
                             Note: <b>Jikan</b> API rate limits are: <br>
-                            - <b>60 requests/minute</b><br>
-                            - <b>3 requests/second</b>
+                            - 60 requests/minute<br>
+                            - 3 requests/second
                         </p>
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <div>
-                            <button id="checkStorageBtn" class="btn btn-sm btn-outline-secondary">
-                                <i class="bi bi-hdd me-1"></i> Check Local Storage Size
-                            </button>
-                        </div>
-                        <div>
-                            <button id="clearCacheBtn" class="btn btn-sm btn-outline-danger">
-                                <i class="bi bi-trash me-1"></i> Clear Local Storage
-                            </button>
+                        <h5>Local Storage:
+                            <i 
+                                class="bi bi-question-circle text-secondary fs-6"
+                                data-bs-toggle="tooltip" 
+                                data-bs-placement="right"
+                                data-bs-html="true"
+                                data-bs-title="
+                                    Fetching top 50 animes characters or 
+                                    the top 10 main role character of voice actors 
+                                    will save the data in the browser local storage.
+                                    <br><br>
+                                    If you want to delete these data, click the <b>Clear</b> button.
+                                "
+                            ></i>
+                        </h5>
+
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <button id="checkStorageBtn" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-hdd me-1"></i> Check Size
+                                </button>
+                            </div>
+                            <div>
+                                <button id="clearCacheBtn" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash me-1"></i> Clear
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
