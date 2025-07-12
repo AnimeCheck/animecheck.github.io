@@ -27,6 +27,10 @@ describe('Settings Clear button', () => {
       expect(win.localStorage.getItem('top50AnimeCharUpdatedAt')).to.not.be.null;
       expect(win.localStorage.getItem('fav_of_character_0')).to.not.be.null;
     });
+
+    // Wait for toast to appear and check message
+    cy.get('#clearToast').should('be.visible');
+    cy.get('#clearToast .toast-body').should('contain.text', 'Nothing is cleared');
   });
 
   it('Clears Top 50 if toggle is on', () => {
@@ -44,6 +48,10 @@ describe('Settings Clear button', () => {
       // VA data still exists
       expect(win.localStorage.getItem('fav_of_character_0')).to.not.be.null;
     });
+
+    // Wait for toast to appear and check message
+    cy.get('#clearToast').should('be.visible');
+    cy.get('#clearToast .toast-body').should('contain.text', 'Local storage cleared');
   });
 
   it('Clears VA Top 10 if toggle is on', () => {
@@ -61,9 +69,13 @@ describe('Settings Clear button', () => {
       expect(win.localStorage.getItem('top50AnimeCharCache')).to.not.be.null;
       expect(win.localStorage.getItem('top50AnimeCharUpdatedAt')).to.not.be.null;
     });
+
+    // Wait for toast to appear and check message
+    cy.get('#clearToast').should('be.visible');
+    cy.get('#clearToast .toast-body').should('contain.text', 'Local storage cleared');
   });
 
-  it('Clears both if both toggles are on', () => {
+  it('Clears all if all toggles are on', () => {
     cy.get('#toggleClearTop50').check({ force: true });
     cy.get('#toggleClearVATop10').check({ force: true });
 
@@ -74,5 +86,9 @@ describe('Settings Clear button', () => {
       expect(win.localStorage.getItem('top50AnimeCharUpdatedAt')).to.be.null;
       expect(win.localStorage.getItem('fav_of_character_0')).to.be.null;
     });
+
+    // Wait for toast to appear and check message
+    cy.get('#clearToast').should('be.visible');
+    cy.get('#clearToast .toast-body').should('contain.text', 'Local storage cleared');
   });
 })

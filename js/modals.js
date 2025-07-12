@@ -56,6 +56,15 @@ document.getElementById("clearCacheBtn").addEventListener("click", () => {
         StorageHelper.remove(TOP50_UPDATED_AT_KEY);
     }
 
+    const body = document.getElementById("clearToastBody");
+    
+    // Check if all toggles are off
+    if (!clearTop50 && !clearVATop10) {
+        body.innerHTML = `Nothing is cleared.`;
+    } else {
+        body.innerHTML = `Local storage cleared successfully.`;
+    }
+
     // Toast for the button Clear Local Storage
     const toastEl = document.getElementById("clearToast");
     const toast = new bootstrap.Toast(toastEl);
