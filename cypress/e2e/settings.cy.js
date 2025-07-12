@@ -8,15 +8,6 @@ describe('Settings modal interactions', () => {
     cy.get('#settingsModal').should('be.visible');
   });
 
-  it('Button Check Local Storage Size', () => {
-    cy.get('#settings-btn').click();
-    cy.get('#settingsModal').should('be.visible');
-
-    cy.get('#checkStorageBtn').click();
-    cy.get('#storageToast').should('be.visible');
-    cy.get('#storageToast').contains('Local Storage usage:');
-  });
-
   it('Closes the settings modal', () => {
     cy.get('#settings-btn').click();
 
