@@ -54,7 +54,7 @@ async function getAnimeById(animeId) {
             <div class="row mb-3 align-items-center">
                 <div class="col-md-2 text-center my-2">
                     <a href="${imageURL}" target="_blank" rel="noopener noreferrer">
-                        <img src="${imageURL}" class="img-fluid rounded">
+                        <img src="${imageURL}" class="anime-poster img-fluid rounded">
                     </a>
                 </div>
                 <div class="col-md-10 d-flex align-items-center">
@@ -86,6 +86,9 @@ async function getAnimeById(animeId) {
             </div>
         `;
         document.getElementById("animeDetailsWrapper").innerHTML = animeDetailsHTML;
+
+        // Privacy option
+        toggleImageBlur(isBlurEnabled);
     } catch (error) {
         console.error("Error fetching anime data:", error.message);
     }

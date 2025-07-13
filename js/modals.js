@@ -36,6 +36,24 @@ topAnimeModal.addEventListener("hidden.bs.modal", () => {
     document.getElementById("topAnimeCharactersList").innerHTML = ""; // clear old content
 });
 
+// Privacy option
+let isBlurEnabled = document.getElementById('privacyBlurToggle').checked;
+
+function toggleImageBlur(enabled) {
+    // Select anime posters and character images only
+    const images = document.querySelectorAll('.anime-poster, .character-image');
+
+    images.forEach(img => {
+        img.classList.toggle('blur-images', enabled);
+    });
+}
+
+document.getElementById('privacyBlurToggle').addEventListener('change', (event) => {
+    // Listen for Privacy toggle changes
+    isBlurEnabled = event.target.checked;
+    toggleImageBlur(isBlurEnabled);
+});
+
 // Clear Local Storage button
 document.getElementById("clearCacheBtn").addEventListener("click", () => {
     const clearTop50 = document.getElementById("toggleClearTop50").checked;

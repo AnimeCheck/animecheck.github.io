@@ -72,7 +72,7 @@ async function getAnimeCharacters(animeId) {
             // Final character card
             col.innerHTML = `
                 <div class="card fade-in bg-dark text-light h-100">
-                    <img src="${characterImage}" class="card-img-top" alt="${characterName}" loading="lazy">
+                    <img src="${characterImage}" class="character-image card-img-top" alt="${characterName}" loading="lazy">
                     <div class="card-body">
                         <h5 class="card-title custom-card-charname">${characterName}</h5>
                         <div>${vaListHTML}</div>
@@ -80,6 +80,9 @@ async function getAnimeCharacters(animeId) {
                 </div>
             `;
             container.appendChild(col);
+            
+            // Privacy option
+            toggleImageBlur(isBlurEnabled);
 
             // fade in when scrolling into view for that div card .fade-in
             const card = col.querySelector('.fade-in');
