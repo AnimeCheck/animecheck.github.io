@@ -26,6 +26,7 @@ async function getAnimeCharacters(animeId) {
         animeCharacters.forEach(entry => {
             const characterName = entry.character.name;
             const characterImage = entry.character.images.jpg.image_url;
+            const characterId = entry.character.mal_id;
             const voiceActors = entry.voice_actors;
 
             /*console.log("Name:", characterName);
@@ -55,7 +56,7 @@ async function getAnimeCharacters(animeId) {
 
                 vaListHTML += `
                     <div class="d-flex align-items-center mt-2">
-                        <img src="${image}" alt="${name}" class="me-2 rounded" style="width: 40px; height: 40px; object-fit: cover;" loading="lazy">
+                        <img src="${image}" alt="${name}" class="me-2 rounded" style="width: 40px; height: 40px; object-fit: cover; flex-shrink: 0;" loading="lazy">
                         <div>
                             <div>
                                 <a href="#" class="va-link text-decoration-none" data-bs-toggle="modal" data-bs-target="#vaModal" 
@@ -73,9 +74,12 @@ async function getAnimeCharacters(animeId) {
             col.innerHTML = `
                 <div class="card fade-in bg-dark text-light h-100">
                     <img src="${characterImage}" class="character-image card-img-top" alt="${characterName}" loading="lazy">
-                    <div class="card-body">
+                    <div class="card-body d-flex flex-column">
                         <h5 class="card-title custom-card-charname">${characterName}</h5>
-                        <div>${vaListHTML}</div>
+                        <div class="pb-2 custom-card-valist">${vaListHTML}</div>
+                        <div class="mt-auto text-end custom-card-charid">
+                            <span class="user-select-none text-secondary">Char Id: </span><b>${characterId}</b>
+                        </div>
                     </div>
                 </div>
             `;
