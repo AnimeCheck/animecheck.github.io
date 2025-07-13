@@ -146,6 +146,7 @@ a:hover {
 .blur-images {
     filter: blur(35px) brightness(0.7) saturate(0.5);
     transition: filter 0.3s ease;
+    clip-path: inset(0 round 0.375rem); /* prevents blur from overflowing */
 }
 
 .testborder {

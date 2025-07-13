@@ -36,6 +36,13 @@ topAnimeModal.addEventListener("hidden.bs.modal", () => {
     document.getElementById("topAnimeCharactersList").innerHTML = ""; // clear old content
 });
 
+// Settings modal accessibility + cleanup
+const settingsModal = document.getElementById('settingsModal');
+// Fix accessibility warning by blurring the focused element before hiding
+settingsModal.addEventListener('hide.bs.modal', () => {
+    document.body.focus(); // move focus away from modal before it hides
+});
+
 // Privacy option
 let isBlurEnabled = document.getElementById('privacyBlurToggle').checked;
 
