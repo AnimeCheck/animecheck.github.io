@@ -144,7 +144,7 @@ a:hover {
 
 /* For privacy option */
 .blur-images {
-    filter: blur(6px);
+    filter: blur(20px) brightness(0.2) saturate(0.2);
     transition: filter 0.3s ease;
 }
 
