@@ -39,6 +39,13 @@ topAnimeModal.addEventListener("hidden.bs.modal", () => {
 // Privacy option
 let isBlurEnabled = document.getElementById('privacyBlurToggle').checked;
 
+document.addEventListener('DOMContentLoaded', () => {
+    // Load setting from sessionStorage on page load
+    isBlurEnabled = sessionStorage.getItem('privacyBlur') === 'true'; // to convert it to Boolean
+    document.getElementById('privacyBlurToggle').checked = isBlurEnabled;
+    toggleImageBlur(isBlurEnabled);
+});
+
 function toggleImageBlur(enabled) {
     // Select anime posters and character images only
     const images = document.querySelectorAll('.anime-poster, .character-image');
@@ -51,6 +58,7 @@ function toggleImageBlur(enabled) {
 document.getElementById('privacyBlurToggle').addEventListener('change', (event) => {
     // Listen for Privacy toggle changes
     isBlurEnabled = event.target.checked;
+    sessionStorage.setItem('privacyBlur', isBlurEnabled);
     toggleImageBlur(isBlurEnabled);
 });
 
