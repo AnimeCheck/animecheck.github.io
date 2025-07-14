@@ -89,8 +89,8 @@ async function smartDelay() {
 
     // Slight extra delay to avoid bursting right on the limit edge
     //console.log(`[smartDelay] Adding extra 500ms delay to spread out requests.`);
-    const jitter = Math.floor(Math.random() * 200); // 0–199 ms
-    await delay(500 + jitter); // total = 500–699 ms
+    const jitter = Math.floor(Math.random() * 150); // 0–199 ms
+    await delay(350 + jitter); // total = 500–699 ms
 }
 
 function throttledFetch(...args) {
