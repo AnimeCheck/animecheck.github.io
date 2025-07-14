@@ -45,14 +45,6 @@ settingsModal.addEventListener('hide.bs.modal', () => {
 
 // Favorite option
 document.getElementById("viewFavoritesBtn").addEventListener("click", () => {
-    const favorites = StorageHelper.get(FAVORITES_KEY) || [];
-    if (favorites.length === 0) {
-        document.getElementById("viewFavoriteCharacters").innerHTML = "<p>No favorite characters saved.</p>";
-        return;
-    }
-
-    // Your custom logic goes here
-    console.log("There are favorite characters");
     document.getElementById("animeDetailsWrapper").classList.add("d-none");
     document.getElementById("animeCharacters").classList.add("d-none");
     document.getElementById("viewFavoriteCharacters").classList.remove("d-none");
