@@ -78,7 +78,7 @@ async function getAnimeCharacters(animeId) {
                         <h5 class="card-title custom-card-charname">${characterName}</h5>
                         <div class="pb-2 custom-card-valist">${vaListHTML}</div>
                         <div class="mt-auto text-end custom-card-charid">
-                            <span class="user-select-none text-secondary">Char Id: </span><b>${characterId}</b>
+                            <span class="user-select-none text-secondary">Char ID: </span><b>${characterId}</b>
                         </div>
                     </div>
                 </div>
