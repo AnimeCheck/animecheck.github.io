@@ -161,15 +161,8 @@ function toggleFavoriteCharacter(characterId, characterName) {
 function renderFavoriteCharacters() {
     const container = document.getElementById("viewFavoriteCharacters");
     const favorites = StorageHelper.get(FAVORITES_KEY) || [];
-    // Sorting favorites in alphabetical order
-    favorites.sort((a, b) => a.name.localeCompare(b.name));
-
+    
     container.innerHTML = "";
-
-    if (favorites.length === 0) {
-        container.innerHTML = "<p>No favorite characters saved.</p>";
-        return;
-    }
 
     let html = `
         <h5 class="mb-3 text-warning d-flex align-items-center gap-2 fs-3 fs-md-2 fs-lg-1">
@@ -178,6 +171,14 @@ function renderFavoriteCharacters() {
             <span class="text-secondary small">(${favorites.length})</span>
         </h5>
     `;
+
+    if (favorites.length === 0) {
+        container.innerHTML = html;
+        return;
+    }
+
+    // Sorting favorites in alphabetical order
+    favorites.sort((a, b) => a.name.localeCompare(b.name));
 
     favorites.forEach((char, index) => {
         html += `
