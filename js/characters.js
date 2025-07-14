@@ -183,7 +183,7 @@ function renderFavoriteCharacters() {
         html += `
             <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded bg-dark text-light favorite-char-row" data-charid="${char.id}" data-charname="${char.name}">
                 <div><span class="badge rounded-pill bg-secondary me-2 user-select-none">${index + 1}</span><b>${char.name}</b> <span class="text-secondary small">(ID: ${char.id})</span></div>
-                <button class="btn btn-sm btn-outline-warning toggle-favorite-btn" title="Remove from favorites">
+                <button class="btn btn-sm btn-outline-danger toggle-favorite-btn" title="Remove from favorites">
                     <i class="bi bi-trash"></i>
                 </button>
             </div>
