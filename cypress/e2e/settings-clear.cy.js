@@ -56,7 +56,7 @@ describe('Settings Clear button', () => {
 
   it('Clears VA Top 10 if toggle is on', () => {
     // Toggle ON for VA
-    cy.get('#toggleClearVATop10').check({ force: true });
+    cy.get('#toggleClearVAChars').check({ force: true });
 
     // Click clear
     cy.get('#clearCacheBtn').click();
@@ -77,7 +77,7 @@ describe('Settings Clear button', () => {
 
   it('Clears all if all toggles are on', () => {
     cy.get('#toggleClearTop50').check({ force: true });
-    cy.get('#toggleClearVATop10').check({ force: true });
+    cy.get('#toggleClearVAChars').check({ force: true });
 
     cy.get('#clearCacheBtn').click();
 

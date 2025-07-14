@@ -3,6 +3,7 @@
     Voice actor rendering inside each card
     IntersectionObserver for fade-in
 */
+const FAVORITES_KEY = 'favoriteCharacters';
 
 const vaInfoCache = {};
 async function getAnimeCharacters(animeId) {
@@ -75,7 +76,10 @@ async function getAnimeCharacters(animeId) {
                 <div class="card fade-in bg-dark text-light h-100">
                     <img src="${characterImage}" class="character-image card-img-top" alt="${characterName}" loading="lazy">
                     <div class="card-body d-flex flex-column">
-                        <h5 class="card-title custom-card-charname">${characterName}</h5>
+                        <h5 class="card-title d-flex justify-content-between align-items-start custom-card-charname">
+                            <span class="me-2 flex-grow-1">${characterName}</span>
+                            <i class="bi bi-star text-warning" data-charid="${characterId}" role="button"></i>
+                        </h5>
                         <div class="pb-2 custom-card-valist">${vaListHTML}</div>
                         <div class="mt-auto text-end custom-card-charid">
                             <span class="user-select-none text-secondary">Char ID: </span><b>${characterId}</b>
@@ -84,6 +88,24 @@ async function getAnimeCharacters(animeId) {
                 </div>
             `;
             container.appendChild(col);
+
+            // Favorite Character Star icon toggle
+            const starIcon = col.querySelector(`[data-charid="${characterId}"]`);
+
+            if (isFavoriteCharacter(characterId)) {
+                starIcon.classList.replace('bi-star', 'bi-star-fill');
+            }
+
+            starIcon.addEventListener('click', () => {
+                toggleFavoriteCharacter(characterId, characterName);
+
+                // Toggle icon class
+                if (isFavoriteCharacter(characterId)) {
+                    starIcon.classList.replace('bi-star', 'bi-star-fill');
+                } else {
+                    starIcon.classList.replace('bi-star-fill', 'bi-star');
+                }
+            });
             
             // Privacy option
             toggleImageBlur(isBlurEnabled);
@@ -108,3 +130,30 @@ const observer = new IntersectionObserver((entries) => {
         }
     });
 });
+
+/*
+    To add favorite Characters
+*/
+function isFavoriteCharacter(characterId) {
+    const favorites = StorageHelper.get(FAVORITES_KEY) || [];
+    return favorites.some(char => char.id === characterId);
+}
+
+function toggleFavoriteCharacter(characterId, characterName) {
+    let favorites = StorageHelper.get(FAVORITES_KEY) || [];
+    const index = favorites.findIndex(char => char.id === characterId);
+
+    // if character is already a favorite
+    if (index !== -1) {
+        favorites.splice(index, 1); // Remove from favorites if exists
+    } else {
+        if (favorites.length >= 1000) {
+            alert("You have reached the maximum of 1000 favorite characters.");
+            return;
+        }
+        // Add to favorites
+        favorites.push({ id: characterId, name: characterName });
+    }
+
+    StorageHelper.set(FAVORITES_KEY, favorites);
+}

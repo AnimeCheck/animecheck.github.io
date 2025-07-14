@@ -72,13 +72,35 @@ document.getElementById('privacyBlurToggle').addEventListener('change', (event) 
 // Clear Local Storage button
 document.getElementById("clearCacheBtn").addEventListener("click", () => {
     const clearTop50 = document.getElementById("toggleClearTop50").checked;
-    const clearVATop10 = document.getElementById("toggleClearVATop10").checked;
+    const clearVAChars = document.getElementById("toggleClearVAChars").checked;
+    const clearFavChars = document.getElementById("toggleClearFavChars").checked;
 
-    // Clear top favorites VA main role characters
-    if (clearVATop10) {
+    // Clear favorite characters. Order is important.
+    if (clearFavChars) {
+        StorageHelper.remove(FAVORITES_KEY);
+
+        // Update all star icons on UI after clearing favorites
+        document.querySelectorAll('[data-charid]').forEach(icon => {
+            icon.classList.remove('bi-star-fill');
+            icon.classList.add('bi-star');
+        });
+    }
+
+    // Clear VA main role characters except favorite characters
+    if (clearVAChars) {
+        const favoriteCharIds = StorageHelper.get(FAVORITES_KEY) || [];
+        const idsOnly = favoriteCharIds.map(char => char.id);
+
         Object.keys(localStorage).forEach(key => {
             if (key.startsWith(FAV_OF_CHARACTER_KEY_PREFIX)) {
-                StorageHelper.remove(key);
+                // Remove prefix and keep the id number
+                const charIdStr = key.slice(FAV_OF_CHARACTER_KEY_PREFIX.length);
+                const charId = Number(charIdStr);
+
+                // Exclude your favorite characters key from removal
+                if (!idsOnly.includes(charId)) {
+                    StorageHelper.remove(key);
+                }
             }
         });
     }
@@ -92,7 +114,7 @@ document.getElementById("clearCacheBtn").addEventListener("click", () => {
     const body = document.getElementById("clearToastBody");
     
     // Check if all toggles are off
-    if (!clearTop50 && !clearVATop10) {
+    if (!clearTop50 && !clearVAChars && !clearFavChars) {
         body.innerHTML = `Nothing is cleared.`;
     } else {
         body.innerHTML = `Local storage cleared successfully.`;
