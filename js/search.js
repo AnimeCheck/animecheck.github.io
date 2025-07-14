@@ -8,6 +8,12 @@ let debounceTimeout;
 let selectedIndex = -1 // For Up and Down arrow keys in suggestion list
 
 searchInput.addEventListener('input', () => {
+    // Handles Enter when no suggestions are showing
+    if (ignoreNextInput) {
+        ignoreNextInput = false;  // Reset flag and ignore this input event
+        return;
+    }
+
     const query = searchInput.value.trim();
     clearTimeout(debounceTimeout);
     suggestions.innerHTML = '';
@@ -99,13 +105,28 @@ searchInput.addEventListener('keydown', (e) => {
     }
 });
 
+// Handles Enter when no suggestions are showing. Must be separated, can't merge.
+searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        const query = searchInput.value.trim();
+        const hasSuggestions = suggestions.children.length > 0;
+
+        if (query.length >= 2 && !hasSuggestions) {
+            searchInput.dispatchEvent(new Event('input'));
+        }
+    }
+});
+
 function updateHighlight(items) {
     items.forEach((item, index) => {
         item.classList.toggle('active', index === selectedIndex);
     });
 }
 
+let ignoreNextInput = false;
+
 function selectSuggestion(anime) {
+    ignoreNextInput = true; // Handles Enter when no suggestions are showing
     searchInput.value = anime.title_english || anime.title;
     suggestions.innerHTML = '';
     // Optional: do something with anime.mal_id
