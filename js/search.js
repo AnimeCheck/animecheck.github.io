@@ -9,8 +9,9 @@ let selectedIndex = -1 // For Up and Down arrow keys in suggestion list
 
 searchInput.addEventListener('input', () => {
     // Handles Enter when no suggestions are showing
-    if (ignoreNextInput) {
-        ignoreNextInput = false;  // Reset flag and ignore this input event
+    // This prevents a new search from triggering right after a suggestion is selected
+    if (skipInputAfterSelection) {
+        skipInputAfterSelection = false;  // Reset flag and ignore this input event
         return;
     }
 
@@ -123,10 +124,10 @@ function updateHighlight(items) {
     });
 }
 
-let ignoreNextInput = false;
+let skipInputAfterSelection = false;
 
 function selectSuggestion(anime) {
-    ignoreNextInput = true; // Handles Enter when no suggestions are showing
+    skipInputAfterSelection = true; // Handles Enter when no suggestions are showing
     searchInput.value = anime.title_english || anime.title;
     suggestions.innerHTML = '';
     // Optional: do something with anime.mal_id
