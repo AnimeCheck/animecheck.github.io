@@ -157,3 +157,52 @@ function toggleFavoriteCharacter(characterId, characterName) {
 
     StorageHelper.set(FAVORITES_KEY, favorites);
 }
+
+function renderFavoriteCharacters() {
+    const container = document.getElementById("viewFavoriteCharacters");
+    const favorites = StorageHelper.get(FAVORITES_KEY) || [];
+    // Sorting favorites in alphabetical order
+    favorites.sort((a, b) => a.name.localeCompare(b.name));
+
+    container.innerHTML = "";
+
+    if (favorites.length === 0) {
+        container.innerHTML = "<p>No favorite characters saved.</p>";
+        return;
+    }
+
+    let html = `
+        <h5 class="mb-3 text-warning d-flex align-items-center gap-2 fs-3 fs-md-2 fs-lg-1">
+            <i class="bi bi-star-fill"></i>
+            Saved Favorite Characters 
+            <span class="text-secondary small">(${favorites.length})</span>
+        </h5>
+    `;
+
+    favorites.forEach((char, index) => {
+        html += `
+            <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded bg-dark text-light favorite-char-row" data-charid="${char.id}" data-charname="${char.name}">
+                <div><span class="badge rounded-pill bg-secondary me-2 user-select-none">${index + 1}</span><b>${char.name}</b> <span class="text-secondary small">(ID: ${char.id})</span></div>
+                <button class="btn btn-sm btn-outline-warning toggle-favorite-btn" title="Remove from favorites">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
+
+    // Add event listeners for Remove buttons
+    container.querySelectorAll('.toggle-favorite-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const row = btn.closest('.favorite-char-row');
+            const charId = Number(row.dataset.charid);
+            const charName = row.dataset.charname;
+
+            // Remove from favorites
+            toggleFavoriteCharacter(charId, charName);
+
+            renderFavoriteCharacters(); // Refresh UI
+        });
+    });
+}

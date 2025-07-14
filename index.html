@@ -84,6 +84,7 @@
         <div class="container px-0 my-4">
             <div id="animeDetailsWrapper"></div>
             <div id="animeCharacters" class="row g-3 mt-3"></div>
+            <div id="viewFavoriteCharacters"></div>
         </div>
 
 
@@ -141,6 +142,14 @@
                             aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+                        <h5>Favorite</h5>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="user-select-none">Saved favorite characters</span>
+                            <button id="viewFavoritesBtn" class="btn btn-sm btn-outline-warning">
+                                <i class="bi bi-star me-1"></i> View
+                            </button>
+                        </div>
+
                         <h5>Privacy</h5>
                         <div class="form-check form-switch mb-3">
                             <input class="form-check-input" type="checkbox" role="switch" id="privacyBlurToggle">
@@ -154,8 +163,8 @@
                                 data-bs-placement="right"
                                 data-bs-html="true"
                                 data-bs-title="
-                                    Fetched data are saved in the browser local storage.
-                                    <br><br>
+                                    Some data are saved in the browser local storage.
+                                    <br>
                                     If you want to delete these data, click the <b>Clear</b> button.
                                 "
                             ></i>
