@@ -202,8 +202,10 @@ function renderFavoriteCharacters() {
             <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded bg-dark text-light favorite-char-row" 
             data-charid="${char.id}" data-charname="${char.name}" data-charimage="${char.image}">
                 <div class="d-flex align-items-center flex-grow-1">
-                    <img src="${char.image}" alt="${char.name}" loading="lazy"
-                        style="width: 50px; height: 50px; object-fit: cover; border-radius: 0.25rem; margin-right: 0.75rem; flex-shrink: 0;">
+                    <a href="${char.image}" target="_blank">
+                        <img src="${char.image}" alt="${char.name}" loading="lazy"
+                            style="width: 50px; height: 50px; object-fit: cover; border-radius: 0.25rem; margin-right: 0.75rem; flex-shrink: 0;">
+                    </a>
                     <span class="badge bg-secondary me-2 user-select-none">${index + 1}</span>
                     <a href="https://myanimelist.net/character/${char.id}" class="text-decoration-none" target="_blank"><b>${char.name}</b></a>
                 </div>
