@@ -186,6 +186,7 @@ function renderFavoriteCharacters() {
             <i class="bi bi-star-fill"></i>
             Saved Favorite Characters 
             <span class="text-secondary small">(${favorites.length})</span>
+            <i class="bi bi-x-circle ms-auto text-secondary hide-favorites-icon" role="button" title="Hide favorite characters"></i>
         </h5>
     `;
 
@@ -230,6 +231,22 @@ function renderFavoriteCharacters() {
             toggleFavoriteCharacter(charId, charName, charImage);
 
             renderFavoriteCharacters(); // Refresh UI
+        });
+    });
+
+    // Favorite Characters list close icon
+    document.querySelector(".hide-favorites-icon")?.addEventListener("click", () => {
+        document.getElementById("animeDetailsWrapper").classList.remove("d-none");
+        document.getElementById("animeCharacters").classList.remove("d-none");
+        document.getElementById("viewFavoriteCharacters").classList.add("d-none");
+
+        // Sync all star icons with current favorite state
+        document.querySelectorAll('[data-charid]').forEach(icon => {
+            const charId = Number(icon.dataset.charid);
+            const isFavorite = isFavoriteCharacter(charId);
+
+            icon.classList.toggle('bi-star-fill', isFavorite);
+            icon.classList.toggle('bi-star', !isFavorite);
         });
     });
 }
