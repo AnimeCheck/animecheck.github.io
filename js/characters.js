@@ -146,6 +146,12 @@ function toggleFavoriteCharacter(characterId, characterName) {
     // if character is already a favorite
     if (index !== -1) {
         favorites.splice(index, 1); // Remove from favorites if exists
+
+        showToast({
+            message: `<b>${characterName}</b> removed from your favorites.`,
+            type: "secondary",
+            icon: "bi bi-star"
+        });
     } else {
         if (favorites.length >= 1000) {
             alert("You have reached the maximum of 1000 favorite characters.");
@@ -153,6 +159,12 @@ function toggleFavoriteCharacter(characterId, characterName) {
         }
         // Add to favorites
         favorites.push({ id: characterId, name: characterName });
+
+        showToast({
+            message: `<b>${characterName}</b> added to your favorites!`,
+            type: "success",
+            icon: "bi bi-star-fill"
+        });
     }
 
     StorageHelper.set(FAVORITES_KEY, favorites);
@@ -204,6 +216,6 @@ function renderFavoriteCharacters() {
             toggleFavoriteCharacter(charId, charName);
 
             renderFavoriteCharacters(); // Refresh UI
-        });
+        });        
     });
 }
