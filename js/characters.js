@@ -208,7 +208,7 @@ function renderFavoriteCharacters() {
             data-charid="${char.id}" data-charname="${char.name}" data-charimage="${char.image}">
                 <div class="d-flex align-items-center flex-grow-1">
                     <a href="${char.image}" target="_blank">
-                        <img src="${char.image}" alt="${char.name}" loading="lazy"
+                        <img src="${char.image}" alt="${char.name}" loading="lazy" class="character-image"
                             style="width: 50px; height: 50px; object-fit: cover; border-radius: 0.25rem; margin-right: 0.75rem; flex-shrink: 0;">
                     </a>
                     <span class="badge bg-secondary me-2 user-select-none">${index + 1}</span>
@@ -253,4 +253,7 @@ function renderFavoriteCharacters() {
             icon.classList.toggle('bi-star', !isFavorite);
         });
     });
+
+    // Privacy option
+    toggleImageBlur(isBlurEnabled);
 }
