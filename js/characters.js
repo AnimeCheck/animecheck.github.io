@@ -154,7 +154,11 @@ function toggleFavoriteCharacter(characterId, characterName, characterImageUrl) 
         });
     } else {
         if (favorites.length >= 1000) {
-            alert("You have reached the maximum of 1000 favorite characters.");
+            showToast({
+                message: "You have reached the maximum of 1000 favorite characters.",
+                type: "danger",
+                icon: "bi bi-exclamation-triangle"
+            });
             return;
         }
         // Add to favorites
