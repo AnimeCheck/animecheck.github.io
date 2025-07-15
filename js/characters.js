@@ -97,7 +97,7 @@ async function getAnimeCharacters(animeId) {
             }
 
             starIcon.addEventListener('click', () => {
-                toggleFavoriteCharacter(characterId, characterName);
+                toggleFavoriteCharacter(characterId, characterName, characterImage);
 
                 // Toggle icon class
                 if (isFavoriteCharacter(characterId)) {
@@ -139,7 +139,7 @@ function isFavoriteCharacter(characterId) {
     return favorites.some(char => char.id === characterId);
 }
 
-function toggleFavoriteCharacter(characterId, characterName) {
+function toggleFavoriteCharacter(characterId, characterName, characterImageUrl) {
     let favorites = StorageHelper.get(FAVORITES_KEY) || [];
     const index = favorites.findIndex(char => char.id === characterId);
 
@@ -158,7 +158,12 @@ function toggleFavoriteCharacter(characterId, characterName) {
             return;
         }
         // Add to favorites
-        favorites.push({ id: characterId, name: characterName });
+        //favorites.push({ id: characterId, name: characterName });
+        favorites.push({
+            id: characterId,
+            name: characterName,
+            image: characterImageUrl
+        });
 
         showToast({
             message: `<b>${characterName}</b> added to your favorites!`,
@@ -194,11 +199,13 @@ function renderFavoriteCharacters() {
 
     favorites.forEach((char, index) => {
         html += `
-            <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded bg-dark text-light favorite-char-row" data-charid="${char.id}" data-charname="${char.name}">
-                <div>
+            <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded bg-dark text-light favorite-char-row" 
+            data-charid="${char.id}" data-charname="${char.name}" data-charimage="${char.image}">
+                <div class="d-flex align-items-center flex-grow-1">
+                    <img src="${char.image}" alt="${char.name}" loading="lazy"
+                        style="width: 50px; height: 50px; object-fit: cover; border-radius: 0.25rem; margin-right: 0.75rem; flex-shrink: 0;">
                     <span class="badge bg-secondary me-2 user-select-none">${index + 1}</span>
                     <a href="https://myanimelist.net/character/${char.id}" class="text-decoration-none" target="_blank"><b>${char.name}</b></a>
-                    <span class="text-secondary small">(ID: ${char.id})</span>
                 </div>
                 <button class="btn btn-sm btn-outline-danger toggle-favorite-btn" title="Remove from favorites">
                     <i class="bi bi-trash"></i>
@@ -215,9 +222,10 @@ function renderFavoriteCharacters() {
             const row = btn.closest('.favorite-char-row');
             const charId = Number(row.dataset.charid);
             const charName = row.dataset.charname;
+            const charImage = row.dataset.charimage;
 
             // Remove from favorites
-            toggleFavoriteCharacter(charId, charName);
+            toggleFavoriteCharacter(charId, charName, charImage);
 
             renderFavoriteCharacters(); // Refresh UI
         });
