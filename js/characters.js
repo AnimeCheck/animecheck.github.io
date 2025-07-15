@@ -196,6 +196,7 @@ function renderFavoriteCharacters() {
 
     if (favorites.length === 0) {
         container.innerHTML = html;
+        hideFavoritesList();
         return;
     }
 
@@ -239,6 +240,14 @@ function renderFavoriteCharacters() {
     });
 
     // Favorite Characters list close icon
+    hideFavoritesList();
+
+    // Privacy option
+    toggleImageBlur(isBlurEnabled);
+}
+
+function hideFavoritesList() {
+    // Favorite Characters list close icon
     document.querySelector(".hide-favorites-icon")?.addEventListener("click", () => {
         document.getElementById("animeDetailsWrapper").classList.remove("d-none");
         document.getElementById("animeCharacters").classList.remove("d-none");
@@ -253,7 +262,4 @@ function renderFavoriteCharacters() {
             icon.classList.toggle('bi-star', !isFavorite);
         });
     });
-
-    // Privacy option
-    toggleImageBlur(isBlurEnabled);
 }
