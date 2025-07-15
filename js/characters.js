@@ -216,6 +216,6 @@ function renderFavoriteCharacters() {
             toggleFavoriteCharacter(charId, charName);
 
             renderFavoriteCharacters(); // Refresh UI
-        });        
+        });
     });
 }
