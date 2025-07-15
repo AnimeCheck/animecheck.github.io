@@ -29,8 +29,8 @@ describe('Settings Clear button', () => {
     });
 
     // Wait for toast to appear and check message
-    cy.get('#clearToast').should('be.visible');
-    cy.get('#clearToast .toast-body').should('contain.text', 'Nothing is cleared');
+    cy.get('#globalToast').should('be.visible');
+    cy.get('#globalToast .toast-body').should('contain.text', 'Nothing is cleared');
   });
 
   it('Clears Top 50 if toggle is on', () => {
@@ -50,8 +50,8 @@ describe('Settings Clear button', () => {
     });
 
     // Wait for toast to appear and check message
-    cy.get('#clearToast').should('be.visible');
-    cy.get('#clearToast .toast-body').should('contain.text', 'Local storage cleared');
+    cy.get('#globalToast').should('be.visible');
+    cy.get('#globalToast .toast-body').should('contain.text', 'Local storage cleared');
   });
 
   it('Clears VA Top 10 if toggle is on', () => {
@@ -71,8 +71,8 @@ describe('Settings Clear button', () => {
     });
 
     // Wait for toast to appear and check message
-    cy.get('#clearToast').should('be.visible');
-    cy.get('#clearToast .toast-body').should('contain.text', 'Local storage cleared');
+    cy.get('#globalToast').should('be.visible');
+    cy.get('#globalToast .toast-body').should('contain.text', 'Local storage cleared');
   });
 
   it('Clears all if all toggles are on', () => {
@@ -88,7 +88,7 @@ describe('Settings Clear button', () => {
     });
 
     // Wait for toast to appear and check message
-    cy.get('#clearToast').should('be.visible');
-    cy.get('#clearToast .toast-body').should('contain.text', 'Local storage cleared');
+    cy.get('#globalToast').should('be.visible');
+    cy.get('#globalToast .toast-body').should('contain.text', 'Local storage cleared');
   });
 })

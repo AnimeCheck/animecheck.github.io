@@ -24,6 +24,57 @@ function firstLastNameFormat(name) {
     return `${first} ${last}`; // First name Last name format
 }
 
+// Global Toast
+let toastInstance = null;
+let toastIsShowing = false;
+
+function showToast({ message = "", type = "dark", icon = "", delay = 4000 }) {
+    const toastEl = document.getElementById("globalToast");
+    const toastBody = document.getElementById("globalToastBody");
+    const closeBtn = toastEl.querySelector(".btn-close");
+
+    // Initialize toast instance once
+    if (!toastInstance) {
+        toastInstance = new bootstrap.Toast(toastEl, { delay });
+    } else {
+        toastInstance._config.delay = delay; // update delay if needed
+    }
+
+    const updateAndShow = () => {
+        // Update classes
+        toastEl.className = `toast text-bg-${type} border-0`;
+
+        // Update message + icon
+        toastBody.innerHTML = icon ? `<i class="${icon} me-2"></i>${message}` : message;
+
+        // Update close button color
+        if (type === "warning") {
+            closeBtn.classList.remove("btn-close-white");
+        } else {
+            closeBtn.classList.add("btn-close-white");
+        }
+
+        toastInstance.show();
+        toastIsShowing = true;
+    };
+
+    // Always ensure we reset `toastIsShowing` when the toast hides
+    toastEl.addEventListener("hidden.bs.toast", () => {
+        toastIsShowing = false;
+    });
+
+    // Show immediately or wait for current to hide
+    if (toastIsShowing) {
+        toastInstance.hide(); // triggers "hidden.bs.toast" which will call updateAndShow later
+        toastEl.addEventListener("hidden.bs.toast", function handler() {
+            toastEl.removeEventListener("hidden.bs.toast", handler);
+            updateAndShow();
+        });
+    } else {
+        updateAndShow();
+    }
+}
+
 // localStorage helper
 const StorageHelper = {
     get(key) {

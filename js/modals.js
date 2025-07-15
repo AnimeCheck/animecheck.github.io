@@ -122,36 +122,34 @@ document.getElementById("clearCacheBtn").addEventListener("click", () => {
         StorageHelper.remove(TOP50_UPDATED_AT_KEY);
     }
 
-    const body = document.getElementById("clearToastBody");
-    
     // Check if all toggles are off
     if (!clearTop50 && !clearVAChars && !clearFavChars) {
-        body.innerHTML = `Nothing is cleared.`;
+        showToast({
+            message: "Nothing is cleared.",
+            type: "warning"
+        });
     } else {
-        body.innerHTML = `Local storage cleared successfully.`;
+        showToast({
+            message: "Local storage cleared successfully.",
+            type: "success"
+        });
     }
-
-    // Toast for the button Clear Local Storage
-    const toastEl = document.getElementById("clearToast");
-    const toast = new bootstrap.Toast(toastEl);
-    toast.show();
 });
 
 // Check Local Storage Size button
 document.getElementById("checkStorageBtn").addEventListener("click", () => {
     const mb = StorageHelper.size(); // Centralized size calculation
 
-    const body = document.getElementById("storageToastBody");
-    body.innerHTML = `
-        <div class="d-flex flex-wrap gap-2 align-items-center">
-            <i class="bi bi-hdd"></i>
-            <div>Local Storage usage: </div><div>${mb} MB / 5.00 MB</div>
-        </div>
-    `;
-
-    // Toast for the button Check Local Storage Size
-    const toast = new bootstrap.Toast(document.getElementById("storageToast"));
-    toast.show();
+    showToast({
+        message: `
+            <div class="d-flex flex-wrap gap-2 align-items-center">
+                <i class="bi bi-hdd"></i>
+                <div>Local Storage usage: </div>
+                <div>${mb} MB / 5.00 MB</div>
+            </div>
+        `,
+        type: "dark"
+    });
 });
 
 // Adding Tooltips

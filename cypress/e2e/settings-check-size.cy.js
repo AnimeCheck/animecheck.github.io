@@ -7,16 +7,16 @@ describe('Settings Check Size button', () => {
     cy.get('#settingsModal').should('be.visible');
     // Click on Check Size button
     cy.get('#checkStorageBtn').click();
-    cy.get('#storageToast').should('be.visible');
+    cy.get('#globalToast').should('be.visible');
   });
 
   it('Clicking on Check Size button', () => {
-    cy.get('#storageToast').contains('Local Storage usage:');
+    cy.get('#globalToast').contains('Local Storage usage:');
   });
 
   it('Simulate the minimum', () => {
     cy.window().then(win => {
-      const body = win.document.getElementById("storageToastBody");
+      const body = win.document.getElementById("globalToastBody");
       body.innerHTML = `
         <div class="d-flex flex-wrap gap-2 align-items-center">
           <i class="bi bi-hdd"></i>
@@ -26,7 +26,7 @@ describe('Settings Check Size button', () => {
     });
 
     // Extract the text and test the number
-    cy.get('#storageToast').invoke('text').then(text => {
+    cy.get('#globalToast').invoke('text').then(text => {
       const match = text.match(/([\d.]+)\s*MB\s*\/\s*5\.00\s*MB/);
 
       expect(match, 'matched MB usage').to.not.be.null;
@@ -38,7 +38,7 @@ describe('Settings Check Size button', () => {
 
   it('Simulate the maximum', () => {
     cy.window().then(win => {
-      const body = win.document.getElementById("storageToastBody");
+      const body = win.document.getElementById("globalToastBody");
       body.innerHTML = `
         <div class="d-flex flex-wrap gap-2 align-items-center">
           <i class="bi bi-hdd"></i>
@@ -48,7 +48,7 @@ describe('Settings Check Size button', () => {
     });
 
     // Extract the text and test the number
-    cy.get('#storageToast').invoke('text').then(text => {
+    cy.get('#globalToast').invoke('text').then(text => {
       const match = text.match(/([\d.]+)\s*MB\s*\/\s*5\.00\s*MB/);
 
       expect(match, 'matched MB usage').to.not.be.null;

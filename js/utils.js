@@ -137,11 +137,12 @@ function showRateLimitToast() {
     const now = Date.now();
     if (now - lastRateLimitToast > 5000) {
         lastRateLimitToast = now;
-        const toastRateLimit = document.getElementById("rateLimitToast");
-        if (toastRateLimit) {
-            const toast = new bootstrap.Toast(toastRateLimit);
-            toast.show();
-        }
+        
+        showToast({
+            message: "Jikan API rate limit hit. Progressing slowly...",
+            type: "danger",
+            icon: "bi bi-exclamation-triangle-fill"
+        });
     }
 }
 
@@ -152,10 +153,11 @@ function showRateLimitWarningToast() {
     const now = Date.now();
     if (now - lastRateLimitWarningToast > 5000) { // throttle toast to show max once every 5 sec
         lastRateLimitWarningToast = now;
-        const toastEl = document.getElementById("rateLimitWarningToast");
-        if (toastEl) {
-            const toast = new bootstrap.Toast(toastEl);
-            toast.show();
-        }
+        
+        showToast({
+            message: "Avoiding API rate limit. Slowing down...",
+            type: "warning",
+            icon: "bi bi-exclamation-triangle-fill"
+        });
     }
 }
