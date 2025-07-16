@@ -42,8 +42,8 @@ searchInput.addEventListener('input', () => {
                     seenTitles.add(englishTitle);
                     seenTitles.add(originalTitle);
                     // Highlighting
-                    const highlighted = displayTitle.replace(regex, '<strong>$1</strong>');
-                    const highlightedOriginal = originalTitle.replace(regex, '<strong>$1</strong>');
+                    const highlighted = escapeHTML(displayTitle).replace(regex, '<strong>$1</strong>');
+                    const highlightedOriginal = escapeHTML(originalTitle).replace(regex, '<strong>$1</strong>');
                     const animeYear = anime.year || anime.aired?.prop?.from?.year || 'N/A';
                     // Titles in suggestion list 
                     li.innerHTML = `
