@@ -73,7 +73,7 @@ async function getAnimeById(animeId) {
                         <div class="mt-2">Studio: ${studioNames}</div>
                         <div>Genres: ${genreNames}</div>
                         <div>Themes: ${themeNames}</div>
-                        <div>Aired: ${airedDates}</div>
+                        <div>Aired: ${escapeHTML(airedDates)}</div>
                         <div class="bg-dark text-light my-2 p-2 d-flex flex-wrap gap-2 rounded">
                             <div>
                                 MAL Score: <span class="badge bg-primary fs-6 rounded-pill">${escapeHTML(MALscore)}</span> 
