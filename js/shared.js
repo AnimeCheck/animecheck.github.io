@@ -90,7 +90,7 @@ function showToast({ message = "", type = "dark", icon = "", delay = 4000 }) {
 
 // To sanitize string data.
 function escapeHTML(str) {
-    return String(str).replace(/[&<>"'`=\/]/g, (char) => ({
+    return String(str).replace(/[&<>"'`=]/g, (char) => ({
         '&': '&amp;',
         '<': '&lt;',
         '>': '&gt;',
