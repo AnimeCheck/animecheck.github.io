@@ -211,7 +211,7 @@ async function updateTopVoiceActorCharacters(vaMalId) {
 }
 
 function renderTopVoiceActorCharacters(charList, totalCount, vaMalId, updatedAt = Date.now()) {
-    const updatedText = timeAgoText(updatedAt);
+    const updatedText = escapeHTML(timeAgoText(updatedAt));
     const listHTML = createCharacterListHTML(charList);
     const container = document.getElementById("vaModalCharacters");
 
@@ -250,10 +250,10 @@ function renderTopCharactersProgress(containerId, message, totalCount) {
 document.addEventListener('click', function (e) {
     if (e.target.closest('.va-link')) {
         const link = e.target.closest('.va-link');
-        const name = link.dataset.name;
-        const vaMalId = link.dataset.vamalid;
+        const name = escapeHTML(link.dataset.name);
+        const vaMalId = Number(link.dataset.vamalid);
         const image = link.dataset.image;
-        const lang = link.dataset.lang;
+        const lang = escapeHTML(link.dataset.lang);
         const formattedName = firstLastNameFormat(name);
 
         // Update modal info

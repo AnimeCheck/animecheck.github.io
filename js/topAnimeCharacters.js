@@ -118,7 +118,7 @@ async function getAnimeTitleOfCharacter(char, retry = 1) {
 // HTML for the top 50 anime characters
 function renderTopAnimeCharacters(charList, updatedAt = Date.now()) {
     const listHTML = createCharacterListHTML(charList);
-    const updatedText = timeAgoText(updatedAt);
+    const updatedText = escapeHTML(timeAgoText(updatedAt));
     const topAnimeCharListEl = document.getElementById("topAnimeCharactersList");
 
     topAnimeCharListEl.innerHTML = `

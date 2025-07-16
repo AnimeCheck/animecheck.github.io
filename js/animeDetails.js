@@ -32,7 +32,7 @@ async function getAnimeById(animeId) {
 
         // In the JSON, get every item of "titles": [...]. We want to get each title.
         const getTitle = (type) =>
-            titles.find((item) => item.type === type)?.title || "N/A";
+                escapeHTML(titles.find((item) => item.type === type)?.title || "N/A");
         
         const defaultTitle = getTitle("Default");
         const synonymTitle = getTitle("Synonym");
@@ -40,15 +40,15 @@ async function getAnimeById(animeId) {
         const englishTitle = getTitle("English");
         // To show all studios of "studios": [..., ...]
         const studioNames = studios.map(item => 
-            `<span class="badge bg-light text-dark me-2 rounded-pill">${item.name}</span>`
+            `<span class="badge bg-light text-dark me-2 rounded-pill">${escapeHTML(item.name)}</span>`
         ).join("");
         // To show all genres of "genres": [..., ...]
         const genreNames = genres.map(item => 
-            `<span class="badge bg-success me-2 rounded-pill">${item.name}</span>`
+            `<span class="badge bg-success me-2 rounded-pill">${escapeHTML(item.name)}</span>`
         ).join("");
         // To show all themes of "themes": [..., ...]
         const themeNames = themes.map(item => 
-            `<span class="badge bg-warning text-dark me-2 rounded-pill">${item.name}</span>`
+            `<span class="badge bg-warning text-dark me-2 rounded-pill">${escapeHTML(item.name)}</span>`
         ).join("");
         /*console.log("Default:", defaultTitle);
         console.log("Synonym:", synonymTitle);
@@ -76,14 +76,14 @@ async function getAnimeById(animeId) {
                         <div>Aired: ${airedDates}</div>
                         <div class="bg-dark text-light my-2 p-2 d-flex flex-wrap gap-2 rounded">
                             <div>
-                                MAL Score: <span class="badge bg-primary fs-6 rounded-pill">${MALscore}</span> 
-                                <i>by ${MALscoreUsers} users</i> | 
+                                MAL Score: <span class="badge bg-primary fs-6 rounded-pill">${escapeHTML(MALscore)}</span> 
+                                <i>by ${escapeHTML(MALscoreUsers)} users</i> | 
                             </div>
                             <div>
-                                Rank: <span class="badge bg-secondary fs-6 rounded-pill">#${MALrank}</span> | 
+                                Rank: <span class="badge bg-secondary fs-6 rounded-pill">#${escapeHTML(MALrank)}</span> | 
                             </div>
                             <div>
-                                Popularity: <span class="badge bg-secondary fs-6 rounded-pill">#${MALpopularity}</span>
+                                Popularity: <span class="badge bg-secondary fs-6 rounded-pill">#${escapeHTML(MALpopularity)}</span>
                             </div>
                         </div>
                     </div>

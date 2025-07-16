@@ -7,7 +7,16 @@ const FAVORITES_KEY = 'favoriteCharacters';
 
 const vaInfoCache = {};
 async function getAnimeCharacters(animeId) {
-    console.log("Anime Characters URL: ", `https://api.jikan.moe/v4/anime/${animeId}/characters`);
+    // Sanitizing
+    animeId = Number(animeId);
+
+    if (!Number.isInteger(animeId) || animeId <= 0) {
+        console.error("Invalid anime ID:", animeId);
+        return;
+    }
+
+    const url = `https://api.jikan.moe/v4/anime/${animeId}/characters`;
+    console.log("Anime Characters URL: ", url);
     try {
         const response = await throttledFetch(`https://api.jikan.moe/v4/anime/${animeId}/characters`);
         if (!response.ok) {
@@ -25,9 +34,9 @@ async function getAnimeCharacters(animeId) {
         container.innerHTML = `<div class="fs-3 fs-md-2 fs-lg-1"><i class="bi bi-file-person me-1"></i>List of ${totalCharacters} characters</div>`;
 
         animeCharacters.forEach(entry => {
-            const characterName = entry.character.name;
+            const characterName = escapeHTML(entry.character.name);
             const characterImage = entry.character.images.jpg.image_url;
-            const characterId = entry.character.mal_id;
+            const characterId = Number(entry.character.mal_id);
             const voiceActors = entry.voice_actors;
 
             /*console.log("Name:", characterName);
@@ -46,9 +55,9 @@ async function getAnimeCharacters(animeId) {
                 // Cache VA info per VA ID
                 if (!vaInfoCache[vaMalId]) {
                     vaInfoCache[vaMalId] = {
-                        name: va.person.name,
+                        name: escapeHTML(va.person.name),
                         image: va.person.images.jpg.image_url,
-                        lang: va.language
+                        lang: escapeHTML(va.language)
                     };
                 } 
                 //else {console.log(`Using cached VA info for: ${vaMalId} - ${vaInfoCache[vaMalId].name} (${vaInfoCache[vaMalId].lang})`);}
@@ -204,16 +213,20 @@ function renderFavoriteCharacters() {
     favorites.sort((a, b) => a.name.localeCompare(b.name));
 
     favorites.forEach((char, index) => {
+        // Sanitizing the variables
+        const name = escapeHTML(char.name);
+        const image = escapeHTML(char.image);
+        const id = Number(char.id);
         html += `
             <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded bg-dark text-light favorite-char-row" 
-            data-charid="${char.id}" data-charname="${char.name}" data-charimage="${char.image}">
+            data-charid="${id}" data-charname="${name}" data-charimage="${image}">
                 <div class="d-flex align-items-center flex-grow-1">
-                    <a href="${char.image}" target="_blank">
-                        <img src="${char.image}" alt="${char.name}" loading="lazy" class="character-image"
+                    <a href="${image}" target="_blank">
+                        <img src="${image}" alt="${name}" loading="lazy" class="character-image"
                             style="width: 50px; height: 50px; object-fit: cover; border-radius: 0.25rem; margin-right: 0.75rem; flex-shrink: 0;">
                     </a>
                     <span class="badge bg-secondary me-2 user-select-none">${index + 1}</span>
-                    <a href="https://myanimelist.net/character/${char.id}" class="text-decoration-none" target="_blank"><b>${char.name}</b></a>
+                    <a href="https://myanimelist.net/character/${id}" class="text-decoration-none" target="_blank"><b>${name}</b></a>
                 </div>
                 <button class="btn btn-sm btn-outline-danger toggle-favorite-btn" title="Remove from favorites">
                     <i class="bi bi-trash"></i>
