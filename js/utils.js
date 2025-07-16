@@ -130,6 +130,17 @@ function timeAgoText(timestamp) {
     return `${years} year${years !== 1 ? 's' : ''} ago`;
 }
 
+// Sync all <i data-charid> star icons with current favorite state.
+function syncFavoriteStarIcons() {
+    document.querySelectorAll('i[data-charid]').forEach(icon => {
+        const charId = Number(icon.dataset.charid);
+        const isFavorite = isFavoriteCharacter(charId);
+
+        icon.classList.toggle('bi-star-fill', isFavorite);
+        icon.classList.toggle('bi-star', !isFavorite);
+    });
+}
+
 // Toast for API Rate limit
 let lastRateLimitToast = 0;
 

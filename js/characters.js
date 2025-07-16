@@ -267,12 +267,6 @@ function hideFavoritesList() {
         document.getElementById("viewFavoriteCharacters").classList.add("d-none");
 
         // Sync all star icons with current favorite state
-        document.querySelectorAll('[data-charid]').forEach(icon => {
-            const charId = Number(icon.dataset.charid);
-            const isFavorite = isFavoriteCharacter(charId);
-
-            icon.classList.toggle('bi-star-fill', isFavorite);
-            icon.classList.toggle('bi-star', !isFavorite);
-        });
+        syncFavoriteStarIcons();
     });
 }

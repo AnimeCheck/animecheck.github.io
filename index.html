@@ -163,7 +163,18 @@
                             <label class="form-check-label user-select-none" for="privacyBlurToggle">Blur anime posters and character images</label>
                         </div>
 
-                        <h5>Local Storage
+                        <!--h5>Data</h5>
+                        <div class="d-flex gap-2 mb-3">
+                            <button id="exportFavoritesBtn" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-download"></i> Export
+                            </button>
+                            <input type="file" id="importFavoritesInput" accept="application/json" style="display:none" />
+                            <button id="importFavoritesBtn" class="btn btn-outline-success btn-sm">
+                                <i class="bi bi-upload"></i> Import
+                            </button>
+                        </div-->
+
+                        <h5>Storage
                             <i 
                                 class="bi bi-question-circle text-secondary fs-6"
                                 data-bs-toggle="tooltip" 
@@ -242,5 +253,6 @@
     <script src="js/voiceActors.js" defer></script>
     <script src="js/topAnimeCharacters.js" defer></script>
     <script src="js/modals.js" defer></script>
+    <!--script src="js/importExport.js" defer></script-->
 </body>
 </html>
