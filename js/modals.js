@@ -54,13 +54,6 @@ document.getElementById("viewFavoritesBtn").addEventListener("click", () => {
 // Privacy option
 let isBlurEnabled = document.getElementById('privacyBlurToggle').checked;
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Load setting from sessionStorage on page load
-    isBlurEnabled = sessionStorage.getItem('privacyBlur') === 'true'; // to convert it to Boolean
-    document.getElementById('privacyBlurToggle').checked = isBlurEnabled;
-    toggleImageBlur(isBlurEnabled);
-});
-
 function toggleImageBlur(enabled) {
     // Select anime posters and character images only
     const images = document.querySelectorAll('.anime-poster, .character-image');
@@ -152,8 +145,14 @@ document.getElementById("checkStorageBtn").addEventListener("click", () => {
     });
 });
 
-// Adding Tooltips
+// DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
+    // Privacy Blur toggle. Load setting from sessionStorage on page load
+    isBlurEnabled = sessionStorage.getItem('privacyBlur') === 'true'; // to convert it to Boolean
+    document.getElementById('privacyBlurToggle').checked = isBlurEnabled;
+    toggleImageBlur(isBlurEnabled);
+
+    // Tooltips
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     [...tooltipTriggerList].forEach(el => new bootstrap.Tooltip(el));
 });
