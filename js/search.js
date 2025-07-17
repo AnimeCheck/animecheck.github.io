@@ -136,4 +136,11 @@ function selectSuggestion(anime) {
     document.getElementById("animeCharacters").innerHTML = ""; // To clear previous characters list
     getAnimeById(anime.mal_id);
     getAnimeCharacters(anime.mal_id);
+
+    // Important to keep the setTimeout. Happens after the current event completes.
+    setTimeout(() => {
+        // When users CLICK on a suggestion, then select the search input and press Enter.
+        // The suggestion list will appear.
+        skipInputAfterSelection = false;
+    }, 0);
 }

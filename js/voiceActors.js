@@ -228,6 +228,9 @@ function renderTopVoiceActorCharacters(charList, totalCount, vaMalId, updatedAt 
         </div>
     `;
 
+    // Make the anime title clickable
+    clickableAnimeTitleToSearchInput();
+
     // Setting up the "Update" button
     const updateBtn = document.getElementById('updateTopVoiceActorCharactersBtn');
     if (updateBtn) {

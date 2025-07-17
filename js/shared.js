@@ -22,12 +22,49 @@ function createCharacterListHTML(charList) {
                         <i class="bi ${starClass}" data-charid="${id}" data-charname="${name}"></i>
                         <span class="text-secondary small">(#${id})</span>
                     </div>
-                    <div class="text-info text-break"><em>${animeTitle}</em></div>
+                    <div class="text-info text-break">
+                        <em class="anime-title-clickable">${animeTitle}</em>
+                    </div>
                     <div class="text-warning small">❤ ${char.favorites.toLocaleString()} favorites</div>
                 </div>
             </li>
         `;
     }).join('');
+}
+
+function clickableAnimeTitleToSearchInput() {
+    document.querySelectorAll('.anime-title-clickable').forEach(el => {
+        el.addEventListener('click', () => {
+            const title = el.textContent.trim();
+            const input = document.getElementById('search');
+            input.value = title;
+            input.dispatchEvent(new Event('input'));
+            //console.log("opening suggestion list");
+
+            const suggestions = document.getElementById('suggestions');
+            if (!suggestions) return; // Avoid observing if suggestions container doesn't exist
+
+            // MutationObserver to replace the setTimeout and it looks better
+            const observer = new MutationObserver(() => {
+                const firstSuggestion = suggestions.querySelector('.suggestion-item');
+
+                if (firstSuggestion) {
+                    //console.log("highlighting first choice");
+                    // Add active class to highlight it
+                    firstSuggestion.classList.add('active');
+
+                    // Update your selectedIndex variable if you use it globally
+                    if (typeof selectedIndex !== 'undefined') {
+                        selectedIndex = 0;
+                    }
+                    observer.disconnect(); // Stop watching for changes. We only need to react once, not every time the list changes
+                    firstSuggestion.click();
+                }
+            });
+            // Start observing the suggestions container
+            observer.observe(suggestions, { childList: true });
+        });
+    });
 }
 
 function firstLastNameFormat(name) {

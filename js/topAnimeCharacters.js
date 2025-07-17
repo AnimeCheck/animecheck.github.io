@@ -131,6 +131,9 @@ function renderTopAnimeCharacters(charList, updatedAt = Date.now()) {
         </div>
     `;
 
+    // Make the anime title clickable
+    clickableAnimeTitleToSearchInput();
+
     // Attach refresh button listener
     document.getElementById("refreshTopAnimeCharacters")?.addEventListener("click", () => {
         loadTopAnimeCharacters(true); // force refresh

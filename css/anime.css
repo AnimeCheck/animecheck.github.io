@@ -152,6 +152,11 @@ a:hover {
     object-fit: cover;
 }
 
+.anime-title-clickable:hover {
+    cursor: pointer;
+    color: #67a6ff;
+}
+
 /* For privacy option */
 .blur-images {
     filter: blur(35px) brightness(0.7) saturate(0.5);
