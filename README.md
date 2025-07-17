@@ -1,10 +1,21 @@
 # Anime Check
 > By Rixuel
-Search anime, discover characters, and view top voice actor main roles. 
-Powered by Jikan API.
+
+Search anime, check characters, and view top voice actor main role characters. 
+
+API by Jikan.
+
+## Features
+- Search anime
+- Check Top 50 characters
+- Check Voice Actors Top 10 main role characters
+- Save favorite characters
+- Privacy blur option
+- Import/Export json data
 
 ## Cypress E2E testing notes
 `npm install` if you have the package.json
+
 `npm install cypress --save-dev` if you don't
 
 To open Cypress UI:
