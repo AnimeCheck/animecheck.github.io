@@ -32,9 +32,24 @@ function createCharacterListHTML(charList) {
     }).join('');
 }
 
+let lastClickTime = 0;
+
 function clickableAnimeTitleToSearchInput() {
     document.querySelectorAll('.anime-title-clickable').forEach(el => {
         el.addEventListener('click', () => {
+            // To prevent several spammy clicks on different titles
+            const now = Date.now();
+            if (now - lastClickTime < 1000) {
+                showToast({
+                    message: "Please slow down...",
+                    type: "warning",
+                    icon: "bi bi-exclamation-triangle-fill",
+                    delay: 2000,
+                });
+                return; // Ignore fast clicks
+            }
+            lastClickTime = now;
+
             const title = el.textContent.trim();
             const input = document.getElementById('search');
             input.value = title;
