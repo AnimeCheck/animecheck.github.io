@@ -202,12 +202,18 @@
 
                         <div class="form-check form-switch mb-2">
                             <input class="form-check-input" type="checkbox" role="switch" id="toggleClearTop50">
-                            <label class="form-check-label user-select-none" for="toggleClearTop50">Clear Top 50 anime characters</label>
+                            <label class="form-check-label user-select-none" for="toggleClearTop50">
+                                Clear Top 50 anime characters
+                                <span class="badge rounded-pill bg-secondary user-select-none" id="top50Size">0 KB</span>
+                            </label>
                         </div>
 
                         <div class="form-check form-switch mb-2">
                             <input class="form-check-input" type="checkbox" role="switch" id="toggleClearVAChars">
-                            <label class="form-check-label user-select-none" for="toggleClearVAChars">Clear all voice actors' characters</label>
+                            <label class="form-check-label user-select-none" for="toggleClearVAChars">
+                                Clear all voice actors' characters
+                                <span class="badge rounded-pill bg-secondary" id="vaCharSize">0 KB</span>
+                            </label>
                             <div class="form-text text-secondary small user-select-none">
                                 Favorite characters will be preserved<br>
                                 unless they are cleared alongside
@@ -216,7 +222,10 @@
 
                         <div class="form-check form-switch mb-3">
                             <input class="form-check-input" type="checkbox" role="switch" id="toggleClearFavChars">
-                            <label class="form-check-label user-select-none" for="toggleClearFavChars">Clear all favorite characters</label>
+                            <label class="form-check-label user-select-none" for="toggleClearFavChars">
+                                Clear all favorite characters
+                                <span class="badge rounded-pill bg-secondary" id="favCharSize">0 KB</span>
+                            </label>
                             <div class="form-text text-secondary small user-select-none">
                                 Deletes your saved favorite characters
                             </div>

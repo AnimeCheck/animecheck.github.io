@@ -144,10 +144,35 @@ const StorageHelper = {
         for (const key in localStorage) {
             if (localStorage.hasOwnProperty(key)) {
                 const item = localStorage.getItem(key);
-                totalBytes += key.length + (item?.length || 0);
+                totalBytes += new Blob([key + (item ?? '')]).size;
             }
         }
-        const mb = (totalBytes / (1024 * 1024)).toFixed(2);
+        const mb = (totalBytes / 1000000).toFixed(2);
         return `${mb}`;
     }
 };
+
+function updateStorageSizePills() {
+    // Favorite Characters
+    const favChars = StorageHelper.get('favoriteCharacters') || [];
+    const favCharSize = new Blob(['favoriteCharacters' + JSON.stringify(favChars)]).size;
+    document.getElementById('favCharSize').innerText = Math.round(favCharSize / 1000) + ' KB';
+
+    // Top 50 + Timestamp
+    const top50Cache = StorageHelper.get('top50AnimeCharCache') || [];
+    const top50UpdatedAt = StorageHelper.get('top50AnimeCharUpdatedAt') || null;
+    const cacheSize = new Blob(['top50AnimeCharCache' + JSON.stringify(top50Cache)]).size;
+    const updatedAtSize = new Blob(['top50AnimeCharUpdatedAt' + JSON.stringify(top50UpdatedAt)]).size;
+    const top50Size = cacheSize + updatedAtSize;
+    document.getElementById('top50Size').innerText = Math.round(top50Size / 1000) + ' KB';
+
+    // Voice Actor character caches
+    let vaTotalSize = 0;
+    for (const key in localStorage) {
+        if (key.startsWith('fav_of_character_')) {
+            const item = localStorage.getItem(key);
+            vaTotalSize += item ? new Blob([key + item]).size : 0;
+        }
+    }
+    document.getElementById('vaCharSize').innerText = Math.round(vaTotalSize / 1000) + ' KB';
+}

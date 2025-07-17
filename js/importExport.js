@@ -182,6 +182,8 @@ document.getElementById('importFavoritesInput').addEventListener('change', (even
             // Sync all star icons with current favorite state ---
             syncFavoriteStarIcons();
 
+            updateStorageSizePills();
+
             showToast({
                 message: `${added} imported, ${skipped} skipped.`,
                 type: added ? "success" : "warning",

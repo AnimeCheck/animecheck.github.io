@@ -43,6 +43,11 @@ settingsModal.addEventListener('hide.bs.modal', () => {
     document.body.focus(); // move focus away from modal before it hides
 });
 
+// Show every storage size for each pill
+document.getElementById('settingsModal').addEventListener('show.bs.modal', () => {
+    updateStorageSizePills();
+});
+
 // Favorite option
 document.getElementById("viewFavoritesBtn").addEventListener("click", () => {
     document.getElementById("animeDetailsWrapper").classList.add("d-none");
@@ -114,6 +119,8 @@ document.getElementById("clearCacheBtn").addEventListener("click", () => {
         StorageHelper.remove(TOP50_STORAGE_KEY);
         StorageHelper.remove(TOP50_UPDATED_AT_KEY);
     }
+
+    updateStorageSizePills();
 
     // Check if all toggles are off
     if (!clearTop50 && !clearVAChars && !clearFavChars) {
