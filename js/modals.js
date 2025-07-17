@@ -144,7 +144,7 @@ document.getElementById("checkStorageBtn").addEventListener("click", () => {
         message: `
             <div class="d-flex flex-wrap gap-2 align-items-center">
                 <i class="bi bi-hdd"></i>
-                <div>Local Storage usage: </div>
+                <div>Storage size: </div>
                 <div>${mb} MB / 5.00 MB</div>
             </div>
         `,
