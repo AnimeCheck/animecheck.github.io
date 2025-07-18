@@ -32,7 +32,7 @@ async function getAnimeById(animeId) {
 
         // In the JSON, get every item of "titles": [...]. We want to get each title.
         const getTitle = (type) =>
-                escapeHTML(titles.find((item) => item.type === type)?.title || "N/A");
+                escapeHTML(titles.find((item) => item.type === type)?.title || "");
         
         const defaultTitle = getTitle("Default");
         const synonymTitle = getTitle("Synonym");
@@ -64,29 +64,31 @@ async function getAnimeById(animeId) {
                 </div>
                 <div class="col-md-10 d-flex align-items-center">
                     <div class="w-100">
-                        <div class="fs-3 fs-md-2 fs-lg-1">
-                            ${foreignTitle} <span class="fs-5 fs-md-5 fs-lg-4 text-secondary">(${defaultTitle})</span>
+                        <div>
+                            <div class="fs-3 fs-md-2 fs-lg-1 animetitle">${foreignTitle}</div>
+                            <div class="text-secondary fw-bold">${defaultTitle}</div>
                         </div>
-                        <div class="fs-3 fs-md-2 fs-lg-1">
-                            ${englishTitle} <span class="fs-5 fs-md-5 fs-lg-4 text-secondary">(${synonymTitle})</span>
+                        <div>
+                            <div class="fs-3 fs-md-2 fs-lg-1 animetitle">${englishTitle}</div>
+                            <div class="text-secondary fw-bold">${synonymTitle}</div>
                         </div>
                         <div class="mt-2">Studio: ${studioNames}</div>
                         <div>Genres: ${genreNames}</div>
                         <div>Themes: ${themeNames}</div>
-                        <div>Aired: ${escapeHTML(airedDates)}</div>
-                        <div class="bg-dark text-light my-2 p-2 d-flex flex-wrap gap-2 rounded">
-                            <div>
-                                MAL Score: <span class="badge bg-primary fs-6 rounded-pill">${escapeHTML(MALscore)}</span> 
-                                <i>by ${escapeHTML(MALscoreUsers)} users</i> | 
-                            </div>
-                            <div>
-                                Rank: <span class="badge bg-secondary fs-6 rounded-pill">#${escapeHTML(MALrank)}</span> | 
-                            </div>
-                            <div>
-                                Popularity: <span class="badge bg-secondary fs-6 rounded-pill">#${escapeHTML(MALpopularity)}</span>
-                            </div>
-                        </div>
+                        <div class="mt-2">Aired: ${escapeHTML(airedDates)}</div>
                     </div>
+                </div>
+            </div>
+            <div class="bg-dark text-light my-2 p-2 d-flex flex-wrap gap-2 rounded">
+                <div>
+                    MAL Score: <span class="badge bg-primary fs-6 rounded-pill">${escapeHTML(MALscore)}</span> 
+                    <i>by ${escapeHTML(MALscoreUsers)} users</i> | 
+                </div>
+                <div>
+                    Rank: <span class="badge bg-secondary fs-6 rounded-pill">#${escapeHTML(MALrank)}</span> | 
+                </div>
+                <div>
+                    Popularity: <span class="badge bg-secondary fs-6 rounded-pill">#${escapeHTML(MALpopularity)}</span>
                 </div>
             </div>
         `;
