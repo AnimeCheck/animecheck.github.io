@@ -109,17 +109,11 @@ async function getAnimeById(animeId) {
         const synopsisContainer = document.querySelector('.toggleSynopsisContainer');
 
         if (synopsis.trim() !== "") {
-            let synopsisLoaded = false;
             const section = document.getElementById('synopsisSection');
             const icon = btn.querySelector('i');
 
-            function toggleSynopsis() {
-                if (!synopsisLoaded) {
-                    section.innerHTML = escapeHTML(synopsis).replace(/\n/g, "<br>"); // Synopsis text here
-                    synopsisLoaded = true;
-                }
-
-                const isVisible = section.classList.contains('show');
+            btn.addEventListener('click', () => {
+                const isVisible = section.classList.contains('show'); // if using .fade
 
                 if (isVisible) {
                     section.classList.remove('show'); // Fade effect
@@ -127,13 +121,16 @@ async function getAnimeById(animeId) {
                     icon.classList.replace('bi-eye-slash', 'bi-eye');
                     btn.setAttribute('aria-expanded', 'false');
                 } else {
+                    if (section.innerHTML === "") {
+                        section.innerHTML = escapeHTML(synopsis).replace(/\n/g, "<br>"); // Add snopsis text once
+                    }
+
                     section.classList.remove('d-none');
                     setTimeout(() => section.classList.add('show'), 10); // Fade effect
                     icon.classList.replace('bi-eye', 'bi-eye-slash');
                     btn.setAttribute('aria-expanded', 'true');
                 }
-            }
-            btn.addEventListener('click', toggleSynopsis);
+            });
         } else {
             synopsisContainer.classList.add('d-none');
         }

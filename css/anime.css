@@ -110,13 +110,13 @@ a:hover {
     #toggleSynopsisBtn::before {
         content: "Show Synopsis";
         margin-right: 0.3em;
-        font-size: 1.2rem;
+        font-size: 1.0rem;
     }
     .toggleSynopsisContainer {
         width: 100% !important;
     }
     .bi-eye, .bi-eye-slash {
-        font-size: 1.0rem;
+        font-size: 0.8rem;
     }
 }
 
