@@ -82,15 +82,20 @@ async function getAnimeById(animeId) {
             </div>
             <div class="bg-dark text-light my-2 p-2 d-flex flex-wrap gap-2 rounded justify-content-between align-items-center">
                 <div class="d-flex flex-wrap gap-2">
-                    <div>
-                        MAL Score: <span class="badge bg-primary fs-6 rounded-pill">${escapeHTML(MALscore)}</span> 
-                        <i>by ${escapeHTML(MALscoreUsers)} users</i> | 
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fw-semibold">MAL Score:</span>
+                        <span class="badge bg-primary fs-6 rounded-pill">${escapeHTML(MALscore)}</span> 
+                        <small>by ${escapeHTML(MALscoreUsers)} users</small>
+                        <span class="text-secondary">|</span>
                     </div>
-                    <div>
-                        Rank: <span class="badge bg-secondary fs-6 rounded-pill">#${escapeHTML(MALrank)}</span> | 
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fw-semibold">Rank:</span>
+                        <span class="badge bg-secondary fs-6 rounded-pill">#${escapeHTML(MALrank)}</span>
+                        <span class="text-secondary">|</span>
                     </div>
-                    <div>
-                        Popularity: <span class="badge bg-secondary fs-6 rounded-pill">#${escapeHTML(MALpopularity)}</span>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fw-semibold">Popularity:</span>
+                        <span class="badge bg-secondary fs-6 rounded-pill">#${escapeHTML(MALpopularity)}</span>
                     </div>
                 </div>
 
