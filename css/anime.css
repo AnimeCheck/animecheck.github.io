@@ -28,6 +28,16 @@ a:hover {
     color: #67a6ff;
 }
 
+::selection {
+    background: #000000;
+    color: #4063ff;
+}
+
+::-moz-selection {
+    background: #000000;
+    color: #4063ff;
+}
+
 #suggestions {
     position: absolute;
     z-index: 1000;
