@@ -115,20 +115,20 @@ async function getAnimeById(animeId) {
 
             function toggleSynopsis() {
                 if (!synopsisLoaded) {
-                section.innerHTML = escapeHTML(synopsis).replace(/\n/g, "<br>");
-                synopsisLoaded = true;
+                    section.innerHTML = escapeHTML(synopsis).replace(/\n/g, "<br>"); // Synopsis text here
+                    synopsisLoaded = true;
                 }
 
                 const isVisible = section.classList.contains('show');
 
                 if (isVisible) {
-                    section.classList.remove('show');
-                    setTimeout(() => section.classList.add('d-none'), 150);
+                    section.classList.remove('show'); // Fade effect
+                    setTimeout(() => section.classList.add('d-none'), 150); // Fade effect
                     icon.classList.replace('bi-eye-slash', 'bi-eye');
                     btn.setAttribute('aria-expanded', 'false');
                 } else {
                     section.classList.remove('d-none');
-                    setTimeout(() => section.classList.add('show'), 10);
+                    setTimeout(() => section.classList.add('show'), 10); // Fade effect
                     icon.classList.replace('bi-eye', 'bi-eye-slash');
                     btn.setAttribute('aria-expanded', 'true');
                 }
