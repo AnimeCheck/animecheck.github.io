@@ -30,12 +30,12 @@ a:hover {
 
 ::selection {
     background: #000000;
-    color: #4063ff;
+    color: #60a4ff;
 }
 
 ::-moz-selection {
     background: #000000;
-    color: #4063ff;
+    color: #60a4ff;
 }
 
 #suggestions {
