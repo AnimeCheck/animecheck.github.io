@@ -153,6 +153,11 @@ function escapeHTML(str) {
     })[char]);
 }
 
+function uppercaseFirstChar(str) {
+    if (!str) return "";
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 // localStorage helper
 const StorageHelper = {
     get(key) {

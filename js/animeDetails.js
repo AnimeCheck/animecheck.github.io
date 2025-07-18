@@ -18,13 +18,15 @@ async function getAnimeById(animeId) {
         const studios = dataJSON.data?.studios || [];
         const genres = dataJSON.data?.genres || [];
         const themes = dataJSON.data?.themes || [];
+        const season = dataJSON.data?.season || "";
         const airedDates = dataJSON.data?.aired.string || ["N/A"];
+        const episodes = dataJSON.data?.episodes || 0;
         const imageURL = dataJSON.data?.images.jpg.large_image_url;
         //console.log("imageURL: ", imageURL);
         const MALscore = dataJSON.data?.score || ["N/A"];
         const MALscoreUsers = dataJSON.data?.scored_by || ["N/A"];
         const MALrank = dataJSON.data?.rank || [""];
-        const MALpopularity = dataJSON.data?.popularity || ["N/A"];
+        const MALpopularity = dataJSON.data?.popularity || [""];
         const synopsis = dataJSON.data?.synopsis || "";
         /*console.log("MALscore: ", MALscore);
         console.log("MALscoreUsers: ", MALscoreUsers);
@@ -76,7 +78,9 @@ async function getAnimeById(animeId) {
                         <div class="mt-2">Studio: ${studioNames}</div>
                         <div>Genres: ${genreNames}</div>
                         <div>Themes: ${themeNames}</div>
+                        <div>Season: <span class="badge bg-info me-2 rounded-pill">${escapeHTML(uppercaseFirstChar(season))}</span></div>
                         <div class="mt-2">Aired: ${escapeHTML(airedDates)}</div>
+                        <div class="">Episodes: ${Number(episodes)}</div>
                     </div>
                 </div>
             </div>
