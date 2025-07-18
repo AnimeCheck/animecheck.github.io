@@ -25,6 +25,7 @@ async function getAnimeById(animeId) {
         const MALscoreUsers = dataJSON.data?.scored_by || ["N/A"];
         const MALrank = dataJSON.data?.rank || [""];
         const MALpopularity = dataJSON.data?.popularity || ["N/A"];
+        const synopsis = dataJSON.data?.synopsis || "";
         /*console.log("MALscore: ", MALscore);
         console.log("MALscoreUsers: ", MALscoreUsers);
         console.log("MALrank: ", MALrank);
@@ -79,20 +80,63 @@ async function getAnimeById(animeId) {
                     </div>
                 </div>
             </div>
-            <div class="bg-dark text-light my-2 p-2 d-flex flex-wrap gap-2 rounded">
-                <div>
-                    MAL Score: <span class="badge bg-primary fs-6 rounded-pill">${escapeHTML(MALscore)}</span> 
-                    <i>by ${escapeHTML(MALscoreUsers)} users</i> | 
+            <div class="bg-dark text-light my-2 p-2 d-flex flex-wrap gap-2 rounded justify-content-between align-items-center">
+                <div class="d-flex flex-wrap gap-2">
+                    <div>
+                        MAL Score: <span class="badge bg-primary fs-6 rounded-pill">${escapeHTML(MALscore)}</span> 
+                        <i>by ${escapeHTML(MALscoreUsers)} users</i> | 
+                    </div>
+                    <div>
+                        Rank: <span class="badge bg-secondary fs-6 rounded-pill">#${escapeHTML(MALrank)}</span> | 
+                    </div>
+                    <div>
+                        Popularity: <span class="badge bg-secondary fs-6 rounded-pill">#${escapeHTML(MALpopularity)}</span>
+                    </div>
                 </div>
-                <div>
-                    Rank: <span class="badge bg-secondary fs-6 rounded-pill">#${escapeHTML(MALrank)}</span> | 
-                </div>
-                <div>
-                    Popularity: <span class="badge bg-secondary fs-6 rounded-pill">#${escapeHTML(MALpopularity)}</span>
+
+                <div class="toggleSynopsisContainer">
+                    <button id="toggleSynopsisBtn" class="btn btn-outline-light btn-sm w-100" title="Toggle Synopsis" aria-expanded="false" aria-controls="synopsisSection">
+                        <i class="bi bi-eye"></i>
+                    </button>
                 </div>
             </div>
+            <div id="synopsisSection" class="card bg-dark bg-opacity-50 text-light p-2 lh-lg fade d-none"></div>
         `;
         document.getElementById("animeDetailsWrapper").innerHTML = animeDetailsHTML;
+
+        // Toggle Synopsis Section if it exists
+        const btn = document.getElementById('toggleSynopsisBtn');
+        const synopsisContainer = document.querySelector('.toggleSynopsisContainer');
+
+        if (synopsis.trim() !== "") {
+            let synopsisLoaded = false;
+            const section = document.getElementById('synopsisSection');
+            const icon = btn.querySelector('i');
+
+            function toggleSynopsis() {
+                if (!synopsisLoaded) {
+                section.innerHTML = escapeHTML(synopsis).replace(/\n/g, "<br>");
+                synopsisLoaded = true;
+                }
+
+                const isVisible = section.classList.contains('show');
+
+                if (isVisible) {
+                    section.classList.remove('show');
+                    setTimeout(() => section.classList.add('d-none'), 150);
+                    icon.classList.replace('bi-eye-slash', 'bi-eye');
+                    btn.setAttribute('aria-expanded', 'false');
+                } else {
+                    section.classList.remove('d-none');
+                    setTimeout(() => section.classList.add('show'), 10);
+                    icon.classList.replace('bi-eye', 'bi-eye-slash');
+                    btn.setAttribute('aria-expanded', 'true');
+                }
+            }
+            btn.addEventListener('click', toggleSynopsis);
+        } else {
+            synopsisContainer.classList.add('d-none');
+        }
 
         // Privacy option
         toggleImageBlur(isBlurEnabled);

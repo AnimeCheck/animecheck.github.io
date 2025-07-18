@@ -96,16 +96,30 @@ a:hover {
     cursor: pointer;
 }
 
+@media (max-width: 768px) {
+    #toggleSynopsisBtn::before {
+        content: "Show Synopsis";
+        margin-right: 0.3em;
+        font-size: 1.2rem;
+    }
+    .toggleSynopsisContainer {
+        width: 100% !important;
+    }
+    .bi-eye, .bi-eye-slash {
+        font-size: 1.0rem;
+    }
+}
+
 /* For fade in the character card when scrolling down */
 .fade-in {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
 .fade-in.visible {
-  opacity: 1;
-  transform: translateY(0);
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .custom-suggestion-list {

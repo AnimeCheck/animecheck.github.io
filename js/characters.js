@@ -28,6 +28,8 @@ async function getAnimeCharacters(animeId) {
         const totalCharacters = animeCharacters.length;
         //console.log("Total Characters: ", totalCharacters);
 
+        if (totalCharacters === 0) return;
+
         const container = document.getElementById("animeCharacters");
 
         // Add title header
