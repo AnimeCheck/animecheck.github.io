@@ -130,15 +130,22 @@ function timeAgoText(timestamp) {
     return `${years} year${years !== 1 ? 's' : ''} ago`;
 }
 
-// Sync all <i data-charid> star icons with current favorite state.
-function syncFavoriteStarIcons() {
-    document.querySelectorAll('i[data-charid]').forEach(icon => {
-        const charId = Number(icon.dataset.charid);
-        const isFavorite = isFavoriteCharacter(charId);
+// To sanitize string data.
+function escapeHTML(str) {
+    return String(str).replace(/[&<>"'`=]/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+        '`': '&#x60;',
+        '=': '&#x3D;'
+    })[char]);
+}
 
-        icon.classList.toggle('bi-star-fill', isFavorite);
-        icon.classList.toggle('bi-star', !isFavorite);
-    });
+function uppercaseFirstChar(str) {
+    if (!str) return "";
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 // Toast for API Rate limit

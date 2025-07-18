@@ -150,14 +150,13 @@ document.getElementById('importFavoritesInput').addEventListener('change', (even
             // fav_of_character_: merge, skip existing
             if (imported.favOfCharacter && typeof imported.favOfCharacter === 'object') {
                 Object.entries(imported.favOfCharacter).forEach(([key, value]) => {
-                    const isValid =
-                        typeof value === 'object' &&
-                        value !== null &&
-                        typeof value.value === 'number' &&
-                        typeof value.timestamp === 'number';
+                    if (!key.startsWith('fav_of_character_')) {
+                        skipped++;
+                        return;
+                    }
 
                     // Validate each favOfCharacter[key] has expected object structure
-                    if (!localStorage.getItem(key) && isValid) {
+                    if (!localStorage.getItem(key) && isValidFavOfCharacter(value)) {
                         try {
                             StorageHelper.set(key, value);
                             added++;
@@ -231,5 +230,31 @@ function isValidTimestamp(ts) {
     // Allow some leeway (e.g., up to 1 day in the future)
     const now = Date.now();
     if (ts > now + 24 * 60 * 60 * 1000) return false;
+    return true;
+}
+
+// Validate that the favOfCharacter value object has sane numeric fields
+function isValidFavOfCharacter(valueObj) {
+    const keys = Object.keys(valueObj);
+    // Only allow "value" and "timestamp" keys
+    if (keys.length !== 2 || !keys.includes('value') || !keys.includes('timestamp')) {
+        return false;
+    }
+
+    // Basic object and non-null check
+    if (typeof valueObj !== 'object' || valueObj === null) {
+        return false;
+    }
+
+    // Validate `value`: finite number, >= 0, <= 10 million (adjust max if needed)
+    if (!Number.isFinite(valueObj.value) || valueObj.value < 0 || valueObj.value > 1e7) {
+        return false;
+    }
+
+    // Validate `timestamp`: finite number and passes your isValidTimestamp() function
+    if (!Number.isFinite(valueObj.timestamp) || !isValidTimestamp(valueObj.timestamp)) {
+        return false;
+    }
+
     return true;
 }

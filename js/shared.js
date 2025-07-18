@@ -140,22 +140,15 @@ function showToast({ message = "", type = "dark", icon = "", delay = 4000 }) {
     }
 }
 
-// To sanitize string data.
-function escapeHTML(str) {
-    return String(str).replace(/[&<>"'`=]/g, (char) => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;',
-        '`': '&#x60;',
-        '=': '&#x3D;'
-    })[char]);
-}
+// Sync all <i data-charid> star icons with current favorite state.
+function syncFavoriteStarIcons() {
+    document.querySelectorAll('i[data-charid]').forEach(icon => {
+        const charId = Number(icon.dataset.charid);
+        const isFavorite = isFavoriteCharacter(charId);
 
-function uppercaseFirstChar(str) {
-    if (!str) return "";
-    return str.charAt(0).toUpperCase() + str.slice(1);
+        icon.classList.toggle('bi-star-fill', isFavorite);
+        icon.classList.toggle('bi-star', !isFavorite);
+    });
 }
 
 // localStorage helper
