@@ -148,6 +148,13 @@ function uppercaseFirstChar(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+const debug = false;
+function consoleWarn(...args) {
+    if (debug) {
+        console.warn(...args);
+    }
+}
+
 // Toast for API Rate limit
 let lastRateLimitToast = 0;
 

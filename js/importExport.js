@@ -93,7 +93,7 @@ importInput.addEventListener('change', (event) => {
             const allowedKeys = ['favoriteCharacters', 'top50AnimeCharCache', 'top50AnimeCharUpdatedAt', 'favOfCharacter'];
             const unknownKeys = Object.keys(imported).filter(key => !allowedKeys.includes(key));
             if (unknownKeys.length > 0) {
-                console.warn("Unknown keys in import:", unknownKeys);
+                consoleWarn("Unknown keys in import:", unknownKeys);
                 skipped += unknownKeys.length; // optional: count them
             }
 
@@ -130,7 +130,7 @@ importInput.addEventListener('change', (event) => {
 
                     StorageHelper.set('top50AnimeCharCache', sanitized);
                 } else {
-                    console.warn('Invalid top50AnimeCharCache format in import, skipping.');
+                    consoleWarn('Invalid top50AnimeCharCache format in import, skipping.');
                     skipped++;
                 }
             }
@@ -146,7 +146,7 @@ importInput.addEventListener('change', (event) => {
                     }
                     StorageHelper.set('top50AnimeCharUpdatedAt', imported.top50AnimeCharUpdatedAt);
                 } else {
-                    console.warn('Invalid top50AnimeCharUpdatedAt timestamp in import, skipping.');
+                    consoleWarn('Invalid top50AnimeCharUpdatedAt timestamp in import, skipping.');
                     skipped++;
                 }
             }
@@ -244,7 +244,7 @@ function isValidFavoriteCharacter(char) {
     const keys = Object.keys(char);
 
     if (keys.length !== allowedKeys.length || !keys.every(key => allowedKeys.includes(key))) {
-        console.warn('Rejected: unexpected keys in favoriteCharacter entry:', keys);
+        consoleWarn('Rejected: unexpected keys in favoriteCharacter entry:', keys);
         return false;
     }
 
@@ -272,7 +272,7 @@ function isValidTop50Cache(cache) {
         const entryKeys = Object.keys(entry);
 
         if (entryKeys.length !== allowedKeys.length || !entryKeys.every(key => allowedKeys.includes(key))) {
-            console.warn('Rejected: invalid keys in top50AnimeCharCache entry:', entryKeys);
+            consoleWarn('Rejected: invalid keys in top50AnimeCharCache entry:', entryKeys);
             return false;
         }
 
@@ -300,7 +300,7 @@ function isValidTimestamp(ts) {
 function isValidFavOfCharacter(valueObj) {
     // Basic object and non-null check
     if (typeof valueObj !== 'object' || valueObj === null) {
-        console.warn('Rejected: not a valid object.', valueObj);
+        consoleWarn('Rejected: not a valid object.', valueObj);
         return false;
     }
 
@@ -309,19 +309,19 @@ function isValidFavOfCharacter(valueObj) {
     const keys = Object.keys(valueObj);
 
     if (keys.length !== allowedKeys.length || !keys.every(key => allowedKeys.includes(key))) {
-        console.warn('Rejected: unexpected keys.', keys);
+        consoleWarn('Rejected: unexpected keys.', keys);
         return false;
     }
 
     // Validate `value`: finite number, >= 0, <= 10 million (adjust max if needed)
     if (!Number.isFinite(valueObj.value) || valueObj.value < 0 || valueObj.value > 1e7) {
-        console.warn('Rejected: invalid "value"', valueObj.value);
+        consoleWarn('Rejected: invalid "value"', valueObj.value);
         return false;
     }
 
     // Validate `timestamp`: finite number and passes your isValidTimestamp() function
     if (!Number.isFinite(valueObj.timestamp) || !isValidTimestamp(valueObj.timestamp)) {
-        console.warn('Rejected: invalid "timestamp"', valueObj.timestamp);
+        consoleWarn('Rejected: invalid "timestamp"', valueObj.timestamp);
         return false;
     }
 
