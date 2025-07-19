@@ -6,6 +6,9 @@ const clearBtn = document.getElementById('clear-btn');
 
 let debounceTimeout;
 let selectedIndex = -1 // For Up and Down arrow keys in suggestion list
+let isFetching = false; // For preventing spamming input
+let fetchController = null;
+let timeoutId;
 
 searchInput.addEventListener('input', () => {
     // Handles Enter when no suggestions are showing
@@ -21,8 +24,32 @@ searchInput.addEventListener('input', () => {
 
     if (query.length < 2) return; // Less than 2 shows no suggestion list
 
+    // Abort previous fetch if any
+    if (fetchController) {
+        fetchController.abort();
+        //console.warn("Previous fetch aborted due to new input");
+    }
+    
     debounceTimeout = setTimeout(() => {
-        fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=5`)
+        // Recheck if the input has changed during the delay
+        if (query !== searchInput.value.trim()) return;
+
+        // AbortController allows you to cancel in-flight fetches.
+        fetchController = new AbortController();
+        const signal = fetchController.signal; // For fetch() to listen for abort
+
+        isFetching = true;
+        //console.log("Fetching suggestions... (pending = true)");
+
+        // auto-timeout after 10 seconds
+        timeoutId = setTimeout(() => {
+            if (isFetching && fetchController) {
+                fetchController.abort();
+                //console.warn("Fetch manually aborted after 10 seconds");
+            }
+        }, 10000);
+
+        fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=5`, {signal})
             .then(res => res.json())
             .then(data => {
                 suggestions.innerHTML = ''; // To avoid a duplicated list when you enter a title and you press backspace.
@@ -59,6 +86,15 @@ searchInput.addEventListener('input', () => {
                     });
                     suggestions.appendChild(li);
                 });
+            }).catch(err => {
+                if (err.name !== 'AbortError') {
+                    console.warn("Autocomplete fetch failed", err);
+                }
+            }).finally(() => {
+                isFetching = false;
+                clearTimeout(timeoutId); // prevent zombie abort
+                fetchController = null;
+                //console.log("Fetch done. (pending = false)");
             });
     }, 400);
 });
