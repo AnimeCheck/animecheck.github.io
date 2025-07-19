@@ -114,13 +114,16 @@ document.getElementById('importFavoritesInput').addEventListener('change', (even
                 const truncated = imported.top50AnimeCharCache.slice(0, 50);
 
                 if (isValidTop50Cache(truncated)) {
+                    // Sanitize all entries before saving
+                    const sanitized = truncated.map(sanitizeTop50Entry);
                     // Counter
                     if (StorageHelper.get('top50AnimeCharCache')) {
                         skipped++;
                     } else {
                         added++;
                     }
-                    StorageHelper.set('top50AnimeCharCache', truncated);
+
+                    StorageHelper.set('top50AnimeCharCache', sanitized);
                 } else {
                     console.warn('Invalid top50AnimeCharCache format in import, skipping.');
                     skipped++;
@@ -154,7 +157,8 @@ document.getElementById('importFavoritesInput').addEventListener('change', (even
                     // Validate each favOfCharacter[key] has expected object structure
                     if (!localStorage.getItem(key) && isValidFavOfCharacter(value)) {
                         try {
-                            StorageHelper.set(key, value);
+                            const sanitizedValue = sanitizeFavOfCharacter(value);
+                            StorageHelper.set(key, sanitizedValue);
                             added++;
                         } catch (e) {
                             if (e instanceof DOMException && e.name === 'QuotaExceededError') {
@@ -202,6 +206,23 @@ function sanitizeFavCharacter(char) {
         id: Number(char.id),
         name: String(char.name).trim(),
         image: String(char.image)
+    };
+}
+
+function sanitizeTop50Entry(entry) {
+    return {
+        id: Number(entry.id),
+        name: String(entry.name).trim(),
+        image: String(entry.image).trim(),
+        animeTitle: String(entry.animeTitle).trim(),
+        favorites: Number(entry.favorites)
+    };
+}
+
+function sanitizeFavOfCharacter(valueObj) {
+    return {
+        value: Number(valueObj.value),
+        timestamp: Number(valueObj.timestamp)
     };
 }
 
