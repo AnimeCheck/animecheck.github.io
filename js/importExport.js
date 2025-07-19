@@ -1,7 +1,10 @@
 // Import Export Download Upload
+const importBtn = document.getElementById('importDataBtn');
+const importInput = document.getElementById('importDataInput');
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB max file size
+
 // Export favorites as JSON file
-document.getElementById('exportFavoritesBtn').addEventListener('click', () => {
+document.getElementById('exportDataBtn').addEventListener('click', () => {
     // Favorites
     const favoriteCharacters = StorageHelper.get('favoriteCharacters') || [];
     // Top 50 cache
@@ -57,14 +60,16 @@ document.getElementById('exportFavoritesBtn').addEventListener('click', () => {
 });
 
 // Trigger file selector for import
-document.getElementById('importFavoritesBtn').addEventListener('click', () => {
-    document.getElementById('importFavoritesInput').click();
+importBtn.addEventListener('click', () => {
+    importInput.click();
 });
 
 // Import favorites from selected JSON file (skip existing)
-document.getElementById('importFavoritesInput').addEventListener('change', (event) => {
+importInput.addEventListener('change', (event) => {
     const file = event.target.files[0];
     if (!file) return;
+
+    importBtn.disabled = true; // Disable import button during processing
 
     // Check import size limit
     if (file.size > MAX_FILE_SIZE) {
@@ -194,9 +199,10 @@ document.getElementById('importFavoritesInput').addEventListener('change', (even
                 type: "danger",
                 icon: "bi bi-x-circle"
             });
+        } finally {
+            importBtn.disabled = false;  // Re-enable import button
+            event.target.value = '';     // Allow re-importing the same file
         }
-        // Allow re-importing the same file
-        event.target.value = '';
     };
     reader.readAsText(file);
 });
