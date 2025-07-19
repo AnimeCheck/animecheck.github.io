@@ -96,15 +96,9 @@ document.getElementById('importFavoritesInput').addEventListener('change', (even
             if (Array.isArray(imported.favoriteCharacters)) {
                 const existing = StorageHelper.get('favoriteCharacters') || [];
                 const existingIds = new Set(existing.map(char => char.id));
-                imported.favoriteCharacters.forEach(char => {
-                    const isValidFavChar = char &&
-                        typeof char.id === 'number' &&
-                        typeof char.name === 'string' &&
-                        char.name.trim().length > 0 &&
-                        typeof char.image === 'string' &&
-                        /^https:\/\/cdn\.myanimelist\.net\/images\/.+\.(jpg|jpeg|png|webp|gif)(\?.*)?$/i.test(char.image);
 
-                    if (isValidFavChar && !existingIds.has(char.id) && existing.length < 1000) {
+                imported.favoriteCharacters.forEach(char => {
+                    if (isValidFavoriteCharacter(char) && !existingIds.has(char.id) && existing.length < 1000) {
                         existing.push(sanitizeFavCharacter(char));
                         existingIds.add(char.id);
                         added++;
@@ -117,14 +111,16 @@ document.getElementById('importFavoritesInput').addEventListener('change', (even
 
             // top50AnimeCharCache: overwrite
             if (Array.isArray(imported.top50AnimeCharCache)) {
-                if (isValidTop50Cache(imported.top50AnimeCharCache)) {
+                const truncated = imported.top50AnimeCharCache.slice(0, 50);
+
+                if (isValidTop50Cache(truncated)) {
                     // Counter
                     if (StorageHelper.get('top50AnimeCharCache')) {
                         skipped++;
                     } else {
                         added++;
                     }
-                    StorageHelper.set('top50AnimeCharCache', imported.top50AnimeCharCache);
+                    StorageHelper.set('top50AnimeCharCache', truncated);
                 } else {
                     console.warn('Invalid top50AnimeCharCache format in import, skipping.');
                     skipped++;
@@ -209,10 +205,50 @@ function sanitizeFavCharacter(char) {
     };
 }
 
+// Validate a single favorite character object
+function isValidFavoriteCharacter(char) {
+    // Inside favoriteCharacters[] array, we have objects
+    if (!char || typeof char !== 'object' || Array.isArray(char)) {
+        return false;
+    }
+
+    // Ensure no unexpected keys
+    const allowedKeys = ['id', 'name', 'image'];
+    const keys = Object.keys(char);
+
+    if (keys.length !== allowedKeys.length || !keys.every(key => allowedKeys.includes(key))) {
+        console.warn('Rejected: unexpected keys in favoriteCharacter entry:', keys);
+        return false;
+    }
+
+    return char &&
+        typeof char.id === 'number' &&
+        typeof char.name === 'string' &&
+        char.name.trim().length > 0 &&
+        typeof char.image === 'string' &&
+        /^https:\/\/cdn\.myanimelist\.net\/images\/.+\.(jpg|jpeg|png|webp|gif)(\?.*)?$/i.test(char.image);
+}
+
 // Validate top50AnimeCharCache is an array of valid entries
 function isValidTop50Cache(cache) {
     if (!Array.isArray(cache)) return false;
+
     return cache.every(entry => {
+        // If entry is missing, not an object, or is an array — return false.
+        // Inside top50AnimeCharCache[] array, we have objects
+        if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
+            return false;
+        }
+
+        // Ensure no unexpected keys
+        const allowedKeys = ['id', 'name', 'image', 'animeTitle', 'favorites'];
+        const entryKeys = Object.keys(entry);
+
+        if (entryKeys.length !== allowedKeys.length || !entryKeys.every(key => allowedKeys.includes(key))) {
+            console.warn('Rejected: invalid keys in top50AnimeCharCache entry:', entryKeys);
+            return false;
+        }
+
         return entry &&
             typeof entry.id === 'number' &&
             typeof entry.name === 'string' && entry.name.trim().length > 0 &&
@@ -235,24 +271,30 @@ function isValidTimestamp(ts) {
 
 // Validate that the favOfCharacter value object has sane numeric fields
 function isValidFavOfCharacter(valueObj) {
-    const keys = Object.keys(valueObj);
-    // Only allow "value" and "timestamp" keys
-    if (keys.length !== 2 || !keys.includes('value') || !keys.includes('timestamp')) {
+    // Basic object and non-null check
+    if (typeof valueObj !== 'object' || valueObj === null) {
+        console.warn('Rejected: not a valid object.', valueObj);
         return false;
     }
 
-    // Basic object and non-null check
-    if (typeof valueObj !== 'object' || valueObj === null) {
+    // Only allow "value" and "timestamp" keys
+    const allowedKeys = ['value', 'timestamp'];
+    const keys = Object.keys(valueObj);
+
+    if (keys.length !== allowedKeys.length || !keys.every(key => allowedKeys.includes(key))) {
+        console.warn('Rejected: unexpected keys.', keys);
         return false;
     }
 
     // Validate `value`: finite number, >= 0, <= 10 million (adjust max if needed)
     if (!Number.isFinite(valueObj.value) || valueObj.value < 0 || valueObj.value > 1e7) {
+        console.warn('Rejected: invalid "value"', valueObj.value);
         return false;
     }
 
     // Validate `timestamp`: finite number and passes your isValidTimestamp() function
     if (!Number.isFinite(valueObj.timestamp) || !isValidTimestamp(valueObj.timestamp)) {
+        console.warn('Rejected: invalid "timestamp"', valueObj.timestamp);
         return false;
     }
 
