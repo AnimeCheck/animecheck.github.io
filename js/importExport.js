@@ -2,16 +2,14 @@
 const importBtn = document.getElementById('importDataBtn');
 const importInput = document.getElementById('importDataInput');
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB max file size
+const EXPORT_SOURCE = 'animeCheck-client-source';
 
 // Export favorites as JSON file
-document.getElementById('exportDataBtn').addEventListener('click', () => {
-    // Favorites
+document.getElementById('exportDataBtn').addEventListener('click', async () => {
+    // Gather all export data (Favorites, Top 50, fav_of_character_)
     const favoriteCharacters = StorageHelper.get('favoriteCharacters') || [];
-    // Top 50 cache
     const top50AnimeCharCache = StorageHelper.get('top50AnimeCharCache') || [];
-    // Top 50 timestamp
     const top50AnimeCharUpdatedAt = StorageHelper.get('top50AnimeCharUpdatedAt') || null;
-    // All fav_of_character_ keys
     const favOfCharacter = {};
     Object.keys(localStorage).forEach(key => {
         if (key.startsWith('fav_of_character_')) {
@@ -19,7 +17,7 @@ document.getElementById('exportDataBtn').addEventListener('click', () => {
         }
     });
 
-    // Build export object
+    // Build export object WITHOUT signature
     const exportData = {
         favoriteCharacters,
         top50AnimeCharCache,
@@ -27,7 +25,14 @@ document.getElementById('exportDataBtn').addEventListener('click', () => {
         favOfCharacter
     };
 
-    // Export as JSON
+    // Serialize WITHOUT signature
+    const unsignedStr = JSON.stringify(exportData);
+    // Calculate signature with secret
+    const signature = await sha256(unsignedStr + EXPORT_SOURCE);
+    // Add _signature to export object
+    exportData._signature = signature;
+
+    // Export as JSON including signature with pretty print format
     const dataStr = JSON.stringify(exportData, null, 2);
 
     // Check export size limit
@@ -41,7 +46,7 @@ document.getElementById('exportDataBtn').addEventListener('click', () => {
         return; // Stop export
     }
 
-    // Proceed with creating Blob and download
+    // Create Blob and download file
     const blob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -53,7 +58,7 @@ document.getElementById('exportDataBtn').addEventListener('click', () => {
     URL.revokeObjectURL(url);
 
     showToast({
-        message: "Anime Check data exported!",
+        message: "Anime Check data exported with signature!",
         type: "success",
         icon: "bi bi-download"
     });
@@ -79,15 +84,35 @@ importInput.addEventListener('change', (event) => {
             icon: "bi bi-x-circle"
         });
         event.target.value = ''; // reset input
+        importBtn.disabled = false;
         return;
     }
 
     const reader = new FileReader();
     let added = 0, skipped = 0;
 
-    reader.onload = function (e) {
+    reader.onload = async function (e) {
         try {
             const imported = JSON.parse(e.target.result);
+
+            // Extract signature and remove it from object
+            const receivedSig = imported._signature;
+            delete imported._signature;
+
+            // Compute expected signature
+            const unsignedStr = JSON.stringify(imported);
+            const expectedSig = await sha256(unsignedStr + EXPORT_SOURCE);
+
+            if (receivedSig !== expectedSig) {
+                showToast({
+                    message: "Import rejected: invalid or tampered file.",
+                    type: "danger",
+                    icon: "bi bi-shield-x"
+                });
+                importBtn.disabled = false;
+                event.target.value = '';
+                return;
+            }
 
             // Strict whitelist for top-level keys
             const allowedKeys = ['favoriteCharacters', 'top50AnimeCharCache', 'top50AnimeCharUpdatedAt', 'favOfCharacter'];
@@ -326,4 +351,11 @@ function isValidFavOfCharacter(valueObj) {
     }
 
     return true;
+}
+
+async function sha256(message) {
+    const msgBuffer = new TextEncoder().encode(message);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
