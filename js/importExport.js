@@ -6,6 +6,7 @@ const EXPORT_SOURCE = 'animeCheck-client-source';
 
 // Export favorites as JSON file
 document.getElementById('exportDataBtn').addEventListener('click', async () => {
+    const isPrettify = document.getElementById('prettifyRadio')?.checked;
     // Gather all export data (Favorites, Top 50, fav_of_character_)
     const favoriteCharacters = StorageHelper.get('favoriteCharacters') || [];
     const top50AnimeCharCache = StorageHelper.get('top50AnimeCharCache') || [];
@@ -33,7 +34,7 @@ document.getElementById('exportDataBtn').addEventListener('click', async () => {
     exportData._signature = signature;
 
     // Export as JSON including signature with pretty print format
-    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataStr = JSON.stringify(exportData, null, isPrettify ? 2 : 0);
 
     // Check export size limit
     const dataSize = new Blob([dataStr]).size;
@@ -48,10 +49,11 @@ document.getElementById('exportDataBtn').addEventListener('click', async () => {
 
     // Create Blob and download file
     const blob = new Blob([dataStr], { type: "application/json" });
+    const fileName = isPrettify ? 'animeCheckData.json' : 'animeCheckData.min.json';
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'animeCheckData.json';
+    a.download = fileName;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
