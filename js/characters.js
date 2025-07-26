@@ -197,7 +197,7 @@ function renderFavoriteCharacters() {
     container.innerHTML = "";
 
     let html = `
-        <h5 class="mb-3 text-warning d-flex align-items-center gap-2 fs-3 fs-md-2 fs-lg-1">
+        <h5 class="mx-1 mb-3 text-warning d-flex align-items-center gap-2 fs-3 fs-md-2 fs-lg-1">
             <i class="bi bi-star-fill"></i>
             Saved Favorite Characters 
             <span class="text-secondary small">(${favorites.length})</span>
