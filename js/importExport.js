@@ -212,7 +212,7 @@ importInput.addEventListener('change', (event) => {
 
             // Sync all star icons with current favorite state ---
             syncFavoriteStarIcons();
-
+            favoriteCounterSettings();
             updateStorageSizePills();
 
             showToast({

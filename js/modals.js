@@ -43,8 +43,9 @@ settingsModal.addEventListener('hide.bs.modal', () => {
     document.body.focus(); // move focus away from modal before it hides
 });
 
-// Show every storage size for each pill
+// Show favorite counter and every storage size pill in the settings modal
 document.getElementById('settingsModal').addEventListener('show.bs.modal', () => {
+    favoriteCounterSettings();
     updateStorageSizePills();
 });
 
@@ -120,6 +121,7 @@ document.getElementById("clearCacheBtn").addEventListener("click", () => {
         StorageHelper.remove(TOP50_UPDATED_AT_KEY);
     }
 
+    favoriteCounterSettings();
     updateStorageSizePills();
 
     // Check if all toggles are off

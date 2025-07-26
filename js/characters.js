@@ -272,3 +272,7 @@ function hideFavoritesList() {
         syncFavoriteStarIcons();
     });
 }
+function favoriteCounterSettings() {
+    const favoriteCountSettings = (StorageHelper.get(FAVORITES_KEY) || []).length;
+    document.getElementById('favCountSettings').innerText = favoriteCountSettings;
+}
