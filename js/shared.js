@@ -194,7 +194,9 @@ const StorageHelper = {
         for (const key in localStorage) {
             if (localStorage.hasOwnProperty(key)) {
                 const item = localStorage.getItem(key);
-                totalBytes += new Blob([key + (item ?? '')]).size;
+                // Always account for key + value, even if value is empty string
+                const value = item ?? '';
+                totalBytes += new TextEncoder().encode(key + value).length;
             }
         }
         const mb = (totalBytes / 1000000).toFixed(2);
