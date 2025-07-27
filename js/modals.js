@@ -44,7 +44,7 @@ settingsModal.addEventListener('hide.bs.modal', () => {
 });
 
 // Show favorite counter and every storage size pill in the settings modal
-document.getElementById('settingsModal').addEventListener('show.bs.modal', () => {
+settingsModal.addEventListener('show.bs.modal', () => {
     favoriteCounterSettings();
     updateStorageSizePills();
 });
