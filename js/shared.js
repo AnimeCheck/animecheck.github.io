@@ -221,7 +221,8 @@ function updateStorageSizePills() {
     for (const key in localStorage) {
         if (key.startsWith('fav_of_character_')) {
             const item = localStorage.getItem(key);
-            vaTotalSize += item ? new Blob([key + item]).size : 0;
+            // Size of all VAs' characters. Blob will slowdown, so we use TextEncoder... instead
+            if (item) vaTotalSize += new TextEncoder().encode(key + item).length;
         }
     }
     document.getElementById('vaCharSize').innerText = Math.round(vaTotalSize / 1000) + ' KB';
