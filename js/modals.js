@@ -82,6 +82,15 @@ document.getElementById("clearCacheBtn").addEventListener("click", () => {
     const clearVAChars = document.getElementById("toggleClearVAChars").checked;
     const clearFavChars = document.getElementById("toggleClearFavChars").checked;
 
+    // Check if all toggles are off
+    if (!clearTop50 && !clearVAChars && !clearFavChars) {
+        showToast({
+            message: "No options selected. Nothing cleared.",
+            type: "warning"
+        });
+        return;
+    }
+
     // Clear favorite characters. Order is important.
     if (clearFavChars) {
         StorageHelper.remove(FAVORITES_KEY);
@@ -124,18 +133,10 @@ document.getElementById("clearCacheBtn").addEventListener("click", () => {
     favoriteCounterSettings();
     updateStorageSizePills();
 
-    // Check if all toggles are off
-    if (!clearTop50 && !clearVAChars && !clearFavChars) {
-        showToast({
-            message: "Nothing is cleared.",
-            type: "warning"
-        });
-    } else {
-        showToast({
-            message: "Local storage cleared successfully.",
-            type: "success"
-        });
-    }
+    showToast({
+        message: "Selected data cleared successfully.",
+        type: "success"
+    });
 });
 
 // Check Local Storage Size button
