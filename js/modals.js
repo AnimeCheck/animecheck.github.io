@@ -130,6 +130,7 @@ document.getElementById("clearCacheBtn").addEventListener("click", () => {
         StorageHelper.remove(TOP50_UPDATED_AT_KEY);
     }
 
+    // Update counters
     favoriteCounterSettings();
     updateStorageSizePills();
 
