@@ -257,28 +257,27 @@ function renderTopCharactersProgress(containerId, message, totalCount) {
 document.addEventListener('click', function (e) {
     const link = e.target.closest('.va-link');
 
-    if (link) {
-        const name = escapeHTML(link.dataset.name);
-        const vaMalId = Number(link.dataset.vamalid);
-        const image = link.dataset.image;
-        const lang = escapeHTML(link.dataset.lang);
-        const formattedName = firstLastNameFormat(name);
+    if (!link) return; // If no .va-link was clicked, exit early.
 
-        // Update modal info
-        document.getElementById('vaModalLabel').innerHTML = `${formattedName} <span class="text-secondary">(${vaMalId})</span>`;
-        document.getElementById('vaModalName').textContent = formattedName;
-        document.getElementById('vaModalImage').src = image;
-        document.getElementById("vaModalImageLink").href = image;
-        document.getElementById('vaModalLang').textContent = `Dub: ${lang}`;
-        document.getElementById('vaModalCharacters').innerHTML = ""; // Clear any old content
+    const name = escapeHTML(link.dataset.name);
+    const vaMalId = Number(link.dataset.vamalid);
+    const image = link.dataset.image;
+    const lang = escapeHTML(link.dataset.lang);
+    const formattedName = firstLastNameFormat(name);
 
-        // Show the button
-        const topCharButton = document.getElementById('triggerTopCharacters');
-        topCharButton.style.display = "inline-block";
-        topCharButton.onclick = function () {
-            topCharButton.style.display = "none"; // hide it after click
-            checkTopCharacters(vaMalId); // Call your function
-        };
+    // Update modal info
+    document.getElementById('vaModalLabel').innerHTML = `${formattedName} <span class="text-secondary">(${vaMalId})</span>`;
+    document.getElementById('vaModalName').textContent = formattedName;
+    document.getElementById('vaModalImage').src = image;
+    document.getElementById("vaModalImageLink").href = image;
+    document.getElementById('vaModalLang').textContent = `Dub: ${lang}`;
+    document.getElementById('vaModalCharacters').innerHTML = ""; // Clear any old content
 
-    }
+    // Show the button
+    const topCharButton = document.getElementById('triggerTopCharacters');
+    topCharButton.style.display = "inline-block";
+    topCharButton.onclick = function () {
+        topCharButton.style.display = "none"; // hide it after click
+        checkTopCharacters(vaMalId); // Call your function
+    };
 });
