@@ -214,10 +214,11 @@ function renderTopVoiceActorCharacters(charList, totalCount, vaMalId, updatedAt 
     const updatedText = escapeHTML(timeAgoText(updatedAt));
     const listHTML = createCharacterListHTML(charList);
     const container = document.getElementById("vaModalCharacters");
+    const topNumberChar = charList.length;
 
     container.innerHTML = `
         <div class="fs-5 fs-md-4 fs-lg-3 mb-2 text-center text-warning">
-            Top 10 main role characters<br>out of ${totalCount}
+            Top ${topNumberChar} main role character${topNumberChar !== 1 ? 's' : ''}<span id="outOfTotalChars"><br>out of ${totalCount}</span>
         </div>
         <ul class="list-unstyled small">${listHTML}</ul>
         <button type="button" id="updateTopVoiceActorCharactersBtn" class="btn btn-sm btn-outline-info">
@@ -227,6 +228,9 @@ function renderTopVoiceActorCharacters(charList, totalCount, vaMalId, updatedAt 
             Updated ${updatedText}
         </div>
     `;
+
+    // Show or hide "out of totalCount"
+    document.getElementById("outOfTotalChars").classList.toggle("d-none", totalCount <= 10);
 
     // Make the anime title clickable
     clickableAnimeTitleToSearchInput();
