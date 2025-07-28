@@ -255,8 +255,9 @@ function renderTopCharactersProgress(containerId, message, totalCount) {
 }
 
 document.addEventListener('click', function (e) {
-    if (e.target.closest('.va-link')) {
-        const link = e.target.closest('.va-link');
+    const link = e.target.closest('.va-link');
+
+    if (link) {
         const name = escapeHTML(link.dataset.name);
         const vaMalId = Number(link.dataset.vamalid);
         const image = link.dataset.image;
