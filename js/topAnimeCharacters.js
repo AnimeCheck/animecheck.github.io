@@ -92,7 +92,7 @@ async function loadTopAnimeCharacters(forceRefresh = false) {
 
 async function getAnimeTitleOfCharacter(char, retry = 1) {
     try {
-        const res = await fetch(`https://api.jikan.moe/v4/characters/${char.id}/anime`);
+        const res = await throttledFetch(`https://api.jikan.moe/v4/characters/${char.id}/anime`);
         if (res.status === 429) {
             showRateLimitToast(); // Inform the user
             await smartDelay();    // Wait and retry
