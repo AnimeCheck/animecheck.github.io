@@ -212,7 +212,11 @@ function renderFavoriteCharacters() {
     }
 
     // Sorting favorites in alphabetical order
-    favorites.sort((a, b) => a.name.localeCompare(b.name));
+    favorites.sort((a, b) => {
+        const nameA = firstLastNameFormat(a.name);
+        const nameB = firstLastNameFormat(b.name);
+        return nameA.localeCompare(nameB);
+    });
 
     favorites.forEach((char, index) => {
         // Sanitizing the variables
@@ -228,7 +232,7 @@ function renderFavoriteCharacters() {
                             style="width: 50px; height: 50px; object-fit: cover; border-radius: 0.25rem; margin-right: 0.75rem; flex-shrink: 0;">
                     </a>
                     <span class="badge bg-secondary me-2 user-select-none">${index + 1}</span>
-                    <a href="https://myanimelist.net/character/${id}" class="text-decoration-none" target="_blank"><b>${name}</b></a>
+                    <a href="https://myanimelist.net/character/${id}" class="text-decoration-none" target="_blank"><b>${firstLastNameFormat(name)}</b></a>
                 </div>
                 <button class="btn btn-sm btn-outline-danger toggle-favorite-btn" title="Remove from favorites">
                     <i class="bi bi-trash"></i>
