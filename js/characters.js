@@ -88,7 +88,7 @@ async function getAnimeCharacters(animeId) {
                     <img src="${characterImage}" class="character-image card-img-top" alt="${characterName}" loading="lazy">
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title d-flex justify-content-between align-items-start custom-card-charname">
-                            <span class="me-2 flex-grow-1">${characterName}</span>
+                            <span class="me-2 flex-grow-1">${firstLastNameFormat(characterName)}</span>
                             <i class="bi bi-star text-warning toggle-favorite-star" data-charid="${characterId}" role="button"></i>
                         </h5>
                         <div class="pb-2 custom-card-valist">${vaListHTML}</div>

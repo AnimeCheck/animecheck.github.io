@@ -18,7 +18,7 @@ function createCharacterListHTML(charList) {
 
                 <div class="flex-grow-1 text-start" style="min-width: 0;">
                     <div>
-                        <strong class="fs-6 text-break me-1">${name}</strong>
+                        <strong class="fs-6 text-break me-1">${firstLastNameFormat(name)}</strong>
                         <i class="bi ${starClass}" data-charid="${id}" data-charname="${name}"></i>
                         <span class="text-secondary small">(#${id})</span>
                     </div>
