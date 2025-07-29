@@ -89,6 +89,18 @@ function firstLastNameFormat(name) {
     return `${first} ${last}`; // First name Last name format
 }
 
+function seasonIcon(season) {
+    const icons = {
+        Spring: '<i class="bi bi-flower2"></i>',
+        Summer: '<i class="bi bi-sun-fill"></i>',
+        Fall: '<i class="bi bi-leaf-fill"></i>',
+        Winter: '<i class="bi bi-snow"></i>',
+    };
+
+    const icon = icons[season];
+    return icon ? `${icon} ${season}` : "";
+}
+
 // Global Toast
 let toastInstance = null;
 let toastIsShowing = false;

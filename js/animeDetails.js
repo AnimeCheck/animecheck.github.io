@@ -78,7 +78,7 @@ async function getAnimeById(animeId) {
                         <div class="mt-2">Studio: ${studioNames}</div>
                         <div>Genres: ${genreNames}</div>
                         <div>Themes: ${themeNames}</div>
-                        <div>Season: <span class="badge bg-info me-2 rounded-pill">${escapeHTML(uppercaseFirstChar(season))}</span></div>
+                        <div>Seasonal: <span class="badge bg-info me-2 rounded-pill">${seasonIcon(escapeHTML(uppercaseFirstChar(season)))}</span></div>
                         <div class="mt-2">Aired: ${escapeHTML(airedDates)}</div>
                         <div class="">Episodes: ${Number(episodes)}</div>
                     </div>
