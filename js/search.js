@@ -6,12 +6,12 @@ const clearBtn = document.getElementById('clear-btn');
 
 let debounceTimeout;
 let selectedIndex = -1 // For Up and Down arrow keys in suggestion list
-let isFetching = false; // For preventing spamming input
+let isFetching = false; // To check fetching state
 let fetchController = null;
 let timeoutId;
+let lastNoResultQuery = '';
 
 searchInput.addEventListener('input', () => {
-    // Handles Enter when no suggestions are showing
     // This prevents a new search from triggering right after a suggestion is selected
     if (skipInputAfterSelection) {
         skipInputAfterSelection = false;  // Reset flag and ignore this input event
@@ -22,7 +22,8 @@ searchInput.addEventListener('input', () => {
     clearTimeout(debounceTimeout);
     suggestions.innerHTML = '';
 
-    if (query.length < 2) return; // Less than 2 shows no suggestion list
+    // Less than 2 shows no suggestion list or stop if the same current and last query has no suggestion
+    if (query.length < 2 || query === lastNoResultQuery) return;
 
     // Abort previous fetch if any
     if (fetchController) {
@@ -54,50 +55,71 @@ searchInput.addEventListener('input', () => {
             .then(data => {
                 suggestions.innerHTML = ''; // To avoid a duplicated list when you enter a title and you press backspace.
                 selectedIndex = -1; // to reset state
-                const seenTitles = new Set(); // To avoid duplicate anime title
                 
-                data.data.forEach((anime, index) => {
-                    const li = document.createElement('li');
-                    li.className = 'list-group-item bg-dark text-light suggestion-item custom-suggestion-list';
+                renderSuggestions(data.data, query);
 
-                    // Highlight matching part
-                    const englishTitle = anime.title_english || '';
-                    const originalTitle = anime.title || '';
-                    const displayTitle = englishTitle || originalTitle;
-                    if (seenTitles.has(englishTitle) && seenTitles.has(originalTitle)) return; // skip duplicate
-                    seenTitles.add(englishTitle);
-                    seenTitles.add(originalTitle);
-                    // Highlighting
-                    const regex = new RegExp(`(${query})`, 'i');
-                    const highlighted = escapeHTML(displayTitle).replace(regex, '<strong>$1</strong>');
-                    const highlightedOriginal = escapeHTML(originalTitle).replace(regex, '<strong>$1</strong>');
-                    const animeYear = anime.year || anime.aired?.prop?.from?.year || 'N/A';
-                    // Titles in suggestion list 
-                    li.innerHTML = `
-                        ${highlighted} <span class="text-primary">(${animeYear})</span>
-                        ${englishTitle && originalTitle && englishTitle !== originalTitle
-                            ? `<div class="text-secondary small">${highlightedOriginal} <span class="text-primary">(${animeYear})</span></div>`
-                            : `<div class="text-secondary small">${highlighted} <span class="text-primary">(${animeYear})</span></div>`}
-                    `;
-                    
-                    li.dataset.index = index;
-                    li.addEventListener('click', () => {
-                        selectSuggestion(anime); // Do something in that function
-                    });
-                    suggestions.appendChild(li);
-                });
+                // Prevent a case where the user spam a query of 2+ chars with no suggestions.
+                const items = suggestions.querySelectorAll('.suggestion-item');
+                if (!items.length && query.length > 1) {
+                    lastNoResultQuery = query;
+                    return;
+                } else {
+                    lastNoResultQuery = ''; // Reset if suggestions exist
+                }
+
             }).catch(err => {
                 if (err.name !== 'AbortError') {
                     console.warn("Autocomplete fetch failed", err);
                 }
             }).finally(() => {
                 isFetching = false;
-                clearTimeout(timeoutId); // prevent zombie abort
+                clearTimeout(timeoutId); // Prevent zombie abort. Cancel the scheduled abort if it’s no longer needed.
                 fetchController = null;
                 //console.log("Fetch done. (pending = false)");
             });
     }, 400);
 });
+
+function renderSuggestions(dataList, query) {
+    const seenTitles = new Set(); // To avoid duplicate anime title
+                
+    dataList.forEach((anime, index) => {
+        // Getting different titles
+        const englishTitle = anime.title_english || '';
+        const originalTitle = anime.title || '';
+        const displayTitle = englishTitle || originalTitle;
+
+        if (seenTitles.has(englishTitle) && seenTitles.has(originalTitle)) return; // skip duplicate
+        
+        seenTitles.add(englishTitle);
+        seenTitles.add(originalTitle);
+
+        const animeYear = anime.year || anime.aired?.prop?.from?.year || 'N/A';
+
+        const li = document.createElement('li');
+        li.className = 'list-group-item bg-dark text-light suggestion-item custom-suggestion-list';
+        li.innerHTML = createSuggestionHTML(displayTitle, originalTitle, query, animeYear);
+        li.dataset.index = index;
+        li.addEventListener('click', () => {
+            selectSuggestion(anime); // Do something in that function
+        });
+        suggestions.appendChild(li);
+    });
+}
+
+function createSuggestionHTML(displayTitle, originalTitle, query, year) {
+    // Highlighting
+    const regex = new RegExp(`(${query})`, 'i');
+    const highlighted = escapeHTML(displayTitle).replace(regex, '<strong>$1</strong>');
+    const highlightedOriginal = escapeHTML(originalTitle).replace(regex, '<strong>$1</strong>');
+
+    // Titles in suggestion list 
+    const titleRow = (displayTitle !== originalTitle)
+        ? `<div class="text-secondary small">${highlightedOriginal} <span class="text-primary">(${year})</span></div>`
+        : `<div class="text-secondary small">${highlighted} <span class="text-primary">(${year})</span></div>`;
+
+    return `${highlighted} <span class="text-primary">(${year})</span>${titleRow}`;
+}
 
 // Clear button click
 clearBtn.addEventListener('click', () => {
