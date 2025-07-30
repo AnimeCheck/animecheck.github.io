@@ -61,7 +61,6 @@ searchInput.addEventListener('input', () => {
                     li.className = 'list-group-item bg-dark text-light suggestion-item custom-suggestion-list';
 
                     // Highlight matching part
-                    const regex = new RegExp(`(${query})`, 'i');
                     const englishTitle = anime.title_english || '';
                     const originalTitle = anime.title || '';
                     const displayTitle = englishTitle || originalTitle;
@@ -69,6 +68,7 @@ searchInput.addEventListener('input', () => {
                     seenTitles.add(englishTitle);
                     seenTitles.add(originalTitle);
                     // Highlighting
+                    const regex = new RegExp(`(${query})`, 'i');
                     const highlighted = escapeHTML(displayTitle).replace(regex, '<strong>$1</strong>');
                     const highlightedOriginal = escapeHTML(originalTitle).replace(regex, '<strong>$1</strong>');
                     const animeYear = anime.year || anime.aired?.prop?.from?.year || 'N/A';
