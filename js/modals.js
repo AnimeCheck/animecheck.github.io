@@ -43,18 +43,18 @@ settingsModal.addEventListener('hide.bs.modal', () => {
     document.body.focus(); // move focus away from modal before it hides
 });
 
-// Show favorite counter and every storage size pill in the settings modal
+// Show saved characters counter and every storage size pill in the settings modal
 settingsModal.addEventListener('show.bs.modal', () => {
-    favoriteCounterSettings();
+    savedCharCounterSettings();
     updateStorageSizePills();
 });
 
-// Favorite option
-document.getElementById("viewFavoritesBtn").addEventListener("click", () => {
+// Save list button
+document.getElementById("viewSavedCharListBtn").addEventListener("click", () => {
     document.getElementById("animeDetailsWrapper").classList.add("d-none");
     document.getElementById("animeCharacters").classList.add("d-none");
-    document.getElementById("viewFavoriteCharacters").classList.remove("d-none");
-    renderFavoriteCharacters();
+    document.getElementById("viewSavedCharacters").classList.remove("d-none");
+    renderSavedCharacters();
 });
 
 // Privacy option
@@ -80,10 +80,10 @@ document.getElementById('privacyBlurToggle').addEventListener('change', (event) 
 document.getElementById("clearCacheBtn").addEventListener("click", () => {
     const clearTop50 = document.getElementById("toggleClearTop50").checked;
     const clearVAChars = document.getElementById("toggleClearVAChars").checked;
-    const clearFavChars = document.getElementById("toggleClearFavChars").checked;
+    const clearSavedChars = document.getElementById("toggleClearSavedChars").checked;
 
     // Check if all toggles are off
-    if (!clearTop50 && !clearVAChars && !clearFavChars) {
+    if (!clearTop50 && !clearVAChars && !clearSavedChars) {
         showToast({
             message: "No options selected. Nothing cleared.",
             type: "warning"
@@ -91,24 +91,24 @@ document.getElementById("clearCacheBtn").addEventListener("click", () => {
         return;
     }
 
-    // Clear favorite characters. Order is important.
-    if (clearFavChars) {
-        StorageHelper.remove(FAVORITES_KEY);
+    // Clear saved characters. Order is important.
+    if (clearSavedChars) {
+        StorageHelper.remove(SAVED_CHAR_KEY);
 
         // If list is visible, update the list and show it empty
-        renderFavoriteCharacters();
+        renderSavedCharacters();
 
-        // Update all star icons on UI after clearing favorites
+        // Update all star icons on UI after clearing saved characters
         document.querySelectorAll('[data-charid]').forEach(icon => {
             icon.classList.remove('bi-star-fill');
             icon.classList.add('bi-star');
         });
     }
 
-    // Clear VA main role characters except favorite characters
+    // Clear VA main role characters except saved characters
     if (clearVAChars) {
-        const favoriteCharIds = StorageHelper.get(FAVORITES_KEY) || [];
-        const idsOnly = favoriteCharIds.map(char => char.id);
+        const savedCharIds = StorageHelper.get(SAVED_CHAR_KEY) || [];
+        const idsOnly = savedCharIds.map(char => char.id);
 
         Object.keys(localStorage).forEach(key => {
             if (key.startsWith(FAV_OF_CHARACTER_KEY_PREFIX)) {
@@ -116,7 +116,7 @@ document.getElementById("clearCacheBtn").addEventListener("click", () => {
                 const charIdStr = key.slice(FAV_OF_CHARACTER_KEY_PREFIX.length);
                 const charId = Number(charIdStr);
 
-                // Exclude your favorite characters key from removal
+                // Exclude your saved characters key from removal
                 if (!idsOnly.includes(charId)) {
                     StorageHelper.remove(key);
                 }
@@ -131,7 +131,7 @@ document.getElementById("clearCacheBtn").addEventListener("click", () => {
     }
 
     // Update counters
-    favoriteCounterSettings();
+    savedCharCounterSettings();
     updateStorageSizePills();
 
     showToast({

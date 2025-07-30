@@ -2,8 +2,8 @@
 
 async function getAnimeById(animeId) {
     console.log("Anime by id URL: ", `https://api.jikan.moe/v4/anime/${animeId}`);
-    // Hide favorite characters list when viewing an anime info
-    document.getElementById("viewFavoriteCharacters").classList.add("d-none");
+    // Hide saved characters list when viewing an anime info
+    document.getElementById("viewSavedCharacters").classList.add("d-none");
     document.getElementById("animeDetailsWrapper").classList.remove("d-none");
     document.getElementById("animeCharacters").classList.remove("d-none");
 

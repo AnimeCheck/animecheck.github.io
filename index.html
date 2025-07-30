@@ -86,7 +86,7 @@
         <div class="container px-0 my-4">
             <div id="animeDetailsWrapper"></div>
             <div id="animeCharacters" class="row g-3 mt-3"></div>
-            <div id="viewFavoriteCharacters" class="d-none"></div>
+            <div id="viewSavedCharacters" class="d-none"></div>
         </div>
 
 
@@ -159,15 +159,15 @@
 
                         <div class="tab-content" id="settingsTabContent">
                             <div class="tab-pane fade show active" id="general-tab-settings" role="tabpanel" aria-labelledby="general-tab" tabindex="0">
-                                <h5>Favorite</h5>
+                                <h5>Characters</h5>
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <div>
-                                        <span class="user-select-none">Saved favorite characters</span>
+                                        <span class="user-select-none">Save List</span>
                                         <div class="form-text text-secondary small user-select-none">
                                             Max limit: <span id="favCountSettings">0</span>/1000
                                         </div>
                                     </div>
-                                    <button id="viewFavoritesBtn" class="btn btn-sm btn-outline-warning">
+                                    <button id="viewSavedCharListBtn" class="btn btn-sm btn-outline-warning">
                                         <i class="bi bi-star me-1"></i> View
                                     </button>
                                 </div>
@@ -247,19 +247,19 @@
                                         <span class="badge rounded-pill bg-secondary" id="vaCharSize">0 KB</span>
                                     </label>
                                     <div class="form-text text-secondary small user-select-none">
-                                        Favorite characters will be preserved<br>
+                                        Saved characters will be preserved<br>
                                         unless they are cleared alongside
                                     </div>
                                 </div>
 
                                 <div class="form-check form-switch mb-3">
-                                    <input class="form-check-input" type="checkbox" role="switch" id="toggleClearFavChars">
-                                    <label class="form-check-label user-select-none" for="toggleClearFavChars">
-                                        Clear all favorite characters
-                                        <span class="badge rounded-pill bg-secondary" id="favCharSize">0 KB</span>
+                                    <input class="form-check-input" type="checkbox" role="switch" id="toggleClearSavedChars">
+                                    <label class="form-check-label user-select-none" for="toggleClearSavedChars">
+                                        Clear all saved characters
+                                        <span class="badge rounded-pill bg-secondary" id="savedCharSize">0 KB</span>
                                     </label>
                                     <div class="form-text text-secondary small user-select-none">
-                                        Deletes your saved favorite characters
+                                        Empty the save list
                                     </div>
                                 </div>
 

@@ -9,7 +9,7 @@ API by Jikan.
 - Search anime
 - Check Top 50 characters
 - Check Voice Actors Top 10 main role characters
-- Save favorite characters
+- Save characters
 - Privacy blur option
 - Import/Export json data
 

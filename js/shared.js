@@ -5,8 +5,8 @@ function createCharacterListHTML(charList) {
         const animeTitle = escapeHTML(char.animeTitle);
         const id = Number(char.id);
 
-        const isFavorite = isFavoriteCharacter(id);
-        const starClass = isFavorite ? "bi-star-fill text-light" : "bi-star text-light";
+        const isSavedChar = isSavedCharacter(id);
+        const starClass = isSavedChar ? "bi-star-fill text-light" : "bi-star text-light";
         
         return `
             <li class="d-flex align-items-center mb-2 custom-top-char-row">
@@ -152,14 +152,14 @@ function showToast({ message = "", type = "dark", icon = "", delay = 4000 }) {
     }
 }
 
-// Sync all <i data-charid> star icons with current favorite state.
-function syncFavoriteStarIcons() {
+// Sync all <i data-charid> star icons with current saved state.
+function syncSavedCharStarIcons() {
     document.querySelectorAll('i[data-charid]').forEach(icon => {
         const charId = Number(icon.dataset.charid);
-        const isFavorite = isFavoriteCharacter(charId);
+        const isSaved = isSavedCharacter(charId);
 
-        icon.classList.toggle('bi-star-fill', isFavorite);
-        icon.classList.toggle('bi-star', !isFavorite);
+        icon.classList.toggle('bi-star-fill', isSaved);
+        icon.classList.toggle('bi-star', !isSaved);
     });
 }
 
@@ -217,10 +217,10 @@ const StorageHelper = {
 };
 
 function updateStorageSizePills() {
-    // Favorite Characters
-    const favChars = StorageHelper.get('favoriteCharacters') || [];
-    const favCharSize = new Blob(['favoriteCharacters' + JSON.stringify(favChars)]).size;
-    document.getElementById('favCharSize').innerText = Math.round(favCharSize / 1000) + ' KB';
+    // Saved Characters
+    const savedChars = StorageHelper.get('savedCharacters') || [];
+    const savedCharSize = new Blob(['savedCharacters' + JSON.stringify(savedChars)]).size;
+    document.getElementById('savedCharSize').innerText = Math.round(savedCharSize / 1000) + ' KB';
 
     // Top 50 + Timestamp
     const top50Cache = StorageHelper.get('top50AnimeCharCache') || [];

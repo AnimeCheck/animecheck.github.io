@@ -4,11 +4,11 @@ const importInput = document.getElementById('importDataInput');
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB max file size
 const EXPORT_SOURCE = 'animeCheck-client-source';
 
-// Export favorites as JSON file
+// Export as JSON file
 document.getElementById('exportDataBtn').addEventListener('click', async () => {
     const isPrettify = document.getElementById('prettifyRadio')?.checked;
-    // Gather all export data (Favorites, Top 50, fav_of_character_)
-    const favoriteCharacters = StorageHelper.get('favoriteCharacters') || [];
+    // Gather all export data (savedCharacters, Top 50, fav_of_character_)
+    const savedCharacters = StorageHelper.get('savedCharacters') || [];
     const top50AnimeCharCache = StorageHelper.get('top50AnimeCharCache') || [];
     const top50AnimeCharUpdatedAt = StorageHelper.get('top50AnimeCharUpdatedAt') || null;
     const favOfCharacter = {};
@@ -20,7 +20,7 @@ document.getElementById('exportDataBtn').addEventListener('click', async () => {
 
     // Build export object WITHOUT signature
     const exportData = {
-        favoriteCharacters,
+        savedCharacters,
         top50AnimeCharCache,
         top50AnimeCharUpdatedAt,
         favOfCharacter
@@ -71,7 +71,7 @@ importBtn.addEventListener('click', () => {
     importInput.click();
 });
 
-// Import favorites from selected JSON file (skip existing)
+// Import from JSON file (skip existing)
 importInput.addEventListener('change', (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -116,21 +116,27 @@ importInput.addEventListener('change', (event) => {
                 return;
             }
 
+            // If old key favoriteCharacters exists, move them to savedCharacters. Old key will be deleted.
+            if (imported.favoriteCharacters && !imported.savedCharacters) {
+                imported.savedCharacters = imported.favoriteCharacters;
+                delete imported.favoriteCharacters;
+            }
+
             // Strict whitelist for top-level keys
-            const allowedKeys = ['favoriteCharacters', 'top50AnimeCharCache', 'top50AnimeCharUpdatedAt', 'favOfCharacter'];
+            const allowedKeys = ['savedCharacters', 'favoriteCharacters', 'top50AnimeCharCache', 'top50AnimeCharUpdatedAt', 'favOfCharacter'];
             const unknownKeys = Object.keys(imported).filter(key => !allowedKeys.includes(key));
             if (unknownKeys.length > 0) {
                 consoleWarn("Unknown keys in import:", unknownKeys);
                 skipped += unknownKeys.length; // optional: count them
             }
 
-            // favoriteCharacters: merge, skip existing
-            if (Array.isArray(imported.favoriteCharacters)) {
-                const existing = StorageHelper.get('favoriteCharacters') || [];
+            // savedCharacters: merge, skip existing
+            if (Array.isArray(imported.savedCharacters)) {
+                const existing = StorageHelper.get('savedCharacters') || [];
                 const existingIds = new Set(existing.map(char => char.id));
 
-                imported.favoriteCharacters.forEach(char => {
-                    if (isValidFavoriteCharacter(char) && !existingIds.has(char.id) && existing.length < 1000) {
+                imported.savedCharacters.forEach(char => {
+                    if (isValidSavedCharacter(char) && !existingIds.has(char.id) && existing.length < 1000) {
                         existing.push(sanitizeFavCharacter(char));
                         existingIds.add(char.id);
                         added++;
@@ -138,7 +144,7 @@ importInput.addEventListener('change', (event) => {
                         skipped++;
                     }
                 });
-                StorageHelper.set('favoriteCharacters', existing);
+                StorageHelper.set('savedCharacters', existing);
             }
 
             // top50AnimeCharCache: overwrite
@@ -208,11 +214,11 @@ importInput.addEventListener('change', (event) => {
                 });
             }
 
-            renderFavoriteCharacters();
+            renderSavedCharacters();
 
-            // Sync all star icons with current favorite state ---
-            syncFavoriteStarIcons();
-            favoriteCounterSettings();
+            // Sync all star icons with saved characters state ---
+            syncSavedCharStarIcons();
+            savedCharCounterSettings();
             updateStorageSizePills();
 
             showToast({
@@ -259,9 +265,9 @@ function sanitizeFavOfCharacter(valueObj) {
     };
 }
 
-// Validate a single favorite character object
-function isValidFavoriteCharacter(char) {
-    // Inside favoriteCharacters[] array, we have objects
+// Validate a single saved character object
+function isValidSavedCharacter(char) {
+    // Inside savedCharacters[] array, we have objects
     if (!char || typeof char !== 'object' || Array.isArray(char)) {
         return false;
     }
@@ -271,7 +277,7 @@ function isValidFavoriteCharacter(char) {
     const keys = Object.keys(char);
 
     if (keys.length !== allowedKeys.length || !keys.every(key => allowedKeys.includes(key))) {
-        consoleWarn('Rejected: unexpected keys in favoriteCharacter entry:', keys);
+        consoleWarn('Rejected: unexpected keys in savedCharacters entry:', keys);
         return false;
     }
 
