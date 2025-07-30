@@ -123,7 +123,7 @@ importInput.addEventListener('change', (event) => {
             }
 
             // Strict whitelist for top-level keys
-            const allowedKeys = ['savedCharacters', 'favoriteCharacters', 'top50AnimeCharCache', 'top50AnimeCharUpdatedAt', 'favOfCharacter'];
+            const allowedKeys = ['savedCharacters', 'top50AnimeCharCache', 'top50AnimeCharUpdatedAt', 'favOfCharacter'];
             const unknownKeys = Object.keys(imported).filter(key => !allowedKeys.includes(key));
             if (unknownKeys.length > 0) {
                 consoleWarn("Unknown keys in import:", unknownKeys);
