@@ -153,13 +153,14 @@ function isSavedCharacter(characterId) {
 function toggleSavedCharacter(characterId, characterName, characterImageUrl) {
     let savedChars = StorageHelper.get(SAVED_CHAR_KEY) || [];
     const index = savedChars.findIndex(char => char.id === characterId);
+    const formattedCharName = firstLastNameFormat(characterName);
 
     // if character is already a save
     if (index !== -1) {
         savedChars.splice(index, 1); // Remove from save list if exists
 
         showToast({
-            message: `<b>${characterName}</b> removed from your save list.`,
+            message: `<b>${formattedCharName}</b> removed from your save list.`,
             type: "secondary",
             icon: "bi bi-star"
         });
@@ -181,7 +182,7 @@ function toggleSavedCharacter(characterId, characterName, characterImageUrl) {
         });
 
         showToast({
-            message: `<b>${characterName}</b> added to your save list!`,
+            message: `<b>${formattedCharName}</b> added to your save list!`,
             type: "success",
             icon: "bi bi-star-fill"
         });
