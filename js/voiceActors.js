@@ -92,7 +92,7 @@ async function getMainCharactersVoicedBy(vaId) {
         const seen = new Set(); // Because we want to avoid duplicates
         const mainCharacters = [];
 
-        allVoices.forEach(entry => {
+        for (const entry of allVoices) {
             // Getting characters where the role is Main and the anime is popular
             if (entry.role === "Main") {
                 const char = {
@@ -108,7 +108,7 @@ async function getMainCharactersVoicedBy(vaId) {
                     mainCharacters.push(char); // adds the character in mainCharacters
                 }
             }
-        });
+        }
 
         //console.log("Main characters:", mainCharacters);
         return mainCharacters;

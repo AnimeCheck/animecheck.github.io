@@ -35,7 +35,7 @@ async function getAnimeCharacters(animeId) {
         // Add title header
         container.innerHTML = `<div class="fs-3 fs-md-2 fs-lg-1"><i class="bi bi-file-person me-1"></i>List of ${totalCharacters} characters</div>`;
 
-        animeCharacters.forEach(entry => {
+        for (const entry of animeCharacters) {
             const characterName = escapeHTML(entry.character.name);
             const characterImage = entry.character.images.jpg.image_url;
             const characterId = Number(entry.character.mal_id);
@@ -51,7 +51,7 @@ async function getAnimeCharacters(animeId) {
             // Build voice actors HTML
             let vaListHTML = "";
             // To get every item of "voice_actors": [...]
-            voiceActors.forEach(va => {
+            for (const va of voiceActors) {
                 const vaMalId = va.person.mal_id;
 
                 // Cache VA info per VA ID
@@ -80,7 +80,7 @@ async function getAnimeCharacters(animeId) {
                         </div>
                     </div>
                 `;
-            });
+            }
 
             // Final character card
             col.innerHTML = `
@@ -124,7 +124,7 @@ async function getAnimeCharacters(animeId) {
             // fade in when scrolling into view for that div card .fade-in
             const card = col.querySelector('.fade-in');
             if (card) observer.observe(card);
-        });
+        }
     } catch (error) {
         console.error("Failed to fetch characters:", error);
     }
@@ -134,12 +134,12 @@ async function getAnimeCharacters(animeId) {
     Fade-in animations when elements scroll into view
 */
 const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
+    for (const entry of entries) {
         if (entry.isIntersecting) {
             entry.target.classList.add('visible');
             observer.unobserve(entry.target); // optional: only once
         }
-    });
+    }
 });
 
 /*
