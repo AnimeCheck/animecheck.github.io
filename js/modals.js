@@ -94,6 +94,7 @@ document.getElementById("clearCacheBtn").addEventListener("click", () => {
     // Clear saved characters. Order is important.
     if (clearSavedChars) {
         StorageHelper.remove(SAVED_CHAR_KEY);
+        StorageHelper.remove("favoriteCharacters"); // OLD key. To remove one day
 
         // If list is visible, update the list and show it empty
         renderSavedCharacters();
