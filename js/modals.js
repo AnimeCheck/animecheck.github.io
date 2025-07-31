@@ -109,20 +109,26 @@ document.getElementById("clearCacheBtn").addEventListener("click", () => {
     // Clear VA main role characters except saved characters
     if (clearVAChars) {
         const savedCharIds = StorageHelper.get(SAVED_CHAR_KEY) || [];
-        const idsOnly = savedCharIds.map(char => char.id);
+        const idsOnly = new Set(savedCharIds.map(char => char.id));
+        const keysToRemove = []; // To gather the keys first
 
-        Object.keys(localStorage).forEach(key => {
+        for (const key of Object.keys(localStorage)) {
             if (key.startsWith(FAV_OF_CHARACTER_KEY_PREFIX)) {
                 // Remove prefix and keep the id number
                 const charIdStr = key.slice(FAV_OF_CHARACTER_KEY_PREFIX.length);
                 const charId = Number(charIdStr);
 
                 // Exclude your saved characters key from removal
-                if (!idsOnly.includes(charId)) {
-                    StorageHelper.remove(key);
+                if (!idsOnly.has(charId)) {
+                    keysToRemove.push(key);
                 }
             }
-        });
+        }
+
+        // Remove them all in one go
+        for (const key of keysToRemove) {
+            StorageHelper.remove(key);
+        }
     }
 
     // Clear top anime character list and timestamp
