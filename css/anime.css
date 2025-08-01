@@ -187,6 +187,10 @@ a:hover {
     color: #67a6ff;
 }
 
+.hover-pointer:hover {
+    color: #dc3545 !important;
+}
+
 /* For privacy option */
 .blur-images {
     filter: blur(35px) brightness(0.7) saturate(0.5);

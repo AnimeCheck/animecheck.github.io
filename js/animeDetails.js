@@ -1,11 +1,12 @@
 // Logic for fetching and displaying anime info (title, studio, genre, score, etc.).
 
 async function getAnimeById(animeId) {
-    console.log("Anime by id URL: ", `https://api.jikan.moe/v4/anime/${animeId}`);
-    // Hide saved characters list when viewing an anime info
-    document.getElementById("viewSavedCharacters").classList.add("d-none");
+    console.log(`Anime by id URL: https://api.jikan.moe/v4/anime/${animeId}`);
+    // Show Anime Details
     document.getElementById("animeDetailsWrapper").classList.remove("d-none");
     document.getElementById("animeCharacters").classList.remove("d-none");
+    // Hide other: saved characters
+    document.getElementById("viewSavedCharacters").classList.add("d-none");
 
     try {
         const response = await throttledFetch(`https://api.jikan.moe/v4/anime/${animeId}`);
@@ -59,6 +60,11 @@ async function getAnimeById(animeId) {
         console.log("English:", englishTitle);
         console.log("studioName:", studioName);*/
         const animeDetailsHTML = `
+            <h5 class="mx-1 mb-3 d-flex align-items-center gap-2 fs-3 fs-md-2 fs-lg-1">
+                <i class="bi bi-info-circle"></i>
+                Anime Details
+                <i class="bi bi-x-circle ms-auto text-secondary hover-pointer hide-anime-details-icon" role="button" title="Clear anime details"></i>
+            </h5>
             <div class="row mb-3 align-items-center">
                 <div class="col-md-2 text-center my-2">
                     <a href="${imageURL}" target="_blank" rel="noopener noreferrer">
@@ -68,11 +74,11 @@ async function getAnimeById(animeId) {
                 <div class="col-md-10 d-flex align-items-center">
                     <div class="w-100">
                         <div>
-                            <div class="fs-3 fs-md-2 fs-lg-1 animetitle">${foreignTitle}</div>
+                            <div class="fs-4 fs-md-2 fs-lg-1 animetitle">${foreignTitle}</div>
                             <div class="text-secondary fw-bold">${defaultTitle}</div>
                         </div>
                         <div>
-                            <div class="fs-3 fs-md-2 fs-lg-1 animetitle">${englishTitle}</div>
+                            <div class="fs-4 fs-md-2 fs-lg-1 animetitle">${englishTitle}</div>
                             <div class="text-secondary fw-bold">${synonymTitle}</div>
                         </div>
                         <div class="mt-2">Studio: ${studioNames}</div>
@@ -144,9 +150,19 @@ async function getAnimeById(animeId) {
             synopsisContainer.classList.add('d-none');
         }
 
+        // Hide Anime details
+        clearAnimeDetails();
+
         // Privacy option
         toggleImageBlur(isBlurEnabled);
     } catch (error) {
         console.error("Error fetching anime data:", error.message);
     }
+}
+
+function clearAnimeDetails() {
+    document.querySelector(".hide-anime-details-icon")?.addEventListener("click", () => {
+        document.getElementById('animeDetailsWrapper').innerHTML = "";
+        document.getElementById('animeCharacters').innerHTML = "";
+    });
 }

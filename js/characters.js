@@ -202,7 +202,7 @@ function renderSavedCharacters() {
             <i class="bi bi-star-fill"></i>
             Saved Characters 
             <span class="text-secondary small">(${savedChars.length})</span>
-            <i class="bi bi-x-circle ms-auto text-secondary hide-saved-characters-icon" role="button" title="Hide saved characters"></i>
+            <i class="bi bi-eye-slash ms-auto text-secondary hover-pointer hide-saved-characters-icon" role="button" title="Hide saved characters"></i>
         </h5>
     `;
 
@@ -269,9 +269,11 @@ function renderSavedCharacters() {
 function hideSavedCharList() {
     // Saved Characters list close icon
     document.querySelector(".hide-saved-characters-icon")?.addEventListener("click", () => {
+        // Hide saved characters list
+        document.getElementById("viewSavedCharacters").classList.add("d-none");
+        // Show back the Anime details
         document.getElementById("animeDetailsWrapper").classList.remove("d-none");
         document.getElementById("animeCharacters").classList.remove("d-none");
-        document.getElementById("viewSavedCharacters").classList.add("d-none");
 
         // Sync all star icons with current saved char state
         syncSavedCharStarIcons();
