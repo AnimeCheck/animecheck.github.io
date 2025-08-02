@@ -4,9 +4,13 @@
     IntersectionObserver for fade-in
 */
 const SAVED_CHAR_KEY = 'savedCharacters';
+characterLoadToken = null;
 
 const vaInfoCache = {};
 async function getAnimeCharacters(animeId) {
+    const myToken = Date.now();
+    characterLoadToken = myToken;
+
     // Sanitizing
     animeId = Number(animeId);
 
@@ -31,6 +35,9 @@ async function getAnimeCharacters(animeId) {
         if (totalCharacters === 0) return;
 
         const container = document.getElementById("animeCharacters");
+
+        // Exit if this is no longer the latest load request
+        if (characterLoadToken !== myToken) return;
 
         // Add title header
         container.innerHTML = `<div class="fs-3 fs-md-2 fs-lg-1"><i class="bi bi-file-person me-1"></i>List of ${totalCharacters} characters</div>`;
@@ -126,6 +133,8 @@ async function getAnimeCharacters(animeId) {
             if (card) observer.observe(card);
         }
     } catch (error) {
+        // still check token before showing error
+        if (characterLoadToken !== myToken) return;
         console.error("Failed to fetch characters:", error);
     }
 }
@@ -271,9 +280,24 @@ function hideSavedCharList() {
     document.querySelector(".hide-saved-characters-icon")?.addEventListener("click", () => {
         // Hide saved characters list
         document.getElementById("viewSavedCharacters").classList.add("d-none");
-        // Show back the Anime details
-        document.getElementById("animeDetailsWrapper").classList.remove("d-none");
-        document.getElementById("animeCharacters").classList.remove("d-none");
+        // Show back the main content or the Anime details
+        const animeDetailsWrapper = document.getElementById("animeDetailsWrapper");
+        const animeCharacters = document.getElementById("animeCharacters");
+        const mainContent = document.getElementById("mainContent");
+
+        // Only show mainContent if anime details are cleared
+        const shouldShowMainContent =
+            animeDetailsWrapper.innerHTML.trim() === "" &&
+            animeCharacters.innerHTML.trim() === "";
+
+        // Show main content instead if anime details was empty or cleared
+        if (shouldShowMainContent) {
+            mainContent.classList.remove("d-none");
+        }
+
+        // Restore these two whenever they are cleared or not
+        animeDetailsWrapper.classList.remove("d-none");
+        animeCharacters.classList.remove("d-none");
 
         // Sync all star icons with current saved char state
         syncSavedCharStarIcons();

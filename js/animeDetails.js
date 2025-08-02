@@ -1,4 +1,5 @@
 // Logic for fetching and displaying anime info (title, studio, genre, score, etc.).
+let characterLoadToken = null;
 
 async function getAnimeById(animeId) {
     console.log(`Anime by id URL: https://api.jikan.moe/v4/anime/${animeId}`);
@@ -6,6 +7,7 @@ async function getAnimeById(animeId) {
     document.getElementById("animeDetailsWrapper").classList.remove("d-none");
     document.getElementById("animeCharacters").classList.remove("d-none");
     // Hide other: saved characters
+    document.getElementById("mainContent").classList.add("d-none");
     document.getElementById("viewSavedCharacters").classList.add("d-none");
 
     try {
@@ -162,7 +164,11 @@ async function getAnimeById(animeId) {
 
 function clearAnimeDetails() {
     document.querySelector(".hide-anime-details-icon")?.addEventListener("click", () => {
+        // Clear Anime details with its anime characters info
         document.getElementById('animeDetailsWrapper').innerHTML = "";
+        characterLoadToken = null;
         document.getElementById('animeCharacters').innerHTML = "";
+        // Show back the main content
+        document.getElementById("mainContent").classList.remove("d-none");
     });
 }

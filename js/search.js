@@ -50,7 +50,7 @@ searchInput.addEventListener('input', () => {
             }
         }, 10000);
 
-        fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=5`, {signal})
+        fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=15`, {signal})
             .then(res => res.json())
             .then(data => {
                 suggestions.innerHTML = ''; // To avoid a duplicated list when you enter a title and you press backspace.
@@ -82,7 +82,10 @@ searchInput.addEventListener('input', () => {
 
 function renderSuggestions(dataList, query) {
     const seenTitles = new Set(); // To avoid duplicate anime title
-                
+    // Prioritize exact match first
+    const exactMatches = [];
+    const others = [];
+
     dataList.forEach((anime, index) => {
         // Getting different titles
         const englishTitle = anime.title_english || '';
@@ -94,6 +97,10 @@ function renderSuggestions(dataList, query) {
         seenTitles.add(englishTitle);
         seenTitles.add(originalTitle);
 
+        const isExactMatch = [englishTitle, originalTitle].some(
+            t => t.toLowerCase() === query.toLowerCase()
+        );
+
         const animeYear = anime.year || anime.aired?.prop?.from?.year || 'N/A';
 
         const li = document.createElement('li');
@@ -103,15 +110,24 @@ function renderSuggestions(dataList, query) {
         li.addEventListener('click', () => {
             selectSuggestion(anime); // Do something in that function
         });
-        suggestions.appendChild(li);
+
+        if (isExactMatch) {
+            exactMatches.push(li);
+        } else {
+            others.push(li);
+        }
+
+        //suggestions.appendChild(li);
     });
+    // Append exact matches first, then the rest
+    [...exactMatches, ...others].forEach(li => suggestions.appendChild(li));
 }
 
 function createSuggestionHTML(displayTitle, originalTitle, query, year) {
     // Highlighting
     const regex = new RegExp(`(${query})`, 'i');
-    const highlighted = escapeHTML(displayTitle).replace(regex, '<strong>$1</strong>');
-    const highlightedOriginal = escapeHTML(originalTitle).replace(regex, '<strong>$1</strong>');
+    const highlighted = displayTitle.replace(regex, '<strong>$1</strong>');
+    const highlightedOriginal = originalTitle.replace(regex, '<strong>$1</strong>');
 
     // Titles in suggestion list 
     const titleRow = (displayTitle !== originalTitle)
@@ -146,6 +162,7 @@ searchInput.addEventListener('keydown', (e) => {
         e.preventDefault();
         selectedIndex = (selectedIndex + 1) % items.length;
         updateHighlight(items);
+        scrollToViewIfNeeded(items[selectedIndex]);
     } else if (e.key === 'ArrowUp') {
         e.preventDefault();
         if (selectedIndex === -1) {
@@ -154,6 +171,7 @@ searchInput.addEventListener('keydown', (e) => {
             selectedIndex = (selectedIndex - 1 + items.length) % items.length;
         }
         updateHighlight(items);
+        scrollToViewIfNeeded(items[selectedIndex]);
     } else if (e.key === 'Enter') {
         e.preventDefault();
         if (selectedIndex >= 0) {
@@ -180,6 +198,25 @@ function updateHighlight(items) {
     items.forEach((item, index) => {
         item.classList.toggle('active', index === selectedIndex);
     });
+}
+
+function scrollToViewIfNeeded(item) {
+    if (!item) return;
+
+    const container = suggestions;
+    const containerTop = container.scrollTop;
+    const containerBottom = containerTop + container.clientHeight;
+
+    const itemTop = item.offsetTop;
+    const itemBottom = itemTop + item.offsetHeight;
+
+    if (itemBottom > containerBottom) {
+        // Scroll down to make item fully visible at bottom
+        container.scrollTop += itemBottom - containerBottom;
+    } else if (itemTop < containerTop) {
+        // Scroll up to make item fully visible at top
+        container.scrollTop -= containerTop - itemTop;
+    }
 }
 
 let skipInputAfterSelection = false;

@@ -54,6 +54,7 @@ document.getElementById("viewSavedCharListBtn").addEventListener("click", () => 
     // Show saved characters list
     document.getElementById("viewSavedCharacters").classList.remove("d-none");
     // Hide other: Anime details
+    document.getElementById("mainContent").classList.add("d-none");
     document.getElementById("animeDetailsWrapper").classList.add("d-none");
     document.getElementById("animeCharacters").classList.add("d-none");
     renderSavedCharacters();

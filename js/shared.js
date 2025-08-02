@@ -36,7 +36,12 @@ let lastClickTime = 0;
 
 function clickableAnimeTitleToSearchInput() {
     document.querySelectorAll('.anime-title-clickable').forEach(el => {
-        el.addEventListener('click', () => {
+        // Remove any existing click handler (by cloning the node)
+        // To prevent an unnecessary warning when opening the top 50 modal and closing it, then clicking on an airing anime title 
+        const newEl = el.cloneNode(true);
+        el.replaceWith(newEl);
+
+        newEl.addEventListener('click', () => {
             // To prevent several spammy clicks on different titles
             const now = Date.now();
             if (now - lastClickTime < 1000) {
@@ -50,9 +55,12 @@ function clickableAnimeTitleToSearchInput() {
             }
             lastClickTime = now;
 
-            const title = el.textContent.trim();
+            const englishTitle = newEl.textContent.trim();
+            const originalTitle = newEl.dataset.originalTitle?.trim();
+            const titleToSearch = originalTitle || englishTitle;
+
             const input = document.getElementById('search');
-            input.value = title;
+            input.value = titleToSearch;
             input.dispatchEvent(new Event('input'));
             //console.log("opening suggestion list");
 
@@ -91,14 +99,14 @@ function firstLastNameFormat(name) {
 
 function seasonIcon(season) {
     const icons = {
-        Spring: '<i class="bi bi-flower2"></i>',
-        Summer: '<i class="bi bi-sun-fill"></i>',
-        Fall: '<i class="bi bi-leaf-fill"></i>',
-        Winter: '<i class="bi bi-snow"></i>',
+        Spring: '<i class="bi bi-flower2 me-1"></i>',
+        Summer: '<i class="bi bi-sun-fill me-1"></i>',
+        Fall: '<i class="bi bi-leaf-fill me-1"></i>',
+        Winter: '<i class="bi bi-snow me-1"></i>',
     };
 
     const icon = icons[season];
-    return icon ? `${icon} ${season}` : "";
+    return icon ? `${icon}${season}` : "";
 }
 
 // Global Toast
