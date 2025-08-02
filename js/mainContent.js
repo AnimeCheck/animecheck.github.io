@@ -97,7 +97,7 @@ function renderScheduleHTML(animeList) {
             <div class="col">
                 <div class="card h-100 bg-dark text-light">
                     <img src="${escapeHTML(anime.images.jpg.large_image_url)}"
-                        class="anime-thumbnail card-img-top" alt="${escapeHTML(anime.title)}" loading="lazy">
+                        class="anime-thumbnail anime-poster card-img-top" alt="${escapeHTML(anime.title)}" loading="lazy">
                     <div class="card-body d-flex flex-column">
                         <h6 class="card-title text-info mt-1">
                             <a class="text-decoration-none anime-title-clickable"

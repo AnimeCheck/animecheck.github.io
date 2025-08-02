@@ -66,10 +66,6 @@ a:hover {
 @media (max-width: 450px), (max-height: 500px) {
     #suggestions {
         max-height: 200px; /* Adjust as needed */
-        overflow-y: auto;
-        overflow-x: hidden;
-        scrollbar-width: thin; /* Firefox */
-        scrollbar-color: #468 #222; /* thumb and track */
     }
 
     #suggestions::-webkit-scrollbar {
