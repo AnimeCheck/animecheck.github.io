@@ -78,6 +78,9 @@ async function loadScheduleForDay(day) {
 
             // Make the anime title clickable
             clickableAnimeTitleToSearchInput();
+
+            // Privacy option
+            toggleImageBlur(isBlurEnabled);
         } else {
             container.innerHTML = `<div class="text-muted">No anime airing on ${uppercaseFirstChar(day)}.</div>`;
         }
@@ -128,8 +131,7 @@ function renderScheduleHTML(animeList) {
                                 <i class="bi bi-box-arrow-up-right"></i>
                             </a>
                             <span>
-                                <i class="bi bi-suit-heart-fill me-1 text-danger"></i>
-                                <b>${anime.favorites?.toLocaleString() || "0"}</b> favorites
+                                <i class="bi bi-suit-heart-fill me-1 text-danger"></i><b>${anime.favorites?.toLocaleString() || "0"}</b> favorites
                             </span>
                         </div>
                     </div>
