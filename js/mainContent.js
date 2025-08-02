@@ -131,7 +131,7 @@ function renderScheduleHTML(animeList) {
                                 <i class="bi bi-box-arrow-up-right"></i>
                             </a>
                             <span>
-                                <i class="bi bi-suit-heart-fill me-1 text-danger"></i><b>${anime.favorites?.toLocaleString() || "0"}</b> favorites
+                                <i class="bi bi-suit-heart-fill me-1 text-danger"></i><b>${anime.favorites?.toLocaleString() || "0"}</b> favorite${(anime.favorites ?? 0) === 1 ? '' : 's'}
                             </span>
                         </div>
                     </div>
