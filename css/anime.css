@@ -116,7 +116,8 @@ a:hover {
     .toggleSynopsisContainer {
         width: 100% !important;
     }
-    .bi-eye, .bi-eye-slash {
+    .toggleSynopsisContainer .bi-eye, .toggleSynopsisContainer .bi-eye-slash {
+    /*.bi-eye, .bi-eye-slash {*/
         font-size: 0.8rem;
     }
 }

@@ -107,18 +107,30 @@ function renderScheduleHTML(animeList) {
                         </h6>
                         <div>
                             ${anime.studios?.map(s => `
-                                <span class="badge bg-light text-dark mb-1 rounded-pill">
-                                    ${escapeHTML(s.name)}
-                                </span>
-                            `).join("<br>") || '<span class="badge bg-light text-dark mb-1 rounded-pill">N/A</span>'}
+                                <div>
+                                    <span class="badge bg-light text-dark mb-1 rounded-pill text-wrap">
+                                        ${escapeHTML(s.name)}
+                                    </span>
+                                </div>
+                            `).join("") || `
+                                <div>
+                                    <span class="badge bg-light text-dark mb-1 rounded-pill text-wrap">N/A</span>
+                                </div>
+                            `}
                         </div>
                         <div>
-                            <span class="badge bg-primary text-light small mb-1 rounded-pill">
+                            <span class="badge bg-primary text-light small mb-1 rounded-pill text-wrap">
                                 ${anime.type || "N/A"}
                             </span>
                         </div>
-                        <div class="mt-auto small text-end text-secondary">
-                            <i class="bi bi-suit-heart-fill me-1 text-danger"></i><b>${anime.favorites?.toLocaleString() || "0"}</b> favorites
+                        <div class="mt-auto pt-2 small d-flex justify-content-between align-items-center text-secondary">
+                            <a href="${anime.url}" class="text-secondary" alt="View on MAL" target="_blank" rel="noopener noreferrer">
+                                <i class="bi bi-box-arrow-up-right"></i>
+                            </a>
+                            <span>
+                                <i class="bi bi-suit-heart-fill me-1 text-danger"></i>
+                                <b>${anime.favorites?.toLocaleString() || "0"}</b> favorites
+                            </span>
                         </div>
                     </div>
                 </div>
