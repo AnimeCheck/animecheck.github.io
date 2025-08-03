@@ -18,7 +18,7 @@ function renderAiringScheduleTabs() {
         <div id="airingDayButtons" class="d-flex flex-wrap gap-2 mb-3">
             ${DAYS_OF_WEEK.map(day => `
             <button class="btn btn-outline-primary btn-sm${day === today ? ' active' : ''}"
-                    data-day="${day}" type="button">
+                    data-day="${day}" type="button" style="letter-spacing: 0.1em;">
                 ${uppercaseFirstChar(day)}
             </button>`).join("")}
         </div>

@@ -40,7 +40,10 @@ async function getAnimeCharacters(animeId) {
         if (characterLoadToken !== myToken) return;
 
         // Add title header
-        container.innerHTML = `<div class="fs-3 fs-md-2 fs-lg-1"><i class="bi bi-file-person me-1"></i>List of ${totalCharacters} characters</div>`;
+        container.innerHTML = `
+            <h5 class="mx-1 mb-3 d-flex align-items-center gap-2 fs-3 fs-md-2 fs-lg-1">
+                <i class="bi bi-person-circle"></i>List of ${totalCharacters} characters
+            </h5>`;
 
         for (const entry of animeCharacters) {
             const characterName = escapeHTML(entry.character.name);
@@ -235,7 +238,7 @@ function renderSavedCharacters() {
         const id = Number(char.id);
         html += `
             <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded bg-dark text-light saved-char-row" 
-            data-charid="${id}" data-charname="${name}" data-charimage="${image}">
+                data-charid="${id}" data-charname="${name}" data-charimage="${image}">
                 <div class="d-flex align-items-center flex-grow-1">
                     <a href="${image}" target="_blank">
                         <img src="${image}" alt="${name}" loading="lazy" class="character-image"
