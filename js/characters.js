@@ -143,18 +143,6 @@ async function getAnimeCharacters(animeId) {
 }
 
 /*
-    Fade-in animations when elements scroll into view
-*/
-const observer = new IntersectionObserver((entries) => {
-    for (const entry of entries) {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target); // optional: only once
-        }
-    }
-});
-
-/*
     To add Saved Characters
 */
 function isSavedCharacter(characterId) {

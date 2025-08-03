@@ -109,6 +109,16 @@ function seasonIcon(season) {
     return icon ? `${icon}${season}` : "";
 }
 
+// Fade-in animations when elements scroll into view
+const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target); // optional: only once
+        }
+    }
+});
+
 // Global Toast
 let toastInstance = null;
 let toastIsShowing = false;

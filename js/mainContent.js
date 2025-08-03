@@ -15,10 +15,10 @@ function renderAiringScheduleTabs() {
             Airing Schedule
         </h5>
 
-        <div id="airingDayButtons" class="d-flex flex-wrap gap-2 mb-3">
+        <div id="airingDayButtons" class="d-flex flex-wrap gap-2 mb-4">
             ${DAYS_OF_WEEK.map(day => `
             <button class="btn btn-outline-primary btn-sm${day === today ? ' active' : ''}"
-                    data-day="${day}" type="button" style="letter-spacing: 0.1em;">
+                data-day="${day}" type="button" style="letter-spacing: 0.1em;">
                 ${uppercaseFirstChar(day)}
             </button>`).join("")}
         </div>
@@ -56,12 +56,9 @@ async function loadScheduleForDay(day) {
     const container = document.getElementById(`schedule-${day}`);
     if (!container) return;
 
-    container.innerHTML = `<div class="text-muted">Loading ${uppercaseFirstChar(day)}...</div>`;
-
     try {
         const res = await throttledFetch(`${SCHEDULE_API_BASE}${day}`);
         const data = await res.json();
-
         let animeList = data?.data || [];
 
         // Deduplicate by mal_id
@@ -74,15 +71,9 @@ async function loadScheduleForDay(day) {
 
         if (animeList.length > 0) {
             scheduleCache[day] = animeList;
-            container.innerHTML = renderScheduleHTML(animeList);
-
-            // Make the anime title clickable
-            clickableAnimeTitleToSearchInput();
-
-            // Privacy option
-            toggleImageBlur(isBlurEnabled);
+            renderScheduleHTMLInto(day, animeList);
         } else {
-            container.innerHTML = `<div class="text-muted">No anime airing on ${uppercaseFirstChar(day)}.</div>`;
+            container.innerHTML = `<div class="text-warning">No anime airing on ${uppercaseFirstChar(day)}.</div>`;
         }
     } catch (error) {
         container.innerHTML = `<div class="text-danger">Failed to load schedule for ${uppercaseFirstChar(day)}.</div>`;
@@ -98,7 +89,7 @@ function renderScheduleHTML(animeList) {
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3">
             ${animeList.map(anime => `
             <div class="col">
-                <div class="card h-100 bg-dark text-light">
+                <div class="card fade-in h-100 bg-dark text-light">
                     <img src="${escapeHTML(anime.images.jpg.large_image_url)}"
                         class="anime-thumbnail anime-poster card-img-top" alt="${escapeHTML(anime.title)}" loading="lazy">
                     <div class="card-body d-flex flex-column">
@@ -149,6 +140,13 @@ function renderScheduleHTMLInto(day, animeList) {
     
     // Re-attach click handlers
     clickableAnimeTitleToSearchInput();
+
+    // Privacy option
+    toggleImageBlur(isBlurEnabled);
+
+    // fade in when scrolling into view for these div card .fade-in
+    const cards = container.querySelectorAll('.fade-in');
+    cards.forEach(card => observer.observe(card));
 }
 
 function getTodayDayString() {
