@@ -40,14 +40,6 @@
         </h1>
         <div class="small text-light my-3 d-flex flex-wrap gap-3 align-items-center font-jost">
             <span>
-                <i class="bi bi-github" aria-hidden="true"></i>
-                <a href="https://github.com/Rixuel" class="text-decoration-none">GitHub</a>
-            </span>
-            <span>
-                <i class="bi bi-discord" aria-hidden="true"></i>
-                <a href="https://discord.gg/qhCsvqT" class="text-decoration-none">Discord</a>
-            </span>
-            <span>
                 <i class="bi bi-bar-chart-fill" aria-hidden="true"></i>
                 <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#topAnimeCharactersModal" id="loadTopAnimeCharacters">Top 50 anime characters</a>
             </span>
@@ -55,6 +47,7 @@
                 <i class="bi bi-server" aria-hidden="true"></i>
                 Data from <a href="https://jikan.moe/" 
                              class="text-decoration-none fw-bold"
+                             target="_blank" rel="noopener noreferrer"
                              data-bs-toggle="tooltip" 
                              data-bs-placement="top"
                              data-bs-html="true"
@@ -89,6 +82,53 @@
             <div id="animeCharacters" class="row g-3 mt-1"></div>
             <div id="viewSavedCharacters" class="d-none"></div>
         </div>
+        <footer class="container bg-dark small mt-4 mb-0 py-3 px-3 px-md-4">
+            <div class="row justify-content-between">
+                <div class="col-12 col-md-6 py-1 d-block d-md-flex text-center justify-content-md-start">
+                    <span class="text-nowrap me-4">
+                        <i class="bi bi-github me-1" aria-hidden="true"></i>
+                        <a href="https://github.com/Rixuel" class="text-decoration-none" target="_blank" rel="noopener noreferrer">
+                            GitHub
+                        </a>
+                    </span>
+                    <span class="text-nowrap me-4">
+                        <i class="bi bi-code-slash me-1" aria-hidden="true"></i>
+                        <a href="https://github.com/AnimeCheck/animecheck.github.io" class="text-decoration-none" target="_blank" rel="noopener noreferrer">
+                            Repo
+                        </a>
+                    </span>
+                    <span class="text-nowrap me-0">
+                        <i class="bi bi-discord me-1" aria-hidden="true"></i>
+                        <a href="https://discord.gg/qhCsvqT" class="text-decoration-none" target="_blank" rel="noopener noreferrer">
+                            Personal Discord
+                        </a>
+                    </span>
+                </div>
+
+                <div class="col-12 col-md-6 py-1 d-block d-md-flex text-center justify-content-md-end">
+                    <span class="text-nowrap me-4">
+                        <i class="bi bi-book me-1" aria-hidden="true"></i>
+                        <a href="https://docs.api.jikan.moe" class="text-decoration-none" target="_blank" rel="noopener noreferrer">
+                            Jikan Doc
+                        </a>
+                    </span>
+                    <span class="text-nowrap me-0">
+                        <i class="bi bi-discord me-1" aria-hidden="true"></i>
+                        <a href="https://discord.jikan.moe" class="text-decoration-none" target="_blank" rel="noopener noreferrer">
+                            Jikan Discord
+                        </a>
+                    </span>
+                </div>
+            </div>
+            <div class="row border-top border-secondary mt-2">
+                <div class="col-12 pt-3 text-center">
+                    <span class="text-nowrap me-0">
+                        <i class="bi bi-arrow-bar-up me-2" aria-hidden="true"></i>
+                        <a href="#top" class="text-decoration-none">Back to Top</a>
+                    </span>
+                </div>
+            </div>
+        </footer>
 
 
         <!-- Modal for VA -->
