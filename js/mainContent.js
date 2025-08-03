@@ -8,6 +8,17 @@ function renderAiringScheduleTabs() {
     if (!container) return;
 
     const today = getTodayDayString();
+    let buttonsHTML = "";
+
+    for (const day of DAYS_OF_WEEK) {
+        const isActive = day === today ? " active" : "";
+        buttonsHTML += `
+            <button class="btn btn-outline-primary btn-sm${isActive}"
+                data-day="${day}" type="button" style="letter-spacing: 0.1em;">
+                ${uppercaseFirstChar(day)}
+            </button>
+        `;
+    }
 
     container.innerHTML = `
         <h5 class="mx-1 mb-3 d-flex align-items-center gap-2 fs-3 fs-md-2 fs-lg-1">
@@ -16,11 +27,7 @@ function renderAiringScheduleTabs() {
         </h5>
 
         <div id="airingDayButtons" class="d-flex flex-wrap gap-2 mb-4">
-            ${DAYS_OF_WEEK.map(day => `
-            <button class="btn btn-outline-primary btn-sm${day === today ? ' active' : ''}"
-                data-day="${day}" type="button" style="letter-spacing: 0.1em;">
-                ${uppercaseFirstChar(day)}
-            </button>`).join("")}
+            ${buttonsHTML}
         </div>
 
         <div id="airingScheduleContent">
@@ -32,17 +39,38 @@ function renderAiringScheduleTabs() {
     loadScheduleForDay(today);
 
     // Handle button clicks
-    document.querySelectorAll("#airingDayButtons button").forEach(btn => {
+    const dayButtons = document.querySelectorAll("#airingDayButtons button");
+    const contentWrapper = document.getElementById("airingScheduleContent");
+
+    dayButtons.forEach(btn => {
         btn.addEventListener("click", () => {
+            if (btn.classList.contains("active")) return; // No need to re-render if already active
+
             const day = btn.dataset.day;
+            const scheduleDay = `schedule-${day}`;
 
             // Update active button styling
-            document.querySelectorAll("#airingDayButtons button").forEach(b => b.classList.remove("active"));
+            dayButtons.forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
 
-            // Swap visible content
-            const contentWrapper = document.getElementById("airingScheduleContent");
-            contentWrapper.innerHTML = `<div id="schedule-${day}" class="schedule-day-content"></div>`;
+            // Hide all day containers
+            document.querySelectorAll(".schedule-day-content").forEach(div => {
+                div.classList.add("d-none");
+            });
+
+            // Check if container for this day already exists
+            let scheduleDiv = document.getElementById(scheduleDay);
+
+            if (!scheduleDiv) {
+                // Don't want to overwrite with innerHTML. So we do this. Create it if not yet in DOM
+                scheduleDiv = document.createElement("div");
+                scheduleDiv.id = scheduleDay;
+                scheduleDiv.className = "schedule-day-content";
+                contentWrapper.appendChild(scheduleDiv);
+            }
+
+            // Show selected day's content
+            scheduleDiv.classList.remove("d-none");
 
             // Load content if not cached
             if (!scheduleCache[day]) loadScheduleForDay(day);
@@ -85,52 +113,55 @@ function renderScheduleHTML(animeList) {
     // Sort descending by favorites count (handle missing or zero)
     animeList.sort((a, b) => (b.favorites || 0) - (a.favorites || 0));
 
-    return `
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3">
-            ${animeList.map(anime => `
+    const rows = [];
+    rows.push(`<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3">`);
+
+    for (const anime of animeList) {
+        const imageUrl = escapeHTML(anime.images.jpg.large_image_url);
+        const title = escapeHTML(anime.title_english || anime.title);
+        const altTitle = escapeHTML(anime.title);
+        const type = escapeHTML(anime.type || "N/A");
+        const favorites = anime.favorites ?? 0;
+
+        let studiosHTML = `<div><span class="badge bg-light text-dark mb-1 rounded-pill text-wrap">N/A</span></div>`;
+        if (anime.studios?.length) {
+            const studioSpans = anime.studios.map(s => 
+                `<div><span class="badge bg-light text-dark mb-1 rounded-pill text-wrap">${escapeHTML(s.name)}</span></div>`
+            );
+            studiosHTML = studioSpans.join("");
+        }
+
+        rows.push(`
             <div class="col">
                 <div class="card fade-in h-100 bg-dark text-light">
-                    <img src="${escapeHTML(anime.images.jpg.large_image_url)}"
-                        class="anime-thumbnail anime-poster card-img-top" alt="${escapeHTML(anime.title)}" loading="lazy">
+                    <img src="${imageUrl}" class="anime-thumbnail anime-poster card-img-top" alt="${altTitle}" loading="lazy">
                     <div class="card-body d-flex flex-column">
                         <h6 class="card-title text-info mt-1">
-                            <a class="text-decoration-none anime-title-clickable"
-                                data-original-title="${anime.title}">
-                                ${escapeHTML(anime.title_english || anime.title)}
+                            <a class="text-decoration-none anime-title-clickable" title="${altTitle}">
+                                ${title}
                             </a>
                         </h6>
+                        ${studiosHTML}
                         <div>
-                            ${anime.studios?.map(s => `
-                                <div>
-                                    <span class="badge bg-light text-dark mb-1 rounded-pill text-wrap">
-                                        ${escapeHTML(s.name)}
-                                    </span>
-                                </div>
-                            `).join("") || `
-                                <div>
-                                    <span class="badge bg-light text-dark mb-1 rounded-pill text-wrap">N/A</span>
-                                </div>
-                            `}
-                        </div>
-                        <div>
-                            <span class="badge bg-primary text-light small mb-1 rounded-pill text-wrap">
-                                ${anime.type || "N/A"}
-                            </span>
+                            <span class="badge bg-primary text-light small mb-1 rounded-pill text-wrap">${type}</span>
                         </div>
                         <div class="mt-auto pt-2 small d-flex justify-content-between align-items-center text-secondary">
-                            <a href="${anime.url}" class="text-secondary" alt="View on MAL" target="_blank" rel="noopener noreferrer">
+                            <a href="${anime.url}" class="text-secondary" target="_blank" rel="noopener noreferrer">
                                 <i class="bi bi-box-arrow-up-right"></i>
                             </a>
                             <span>
-                                <i class="bi bi-suit-heart-fill me-1 text-danger"></i><b>${anime.favorites?.toLocaleString() || "0"}</b> favorite${(anime.favorites ?? 0) === 1 ? '' : 's'}
+                                <i class="bi bi-suit-heart-fill me-1 text-danger"></i>
+                                <b>${favorites.toLocaleString()}</b> favorite${favorites === 1 ? "" : "s"}
                             </span>
                         </div>
                     </div>
                 </div>
             </div>
-            `).join("")}
-        </div>
-    `;
+        `);
+    }
+
+    rows.push(`</div>`);
+    return rows.join("");
 }
 
 function renderScheduleHTMLInto(day, animeList) {
