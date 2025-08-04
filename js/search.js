@@ -46,6 +46,11 @@ searchInput.addEventListener('input', () => {
         timeoutId = setTimeout(() => {
             if (isFetching && fetchController) {
                 fetchController.abort();
+                showToast({
+                    message: `Request took too long and was aborted.`,
+                    type: "danger",
+                    icon: "bi bi-exclamation-triangle"
+                });
                 //console.warn("Fetch manually aborted after 10 seconds");
             }
         }, 10000);
