@@ -1,6 +1,6 @@
 const DAYS_OF_WEEK = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 const SCHEDULE_API_BASE = "https://api.jikan.moe/v4/schedules/";
-const scheduleCache = {};
+const scheduleCache = {}; // For caching when changing day
 
 // Render tab UI into #mainContent
 function renderAiringScheduleTabs() {
@@ -188,23 +188,55 @@ function renderScheduleHTML(animeList) {
     return rows.join("");
 }
 
+const schedulePageDOM = {}; // For caching when changing page in a day
 function renderScheduleHTMLInto(day, animeList, currentPage = 1, lastVisiblePage = 1) {
     const container = document.getElementById(`schedule-${day}`);
     if (!container) return;
-    container.innerHTML = '';
 
-    // Append anime list
-    appendAnimeListWithPagination(container, day, animeList, currentPage, lastVisiblePage);
-    
-    // Re-attach click handlers
+    // Hide all previously shown pages
+    container.querySelectorAll('.schedule-page').forEach(div => {
+        div.style.display = 'none';
+    });
+
+    // Initialize cache for this day
+    if (!schedulePageDOM[day]) {
+        schedulePageDOM[day] = {};
+    }
+
+    // To hold the already created DOM so we can reuse instead of recreating
+    const existingPageDiv = schedulePageDOM[day][currentPage];
+
+    if (existingPageDiv) {
+        // Show cached DOM
+        existingPageDiv.style.display = 'block';
+
+        // Re-observe fade-in elements so they animate again
+        const cards = existingPageDiv.querySelectorAll('.fade-in');
+        cards.forEach(card => {
+            card.classList.remove('visible'); // Remove visible to reset animation
+            observer.observe(card); // Re-observe to allow .visible to be re-added
+        });
+    } else {
+        // Create and cache DOM for this page
+        const pageDiv = document.createElement('div');
+        pageDiv.className = 'schedule-page';
+        // Append anime list
+        appendAnimeListWithPagination(pageDiv, day, animeList, currentPage, lastVisiblePage);
+        schedulePageDOM[day][currentPage] = pageDiv;
+        container.appendChild(pageDiv);
+
+        // Also remove visible and observe newly created cards to trigger fade-in
+        const cards = pageDiv.querySelectorAll('.fade-in');
+        cards.forEach(card => {
+            card.classList.remove('visible');
+            observer.observe(card);
+        });
+    }
+
+    // Re-attach click handlers only on new DOM
     clickableAnimeTitleToSearchInput();
-
     // Privacy option
     toggleImageBlur(isBlurEnabled);
-
-    // fade in when scrolling into view for these div card .fade-in
-    const cards = container.querySelectorAll('.fade-in');
-    cards.forEach(card => observer.observe(card));
 }
 
 function appendAnimeListWithPagination(container, day, animeList, currentPage, lastVisiblePage) {
