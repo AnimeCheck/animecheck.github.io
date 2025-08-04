@@ -149,9 +149,9 @@ function renderScheduleHTML(animeList) {
                             <a href="${anime.url}" class="text-secondary" target="_blank" rel="noopener noreferrer">
                                 <i class="bi bi-box-arrow-up-right"></i>
                             </a>
-                            <span>
+                            <span class="airing-fav">
                                 <i class="bi bi-suit-heart-fill me-1 text-danger"></i>
-                                <b>${favorites.toLocaleString()}</b> favorite${favorites === 1 ? "" : "s"}
+                                <b>${favorites.toLocaleString()}</b> <span class="airing-fav-text">favorite${favorites === 1 ? "" : "s"}</span>
                             </span>
                         </div>
                     </div>

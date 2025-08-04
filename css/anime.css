@@ -211,6 +211,12 @@ a:hover {
     .anime-thumbnail {
         height: 380px;
     }
+    .airing-fav {
+        font-size: 0.9em;
+    }
+    .airing-fav-text {
+        display: none;
+    }
 }
 
 @media (max-width: 450px) {
