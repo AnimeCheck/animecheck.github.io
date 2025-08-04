@@ -125,7 +125,7 @@ function renderSuggestions(dataList, query) {
 
 function createSuggestionHTML(displayTitle, originalTitle, query, year) {
     // Highlighting
-    const regex = new RegExp(`(${query})`, 'i');
+    const regex = new RegExp(`(${escapeRegExp(query)})`, 'i');
     const highlighted = displayTitle.replace(regex, '<strong>$1</strong>');
     const highlightedOriginal = originalTitle.replace(regex, '<strong>$1</strong>');
 

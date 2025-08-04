@@ -148,6 +148,10 @@ function uppercaseFirstChar(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 const debug = false;
 function consoleWarn(...args) {
     if (debug) {
