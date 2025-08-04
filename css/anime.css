@@ -107,20 +107,6 @@ a:hover {
     cursor: pointer;
 }
 
-@media (max-width: 768px) {
-    #toggleSynopsisBtn::before {
-        content: "Show Synopsis";
-        margin-right: 0.3em;
-        font-size: 1.0rem;
-    }
-    .toggleSynopsisContainer {
-        width: 100% !important;
-    }
-    .toggleSynopsisContainer .bi-eye, .toggleSynopsisContainer .bi-eye-slash {
-        font-size: 0.8rem;
-    }
-}
-
 /* For fade in the character card when scrolling down */
 .fade-in {
     opacity: 0;
@@ -207,9 +193,35 @@ a:hover {
     border-radius: 0.25rem;
 }
 
-@media (max-width: 575.20px) {
+@media (max-width: 768px) {
+    #toggleSynopsisBtn::before {
+        content: "Show Synopsis";
+        margin-right: 0.3em;
+        font-size: 1.0rem;
+    }
+    .toggleSynopsisContainer {
+        width: 100% !important;
+    }
+    .toggleSynopsisContainer .bi-eye, .toggleSynopsisContainer .bi-eye-slash {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 576px) {
     .anime-thumbnail {
-        height: 500px;
+        height: 380px;
+    }
+}
+
+@media (max-width: 450px) {
+    .anime-thumbnail {
+        height: 250px;
+    }
+    .card-body .card-title, .va-link, .va-language {
+        font-size: 0.8em;
+    }
+    .badge-airing {
+        font-size: 0.6em;
     }
 }
 

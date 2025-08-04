@@ -56,7 +56,7 @@ async function getAnimeCharacters(animeId) {
             console.log("-------------");*/
 
             const col = document.createElement("div");
-            col.className = "col-12 col-sm-6 col-md-4 col-lg-3 mb-3";
+            col.className = "col-6 col-md-4 col-lg-3 mb-3";
 
             // Build voice actors HTML
             let vaListHTML = "";
@@ -86,7 +86,7 @@ async function getAnimeCharacters(animeId) {
                                     <strong>${firstLastNameFormat(name)}</strong>
                                 </a>
                             </div>
-                            <div class="small">${lang}</div>
+                            <div class="va-language small">${lang}</div>
                         </div>
                     </div>
                 `;
@@ -103,7 +103,7 @@ async function getAnimeCharacters(animeId) {
                         </h5>
                         <div class="pb-2 custom-card-valist">${vaListHTML}</div>
                         <div class="mt-auto text-end custom-card-charid">
-                            <span class="user-select-none text-secondary">Char ID: </span><b>${characterId}</b>
+                            <span class="anime-char-id user-select-none text-secondary">Char ID: </span><b>${characterId}</b>
                         </div>
                     </div>
                 </div>

@@ -114,7 +114,7 @@ function renderScheduleHTML(animeList) {
     animeList.sort((a, b) => (b.favorites || 0) - (a.favorites || 0));
 
     const rows = [];
-    rows.push(`<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3">`);
+    rows.push(`<div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">`);
 
     for (const anime of animeList) {
         const imageUrl = escapeHTML(anime.images.jpg.large_image_url);
@@ -123,10 +123,10 @@ function renderScheduleHTML(animeList) {
         const type = escapeHTML(anime.type || "N/A");
         const favorites = anime.favorites ?? 0;
 
-        let studiosHTML = `<div><span class="badge bg-light text-dark mb-1 rounded-pill text-wrap">N/A</span></div>`;
+        let studiosHTML = `<div><span class="badge badge-airing bg-light text-dark mb-1 rounded-pill text-wrap">N/A</span></div>`;
         if (anime.studios?.length) {
             const studioSpans = anime.studios.map(s => 
-                `<div><span class="badge bg-light text-dark mb-1 rounded-pill text-wrap">${escapeHTML(s.name)}</span></div>`
+                `<div><span class="badge badge-airing bg-light text-dark mb-1 rounded-pill text-wrap">${escapeHTML(s.name)}</span></div>`
             );
             studiosHTML = studioSpans.join("");
         }
@@ -134,16 +134,16 @@ function renderScheduleHTML(animeList) {
         rows.push(`
             <div class="col">
                 <div class="card fade-in h-100 bg-dark text-light">
-                    <img src="${imageUrl}" class="anime-thumbnail anime-poster card-img-top" alt="${altTitle}" loading="lazy">
+                    <img src="${imageUrl}" class="anime-thumbnail anime-poster card-img-top" alt="${altTitle}" title="${altTitle}" loading="lazy">
                     <div class="card-body d-flex flex-column">
-                        <h6 class="card-title text-info mt-1">
-                            <a class="text-decoration-none anime-title-clickable" title="${altTitle}">
+                        <h6 class="card-title text-info text-truncate mt-1">
+                            <a class="text-decoration-none anime-title-clickable" title="${title}">
                                 ${title}
                             </a>
                         </h6>
                         ${studiosHTML}
                         <div>
-                            <span class="badge bg-primary text-light small mb-1 rounded-pill text-wrap">${type}</span>
+                            <span class="badge badge-airing bg-primary text-light small mb-1 rounded-pill text-wrap">${type}</span>
                         </div>
                         <div class="mt-auto pt-2 small d-flex justify-content-between align-items-center text-secondary">
                             <a href="${anime.url}" class="text-secondary" target="_blank" rel="noopener noreferrer">
