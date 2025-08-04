@@ -190,3 +190,7 @@ function showRateLimitWarningToast() {
         });
     }
 }
+
+document.getElementById('backToTopLink')?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
