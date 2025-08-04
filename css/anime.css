@@ -193,6 +193,15 @@ a:hover {
     border-radius: 0.25rem;
 }
 
+a.page-link:not(.disabled):hover {
+    background-color: #456 !important;
+    color: #fff;
+}
+
+.page-item.disabled > .page-link {
+    color: #777 !important;
+}
+
 @media (max-width: 768px) {
     #toggleSynopsisBtn::before {
         content: "Show Synopsis";
@@ -213,9 +222,6 @@ a:hover {
     }
     .airing-fav {
         font-size: 0.9em;
-    }
-    .airing-fav-text {
-        display: none;
     }
 }
 

@@ -36,7 +36,7 @@ function renderAiringScheduleTabs() {
     `;
 
     // Load today day
-    loadScheduleForDay(today);
+    loadScheduleForDay(today, 1);
 
     // Handle button clicks
     const dayButtons = document.querySelectorAll("#airingDayButtons button");
@@ -73,8 +73,12 @@ function renderAiringScheduleTabs() {
             scheduleDiv.classList.remove("d-none");
 
             // Load content if not cached
-            if (!scheduleCache[day]) loadScheduleForDay(day);
-            else renderScheduleHTMLInto(day, scheduleCache[day]);
+            const cached = scheduleCache[day];
+            if (cached?.pages?.[1]) {
+                renderScheduleHTMLInto(day, cached.pages[1], 1, cached.lastVisiblePage);
+            } else {
+                loadScheduleForDay(day, 1);
+            }
         });
     });
 }
@@ -85,24 +89,47 @@ async function loadScheduleForDay(day) {
     if (!container) return;
 
     try {
-        const res = await throttledFetch(`${SCHEDULE_API_BASE}${day}`);
-        const data = await res.json();
-        let animeList = data?.data || [];
+        let allAnime = [];
+        let page = 1;
+        let hasNext = true;
 
-        // Deduplicate by mal_id
-        const seen = new Set();
-        animeList = animeList.filter(anime => {
-            if (seen.has(anime.mal_id)) return false; // If id already exists, skip
-            seen.add(anime.mal_id); // Add new id
-            return true;
-        });
+        while (hasNext) {
+            const res = await throttledFetch(`${SCHEDULE_API_BASE}${day}?page=${page}`);
+            const data = await res.json();
+            const animeList = data?.data || [];
 
-        if (animeList.length > 0) {
-            scheduleCache[day] = animeList;
-            renderScheduleHTMLInto(day, animeList);
-        } else {
-            container.innerHTML = `<div class="text-warning">No anime airing on ${uppercaseFirstChar(day)}.</div>`;
+            // Deduplicate while collecting
+            const seen = new Set(allAnime.map(a => a.mal_id));
+            for (const anime of animeList) {
+                if (!seen.has(anime.mal_id)) {
+                    seen.add(anime.mal_id);
+                    allAnime.push(anime);
+                }
+            }
+
+            hasNext = data.pagination?.has_next_page;
+            page++;
         }
+
+        // Sort by favorites
+        allAnime.sort((a, b) => (b.favorites || 0) - (a.favorites || 0));
+
+        // Slice into 10-per-page chunks
+        const pages = {};
+        const lastVisiblePage = Math.ceil(allAnime.length / 10);
+        for (let i = 0; i < lastVisiblePage; i++) {
+            const start = i * 10;
+            pages[i + 1] = allAnime.slice(start, start + 10);
+        }
+
+        scheduleCache[day] = {
+            pages,
+            lastVisiblePage
+        };
+
+        // Render page 1
+        renderScheduleHTMLInto(day, pages[1], 1, lastVisiblePage);
+
     } catch (error) {
         container.innerHTML = `<div class="text-danger">Failed to load schedule for ${uppercaseFirstChar(day)}.</div>`;
     }
@@ -110,9 +137,6 @@ async function loadScheduleForDay(day) {
 
 // Convert anime list to HTML
 function renderScheduleHTML(animeList) {
-    // Sort descending by favorites count (handle missing or zero)
-    animeList.sort((a, b) => (b.favorites || 0) - (a.favorites || 0));
-
     const rows = [];
     rows.push(`<div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">`);
 
@@ -151,7 +175,7 @@ function renderScheduleHTML(animeList) {
                             </a>
                             <span class="airing-fav">
                                 <i class="bi bi-suit-heart-fill me-1 text-danger"></i>
-                                <b>${favorites.toLocaleString()}</b> <span class="airing-fav-text">favorite${favorites === 1 ? "" : "s"}</span>
+                                <b title="Favorites">${favorites.toLocaleString()}</b>
                             </span>
                         </div>
                     </div>
@@ -164,10 +188,13 @@ function renderScheduleHTML(animeList) {
     return rows.join("");
 }
 
-function renderScheduleHTMLInto(day, animeList) {
+function renderScheduleHTMLInto(day, animeList, currentPage = 1, lastVisiblePage = 1) {
     const container = document.getElementById(`schedule-${day}`);
     if (!container) return;
-    container.innerHTML = renderScheduleHTML(animeList);
+    container.innerHTML = '';
+
+    // Append anime list
+    appendAnimeListWithPagination(container, day, animeList, currentPage, lastVisiblePage);
     
     // Re-attach click handlers
     clickableAnimeTitleToSearchInput();
@@ -178,6 +205,76 @@ function renderScheduleHTMLInto(day, animeList) {
     // fade in when scrolling into view for these div card .fade-in
     const cards = container.querySelectorAll('.fade-in');
     cards.forEach(card => observer.observe(card));
+}
+
+function appendAnimeListWithPagination(container, day, animeList, currentPage, lastVisiblePage) {
+    // Using DOM for safer HTML insertion
+    const listDiv = document.createElement('div');
+    listDiv.innerHTML = renderScheduleHTML(animeList);
+    container.appendChild(listDiv);
+
+    // Build pagination HTML string
+    if (lastVisiblePage >= 1) {
+        // Previous
+        let paginationHTML = `
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mt-4">
+                    <li class="page-item${currentPage === 1 ? ' disabled' : ''}">
+                        <a href="#" class="page-link bg-dark text-light border-secondary" data-page="${currentPage - 1}">Previous</a>
+                    </li>
+        `;
+
+        // Page numbers
+        for (let i = 1; i <= lastVisiblePage; i++) {
+            if (i === currentPage) {
+                paginationHTML += `
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">${i}</span>
+                    </li>
+                `;
+            } else {
+                paginationHTML += `
+                    <li class="page-item">
+                        <a href="#" class="page-link bg-dark text-light border-secondary" data-page="${i}">${i}</a>
+                    </li>
+                `;
+            }
+        }
+
+        // Next
+        paginationHTML += `
+                    <li class="page-item${currentPage === lastVisiblePage ? ' disabled' : ''}">
+                        <a href="#" class="page-link bg-dark text-light border-secondary" data-page="${currentPage + 1}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        `;
+
+        // Append pagination to container
+        container.insertAdjacentHTML('beforeend', paginationHTML);
+
+        // Attach event listeners for pagination links
+        container.querySelectorAll('a.page-link[data-page]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = Number(e.currentTarget.dataset.page);
+                // Checks that the page number is valid (between 1 and the last page) and not the current page
+                if (page >= 1 && page <= lastVisiblePage && page !== currentPage) {
+                    goToPage(day, page);
+                }
+            });
+        });
+    }
+}
+
+function goToPage(day, page) {
+    const cached = scheduleCache[day];
+    if (cached?.pages?.[page]) {
+        renderScheduleHTMLInto(day, cached.pages[page], page, cached.lastVisiblePage);
+    } else {
+        loadScheduleForDay(day, page);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function getTodayDayString() {
