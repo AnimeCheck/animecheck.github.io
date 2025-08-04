@@ -144,7 +144,7 @@ function renderScheduleHTML(animeList) {
         const imageUrl = escapeHTML(anime.images.jpg.large_image_url);
         const title = escapeHTML(anime.title_english || anime.title);
         const altTitle = escapeHTML(anime.title);
-        const type = escapeHTML(anime.type || "N/A");
+        const score = anime.score != null ? anime.score : "N/A";
         const favorites = anime.favorites ?? 0;
 
         let studiosHTML = `<div><span class="badge badge-airing bg-light text-dark mb-1 rounded-pill text-wrap">N/A</span></div>`;
@@ -167,7 +167,7 @@ function renderScheduleHTML(animeList) {
                         </h6>
                         ${studiosHTML}
                         <div>
-                            <span class="badge badge-airing bg-primary text-light small mb-1 rounded-pill text-wrap">${type}</span>
+                            <span class="badge badge-airing bg-primary text-light small mb-1 rounded-pill text-wrap">${score}</span>
                         </div>
                         <div class="mt-auto pt-2 small d-flex justify-content-between align-items-center text-secondary">
                             <a href="${anime.url}" class="text-secondary" target="_blank" rel="noopener noreferrer">
@@ -175,7 +175,7 @@ function renderScheduleHTML(animeList) {
                             </a>
                             <span class="airing-fav">
                                 <i class="bi bi-suit-heart-fill me-1 text-danger"></i>
-                                <b title="Favorites">${favorites.toLocaleString()}</b>
+                                <b title="Favorites">${favorites}</b>
                             </span>
                         </div>
                     </div>
