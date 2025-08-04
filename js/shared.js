@@ -57,7 +57,8 @@ function clickableAnimeTitleToSearchInput() {
 
             const englishTitle = newEl.textContent.trim();
             const originalTitle = newEl.dataset.originalTitle?.trim();
-            const titleToSearch = originalTitle || englishTitle;
+            let titleToSearch = originalTitle || englishTitle;
+            //let titleToSearch = englishTitle || originalTitle;
 
             const input = document.getElementById('search');
             input.value = titleToSearch;
@@ -70,6 +71,16 @@ function clickableAnimeTitleToSearchInput() {
             // MutationObserver to replace the setTimeout and it looks better
             const observer = new MutationObserver(() => {
                 const firstSuggestion = suggestions.querySelector('.suggestion-item');
+                if (!firstSuggestion) return;
+                // If englishTitle is used before originalTitle
+                //const firstSuggestionTitle = firstSuggestion?.querySelector('strong')?.textContent.trim();
+                //console.log("firstSuggestionTitle:", firstSuggestionTitle);
+
+                /*if (input.value != firstSuggestionTitle) {
+                    input.value = originalTitle;
+                    input.dispatchEvent(new Event('input'));
+                    return;
+                }*/
 
                 if (firstSuggestion) {
                     //console.log("highlighting first choice");

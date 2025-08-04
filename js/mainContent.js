@@ -161,7 +161,7 @@ function renderScheduleHTML(animeList) {
                     <img src="${imageUrl}" class="anime-thumbnail anime-poster card-img-top" alt="${altTitle}" title="${altTitle}" loading="lazy">
                     <div class="card-body d-flex flex-column">
                         <h6 class="card-title text-info text-truncate mt-1">
-                            <a class="text-decoration-none anime-title-clickable" title="${title}">
+                            <a class="text-decoration-none anime-title-clickable" title="${title}" data-original-title="${altTitle}">
                                 ${title}
                             </a>
                         </h6>
