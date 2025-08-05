@@ -6,6 +6,11 @@
 const SAVED_CHAR_KEY = 'savedCharacters';
 characterLoadToken = null;
 
+// Show More Characters variables
+let currentCharacterList = [];
+let charactersRenderedCount = 0;
+const batchSize = 40;  // or whatever number you want per batch
+
 const vaInfoCache = {};
 async function getAnimeCharacters(animeId) {
     const myToken = Date.now();
@@ -34,7 +39,11 @@ async function getAnimeCharacters(animeId) {
 
         if (totalCharacters === 0) return;
 
+        currentCharacterList = animeCharacters; // save globally
+        charactersRenderedCount = 0;
+
         const container = document.getElementById("animeCharacters");
+        container.innerHTML = ''; // Clear for Show More Characters
 
         // Exit if this is no longer the latest load request
         if (characterLoadToken !== myToken) return;
@@ -43,103 +52,148 @@ async function getAnimeCharacters(animeId) {
         container.innerHTML = `
             <h5 class="mx-1 mb-3 d-flex align-items-center gap-2 fs-3 fs-md-2 fs-lg-1">
                 <i class="bi bi-person-circle"></i>List of ${totalCharacters} characters
-            </h5>`;
+            </h5>
+        `;
 
-        for (const entry of animeCharacters) {
-            const characterName = escapeHTML(entry.character.name);
-            const characterImage = entry.character.images.jpg.image_url;
-            const characterId = Number(entry.character.mal_id);
-            const voiceActors = entry.voice_actors;
+        renderCharacterBatch(); // render first batch
+        renderShowMoreButton();
 
-            /*console.log("Name:", characterName);
-            console.log("Image:", characterImage);
-            console.log("-------------");*/
-
-            const col = document.createElement("div");
-            col.className = "col-6 col-md-4 col-lg-3 mb-3";
-
-            // Build voice actors HTML
-            let vaListHTML = "";
-            // To get every item of "voice_actors": [...]
-            for (const va of voiceActors) {
-                const vaMalId = va.person.mal_id;
-
-                // Cache VA info per VA ID
-                if (!vaInfoCache[vaMalId]) {
-                    vaInfoCache[vaMalId] = {
-                        name: escapeHTML(va.person.name),
-                        image: va.person.images.jpg.image_url,
-                        lang: escapeHTML(va.language)
-                    };
-                } 
-                //else {console.log(`Using cached VA info for: ${vaMalId} - ${vaInfoCache[vaMalId].name} (${vaInfoCache[vaMalId].lang})`);}
-
-                const { name, image, lang } = vaInfoCache[vaMalId]; // reuses the saved object from the cache.
-
-                vaListHTML += `
-                    <div class="d-flex align-items-center mt-2">
-                        <img src="${image}" alt="${name}" class="me-2 rounded" style="width: 40px; height: 40px; object-fit: cover; flex-shrink: 0;" loading="lazy">
-                        <div>
-                            <div>
-                                <a href="#" class="va-link text-decoration-none" data-bs-toggle="modal" data-bs-target="#vaModal" 
-                                    data-name="${name}" data-image="${image}" data-lang="${lang}" data-vamalid="${vaMalId}">
-                                    <strong>${firstLastNameFormat(name)}</strong>
-                                </a>
-                            </div>
-                            <div class="va-language small">${lang}</div>
-                        </div>
-                    </div>
-                `;
-            }
-
-            // Final character card
-            col.innerHTML = `
-                <div class="card fade-in bg-dark text-light h-100">
-                    <img src="${characterImage}" class="character-image card-img-top" alt="${characterName}" loading="lazy">
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title d-flex justify-content-between align-items-start custom-card-charname">
-                            <span class="me-2 flex-grow-1">${firstLastNameFormat(characterName)}</span>
-                            <i class="bi bi-star text-warning toggle-saved-character-star" data-charid="${characterId}" role="button"></i>
-                        </h5>
-                        <div class="pb-2 custom-card-valist">${vaListHTML}</div>
-                        <div class="mt-auto text-end custom-card-charid">
-                            <span class="anime-char-id user-select-none text-secondary">Char ID: </span><b>${characterId}</b>
-                        </div>
-                    </div>
-                </div>
-            `;
-            container.appendChild(col);
-
-            // Saved Character Star icon toggle
-            const starIcon = col.querySelector(`[data-charid="${characterId}"]`);
-
-            if (isSavedCharacter(characterId)) {
-                starIcon.classList.replace('bi-star', 'bi-star-fill');
-            }
-
-            starIcon.addEventListener('click', () => {
-                toggleSavedCharacter(characterId, characterName, characterImage);
-
-                // Toggle icon class
-                if (isSavedCharacter(characterId)) {
-                    starIcon.classList.replace('bi-star', 'bi-star-fill');
-                } else {
-                    starIcon.classList.replace('bi-star-fill', 'bi-star');
-                }
-            });
-            
-            // Privacy option
-            toggleImageBlur(isBlurEnabled);
-
-            // fade in when scrolling into view for that div card .fade-in
-            const card = col.querySelector('.fade-in');
-            if (card) observer.observe(card);
-        }
     } catch (error) {
         // still check token before showing error
         if (characterLoadToken !== myToken) return;
         console.error("Failed to fetch characters:", error);
     }
+}
+
+function renderCharacterBatch() {
+    const container = document.getElementById("animeCharacters");
+    const nextBatch = currentCharacterList.slice(charactersRenderedCount, charactersRenderedCount + batchSize);
+
+    for (const entry of nextBatch) {
+        const characterName = escapeHTML(entry.character.name);
+        const characterImage = entry.character.images.jpg.image_url;
+        const characterId = Number(entry.character.mal_id);
+        const voiceActors = entry.voice_actors;
+
+        /*console.log("Name:", characterName);
+        console.log("Image:", characterImage);
+        console.log("-------------");*/
+
+        const col = document.createElement("div");
+        col.className = "col-6 col-md-4 col-lg-3 mb-3";
+
+        // Build voice actors HTML
+        let vaListHTML = "";
+        // To get every item of "voice_actors": [...]
+        for (const va of voiceActors) {
+            const vaMalId = va.person.mal_id;
+
+            // Cache VA info per VA ID
+            if (!vaInfoCache[vaMalId]) {
+                vaInfoCache[vaMalId] = {
+                    name: escapeHTML(va.person.name),
+                    image: va.person.images.jpg.image_url,
+                    lang: escapeHTML(va.language)
+                };
+            } 
+            //else {console.log(`Using cached VA info for: ${vaMalId} - ${vaInfoCache[vaMalId].name} (${vaInfoCache[vaMalId].lang})`);}
+
+            const { name, image, lang } = vaInfoCache[vaMalId]; // reuses the saved object from the cache.
+
+            vaListHTML += `
+                <div class="d-flex align-items-center mt-2">
+                    <img src="${image}" alt="${name}" class="me-2 rounded" style="width: 40px; height: 40px; object-fit: cover; flex-shrink: 0;" loading="lazy">
+                    <div>
+                        <div>
+                            <a href="#" class="va-link text-decoration-none" data-bs-toggle="modal" data-bs-target="#vaModal" 
+                                data-name="${name}" data-image="${image}" data-lang="${lang}" data-vamalid="${vaMalId}">
+                                <strong>${firstLastNameFormat(name)}</strong>
+                            </a>
+                        </div>
+                        <div class="va-language small">${lang}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Final character card
+        col.innerHTML = `
+            <div class="card fade-in bg-dark text-light h-100">
+                <img src="${characterImage}" class="character-image card-img-top" alt="${characterName}" loading="lazy">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title d-flex justify-content-between align-items-start custom-card-charname">
+                        <span class="me-2 flex-grow-1">${firstLastNameFormat(characterName)}</span>
+                        <i class="bi bi-star text-warning toggle-saved-character-star" data-charid="${characterId}" role="button"></i>
+                    </h5>
+                    <div class="pb-2 custom-card-valist">${vaListHTML}</div>
+                    <div class="mt-auto text-end custom-card-charid">
+                        <span class="anime-char-id user-select-none text-secondary">Char ID: </span><b>${characterId}</b>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.appendChild(col);
+
+        // Saved Character Star icon toggle
+        const starIcon = col.querySelector(`[data-charid="${characterId}"]`);
+
+        if (isSavedCharacter(characterId)) {
+            starIcon.classList.replace('bi-star', 'bi-star-fill');
+        }
+
+        starIcon.addEventListener('click', () => {
+            toggleSavedCharacter(characterId, characterName, characterImage);
+
+            // Toggle icon class
+            if (isSavedCharacter(characterId)) {
+                starIcon.classList.replace('bi-star', 'bi-star-fill');
+            } else {
+                starIcon.classList.replace('bi-star-fill', 'bi-star');
+            }
+        });
+        
+        // Privacy option
+        toggleImageBlur(isBlurEnabled);
+
+        // fade in when scrolling into view for that div card .fade-in
+        const card = col.querySelector('.fade-in');
+        if (card) observer.observe(card);
+    }
+
+    charactersRenderedCount += nextBatch.length;
+}
+
+function renderShowMoreButton() {
+    const container = document.getElementById("animeCharacters");
+    const totalCharacters = currentCharacterList.length;
+
+    // Remove existing button if any
+    const existingBtn = document.getElementById("showMoreCharactersBtn");
+    if (existingBtn) existingBtn.remove();
+    // If all characters rendered, no button needed
+    if (charactersRenderedCount >= totalCharacters) return;
+
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = `
+        <div class="col-12 text-center">
+            <button id="showMoreCharactersBtn" class="btn btn-primary bg-dark my-3">
+                Show More Characters
+            </button>
+        </div>
+    `;
+    container.appendChild(wrapper.firstElementChild);
+
+    // Add event listener for Show More Characters
+    document.getElementById("showMoreCharactersBtn").addEventListener("click", () => {
+        renderCharacterBatch();
+        renderShowMoreButton();
+
+        showToast({
+            message: `${charactersRenderedCount}/${totalCharacters} characters`,
+            type: "dark",
+            icon: "bi bi-person-circle"
+        });
+    });
 }
 
 /*

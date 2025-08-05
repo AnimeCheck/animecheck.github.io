@@ -27,7 +27,7 @@ async function loadTopAnimeCharacters(forceRefresh = false) {
     }
 
     if (top50AnimeCharCache?.length === TOP50_COMPLETE_COUNT) {
-        console.log("Using full Top 50 from localStorage");
+        //console.log("Using full Top 50 from localStorage");
         renderTopAnimeCharacters(top50AnimeCharCache, storedUpdatedAt);
         return;
     }
@@ -81,7 +81,7 @@ async function loadTopAnimeCharacters(forceRefresh = false) {
             top50AnimeCharCache = enriched;
             StorageHelper.set(TOP50_STORAGE_KEY, enriched);
             StorageHelper.set(TOP50_UPDATED_AT_KEY, Date.now());
-            console.log("Saved Top 50 to localStorage");
+            console.log("Saved Top 50 to storage");
         }
 
     } catch (err) {

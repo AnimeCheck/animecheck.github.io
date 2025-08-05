@@ -134,7 +134,7 @@ const observer = new IntersectionObserver((entries) => {
 let toastInstance = null;
 let toastIsShowing = false;
 
-function showToast({ message = "", type = "dark", icon = "", delay = 4000 }) {
+function showToast({ message = "", type = "dark", icon = "", delay = 4000, extraClasses = "" }) {
     const toastEl = document.getElementById("globalToast");
     const toastBody = document.getElementById("globalToastBody");
     const closeBtn = toastEl.querySelector(".btn-close");
@@ -148,7 +148,7 @@ function showToast({ message = "", type = "dark", icon = "", delay = 4000 }) {
 
     const updateAndShow = () => {
         // Update classes
-        toastEl.className = `toast text-bg-${type} border-0`;
+        toastEl.className = `toast text-bg-${type} ${extraClasses}`;
 
         // Update message + icon
         toastBody.innerHTML = icon ? `<i class="${icon} me-2"></i>${message}` : message;
