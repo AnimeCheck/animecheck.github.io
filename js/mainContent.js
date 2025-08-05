@@ -252,7 +252,7 @@ function appendAnimeListWithPagination(container, day, animeList, currentPage, l
             <nav aria-label="Page navigation">
                 <ul class="pagination justify-content-center mt-4">
                     <li class="page-item${currentPage === 1 ? ' disabled' : ''}">
-                        <a href="#" class="page-link bg-dark text-light border-secondary" data-page="${currentPage - 1}">Previous</a>
+                        <a href="#" class="page-link bg-dark text-light border-secondary" data-page="${currentPage - 1}">Prev</a>
                     </li>
         `;
 
