@@ -1,17 +1,19 @@
-describe('Settings Check Size button', () => {
+describe('Settings: Check Size button', () => {
   beforeEach(() => {
     cy.visit('/');
 
     // Click on Settings button
     cy.get('#settings-btn').click();
     cy.get('#settingsModal').should('be.visible');
+    // Click on the Data tab
+    cy.contains('button', 'Data').click();
     // Click on Check Size button
     cy.get('#checkStorageBtn').click();
     cy.get('#globalToast').should('be.visible');
   });
 
   it('Clicking on Check Size button', () => {
-    cy.get('#globalToast').contains('Local Storage usage:');
+    cy.get('#globalToast').contains('Storage size:');
   });
 
   it('Simulate the minimum', () => {
@@ -20,7 +22,7 @@ describe('Settings Check Size button', () => {
       body.innerHTML = `
         <div class="d-flex flex-wrap gap-2 align-items-center">
           <i class="bi bi-hdd"></i>
-          <div>Local Storage usage: </div><div>0.00 MB / 5.00 MB</div>
+          <div>Storage size: </div><div>0.00 MB / 5.00 MB</div>
         </div>
       `;
     });
@@ -42,7 +44,7 @@ describe('Settings Check Size button', () => {
       body.innerHTML = `
         <div class="d-flex flex-wrap gap-2 align-items-center">
           <i class="bi bi-hdd"></i>
-          <div>Local Storage usage: </div><div>5.00 MB / 5.00 MB</div>
+          <div>Storage size: </div><div>5.00 MB / 5.00 MB</div>
         </div>
       `;
     });

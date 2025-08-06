@@ -1,4 +1,4 @@
-describe('Settings Clear button', () => {
+describe('Settings: Clear button', () => {
   beforeEach(() => {
     cy.visit('/');
 
@@ -14,6 +14,8 @@ describe('Settings Clear button', () => {
 
     // Click on Settings button
     cy.get('#settings-btn').click();
+    // Click on the Data tab
+    cy.contains('button', 'Data').click();
   });
 
   it('No clear if all toggles are off', () => {
@@ -30,7 +32,7 @@ describe('Settings Clear button', () => {
 
     // Wait for toast to appear and check message
     cy.get('#globalToast').should('be.visible');
-    cy.get('#globalToast .toast-body').should('contain.text', 'Nothing is cleared');
+    cy.get('#globalToast .toast-body').should('contain.text', 'No options selected. Nothing cleared.');
   });
 
   it('Clears Top 50 if toggle is on', () => {
@@ -51,7 +53,7 @@ describe('Settings Clear button', () => {
 
     // Wait for toast to appear and check message
     cy.get('#globalToast').should('be.visible');
-    cy.get('#globalToast .toast-body').should('contain.text', 'Local storage cleared');
+    cy.get('#globalToast .toast-body').should('contain.text', 'Selected data cleared successfully.');
   });
 
   it('Clears VA Top 10 if toggle is on', () => {
@@ -72,7 +74,7 @@ describe('Settings Clear button', () => {
 
     // Wait for toast to appear and check message
     cy.get('#globalToast').should('be.visible');
-    cy.get('#globalToast .toast-body').should('contain.text', 'Local storage cleared');
+    cy.get('#globalToast .toast-body').should('contain.text', 'Selected data cleared successfully.');
   });
 
   it('Clears all if all toggles are on', () => {
@@ -89,6 +91,6 @@ describe('Settings Clear button', () => {
 
     // Wait for toast to appear and check message
     cy.get('#globalToast').should('be.visible');
-    cy.get('#globalToast .toast-body').should('contain.text', 'Local storage cleared');
+    cy.get('#globalToast .toast-body').should('contain.text', 'Selected data cleared successfully.');
   });
 })

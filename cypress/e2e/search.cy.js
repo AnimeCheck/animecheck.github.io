@@ -4,6 +4,7 @@ describe('Search input, suggestion list and clear button', () => {
   });
 
   it('Clicking on the input and typing to show the suggestion list', () => {
+    cy.wait(500);
     cy.get('#search').type('jjk');
     cy.get('#search').should('have.value', 'jjk');
 
@@ -16,6 +17,7 @@ describe('Search input, suggestion list and clear button', () => {
   });
 
   it('Clicking on Clear button erases the input value', () => {
+    cy.wait(500);
     cy.get('#search').type('one piece');
     cy.get('#search').should('have.value', 'one piece');
     
