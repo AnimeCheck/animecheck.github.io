@@ -7,6 +7,7 @@ API by Jikan.
 
 ## Features
 - Search anime
+- Airing Schedule anime list
 - Check Top 50 characters
 - Check Voice Actors Top 10 main role characters
 - Save characters
