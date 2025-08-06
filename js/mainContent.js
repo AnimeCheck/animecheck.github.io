@@ -160,7 +160,7 @@ function renderScheduleHTML(animeList) {
                 <div class="card fade-in h-100 bg-dark text-light">
                     <img src="${imageUrl}" class="anime-thumbnail anime-poster card-img-top" alt="${altTitle}" title="${altTitle}" loading="lazy">
                     <div class="card-body d-flex flex-column">
-                        <h6 class="card-title text-info text-truncate mt-1">
+                        <h6 class="card-title text-info two-line-truncate mt-1">
                             <a class="text-decoration-none anime-title-clickable" title="${title}" data-original-title="${altTitle}">
                                 ${title}
                             </a>
