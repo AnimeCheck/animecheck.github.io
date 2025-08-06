@@ -211,15 +211,20 @@ a.page-link:not(.disabled):hover {
 }
 
 @media (max-width: 768px) {
+    #statisticsBtn::before {
+        content: "Extra Statistics";
+        margin-right: 0.3em;
+        font-size: 1.0rem;
+    }
     #toggleSynopsisBtn::before {
         content: "Show Synopsis";
         margin-right: 0.3em;
         font-size: 1.0rem;
     }
-    .toggleSynopsisContainer {
+    .extraContainer {
         width: 100% !important;
     }
-    .toggleSynopsisContainer .bi-eye, .toggleSynopsisContainer .bi-eye-slash {
+    .extraContainer .bi-eye, .extraContainer .bi-eye-slash {
         font-size: 0.8rem;
     }
 }

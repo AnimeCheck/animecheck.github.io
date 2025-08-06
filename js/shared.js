@@ -130,6 +130,21 @@ const observer = new IntersectionObserver((entries) => {
     }
 });
 
+// Reusable Modal
+function generalModal(title, htmlContent) {
+    const modalEl = document.getElementById('reusableModal');
+    const labelEl = document.getElementById('reusableModalLabel');
+    const bodyEl = document.getElementById('reusableModalBody');
+
+    if (!modalEl || !labelEl || !bodyEl) return;
+
+    labelEl.textContent = title;
+    bodyEl.innerHTML = htmlContent;
+
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+}
+
 // Global Toast
 let toastInstance = null;
 let toastIsShowing = false;

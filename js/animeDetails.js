@@ -111,7 +111,10 @@ async function getAnimeById(animeId) {
                     </div>
                 </div>
 
-                <div class="toggleSynopsisContainer">
+                <div class="extraContainer d-flex gap-2">
+                    <button id="statisticsBtn" class="btn btn-outline-light btn-sm w-100" title="Extra Statistics" aria-expanded="false" aria-controls="StatisticsModal">
+                        <i class="bi bi-bar-chart-steps"></i>
+                    </button>
                     <button id="toggleSynopsisBtn" class="btn btn-outline-light btn-sm w-100" title="Toggle Synopsis" aria-expanded="false" aria-controls="synopsisSection">
                         <i class="bi bi-eye"></i>
                     </button>
@@ -121,36 +124,9 @@ async function getAnimeById(animeId) {
         `;
         document.getElementById("animeDetailsWrapper").innerHTML = animeDetailsHTML;
 
-        // Toggle Synopsis Section if it exists
-        const btn = document.getElementById('toggleSynopsisBtn');
-        const synopsisContainer = document.querySelector('.toggleSynopsisContainer');
-
-        if (synopsis.trim() !== "") {
-            const section = document.getElementById('synopsisSection');
-            const icon = btn.querySelector('i');
-
-            btn.addEventListener('click', () => {
-                const isVisible = section.classList.contains('show'); // if using .fade
-
-                if (isVisible) {
-                    section.classList.remove('show'); // Fade effect
-                    setTimeout(() => section.classList.add('d-none'), 150); // Fade effect
-                    icon.classList.replace('bi-eye-slash', 'bi-eye');
-                    btn.setAttribute('aria-expanded', 'false');
-                } else {
-                    if (section.innerHTML === "") {
-                        section.innerHTML = escapeHTML(synopsis).replace(/\n/g, "<br>"); // Add snopsis text once
-                    }
-
-                    section.classList.remove('d-none');
-                    setTimeout(() => section.classList.add('show'), 10); // Fade effect
-                    icon.classList.replace('bi-eye', 'bi-eye-slash');
-                    btn.setAttribute('aria-expanded', 'true');
-                }
-            });
-        } else {
-            synopsisContainer.classList.add('d-none');
-        }
+        // Extra
+        openExtraStatistics(animeId);
+        toggleSynopsisSection(synopsis);
 
         // Hide Anime details
         clearAnimeDetails();
@@ -159,6 +135,122 @@ async function getAnimeById(animeId) {
         toggleImageBlur(isBlurEnabled);
     } catch (error) {
         console.error("Error fetching anime data:", error.message);
+    }
+}
+
+const cachedStatsCache = {};
+function openExtraStatistics(animeId) {
+    const btn = document.getElementById('statisticsBtn');
+    if (!btn) return;
+
+    btn.onclick = async () => {
+        if (cachedStatsCache[animeId]) {
+            generalModal('Extra Statistics', cachedStatsCache[animeId]);
+            return;
+        }
+
+        // Show modal immediately with loading state
+        generalModal('Extra Statistics', `<span id="loadingStatsModal" class="text-center text-secondary py-3">Loading...</span>`);
+
+        try {
+            //console.log("openExtraStatistics fetching...");
+            const response = await throttledFetch(`https://api.jikan.moe/v4/anime/${animeId}/statistics`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            const stats = data.data;
+            const scores = stats.scores;
+
+            const scoresHTML = scores
+                .sort((a, b) => b.score - a.score) // sort descending: 10 to 1
+                .map(({ score, votes, percentage }) => {
+                    const percent = parseFloat(percentage);
+                    return `
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between">
+                                <span class="small">Score ${score}</span>
+                                <span class="small text-end">${votes.toLocaleString()} votes [${percent}%]</span>
+                            </div>
+                            <div class="progress bg-secondary-subtle">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: ${percent}%" aria-valuenow="${percent}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            const statsHTML = `
+                <h6 class="text-warning mb-2">Score Distribution</h6>
+                <div class="mb-3">${scoresHTML}</div>
+                <h6 class="text-warning mb-2">Stats</h6>
+                <ul class="list-group list-group-flush text-start">
+                    <li class="list-group-item bg-dark text-light d-flex justify-content-between">
+                        <span>Watching:</span>
+                        <b class="text-success">${stats.watching.toLocaleString()}</b>
+                    </li>
+                    <li class="list-group-item bg-dark text-light d-flex justify-content-between">
+                        <span>Completed:</span>
+                        <b class="text-primary">${stats.completed.toLocaleString()}</b>
+                    </li>
+                    <li class="list-group-item bg-dark text-light d-flex justify-content-between">
+                        <span>On-Hold:</span>
+                        <b class="text-warning">${stats.on_hold.toLocaleString()}</b>
+                    </li>
+                    <li class="list-group-item bg-dark text-light d-flex justify-content-between">
+                        <span>Dropped:</span>
+                        <b class="text-danger">${stats.dropped.toLocaleString()}</b>
+                    </li>
+                    <li class="list-group-item bg-dark text-light d-flex justify-content-between">
+                        <span>Plan to Watch:</span>
+                        <b class="text-secondary">${stats.plan_to_watch.toLocaleString()}</b>
+                    </li>
+                    <li class="list-group-item bg-dark text-light d-flex justify-content-between">
+                        <span>Total:</span>
+                        <b>${stats.total.toLocaleString()}</b>
+                    </li>
+                </ul>
+            `;
+
+            // Update modal
+            document.getElementById('loadingStatsModal').innerHTML = statsHTML;
+            cachedStatsCache[animeId] = statsHTML; // Save to cache
+        } catch (error) {
+            console.error("Error fetching anime data:", error.message);
+            generalModal('Error', `<span class="text-danger">Could not load statistics.</span>`);
+        }
+    };
+}
+
+function toggleSynopsisSection(synopsis) {
+    // Toggle Synopsis Section if it exists
+    const toggleSynopsisBtn = document.getElementById('toggleSynopsisBtn');
+    if (!toggleSynopsisBtn) return;
+
+    if (synopsis.trim() !== "") {
+        const section = document.getElementById('synopsisSection');
+        const icon = toggleSynopsisBtn.querySelector('i');
+
+        toggleSynopsisBtn.onclick = () => {
+            const isVisible = section.classList.contains('show'); // if using .fade
+
+            if (isVisible) {
+                section.classList.remove('show'); // Fade effect
+                setTimeout(() => section.classList.add('d-none'), 150); // Fade effect
+                icon.classList.replace('bi-eye-slash', 'bi-eye');
+                toggleSynopsisBtn.setAttribute('aria-expanded', 'false');
+            } else {
+                if (section.innerHTML === "") {
+                    section.innerHTML = escapeHTML(synopsis).replace(/\n/g, "<br>"); // Add snopsis text once
+                }
+
+                section.classList.remove('d-none');
+                setTimeout(() => section.classList.add('show'), 10); // Fade effect
+                icon.classList.replace('bi-eye', 'bi-eye-slash');
+                toggleSynopsisBtn.setAttribute('aria-expanded', 'true');
+            }
+        };
+    } else {
+        toggleSynopsisBtn.classList.add('d-none');
     }
 }
 
