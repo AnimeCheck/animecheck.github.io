@@ -68,6 +68,9 @@ async function getAnimeCharacters(animeId) {
 function renderCharacterBatch() {
     const container = document.getElementById("animeCharacters");
     const nextBatch = currentCharacterList.slice(charactersRenderedCount, charactersRenderedCount + batchSize);
+    const showEnglish = document.getElementById("toggleEnglish").checked;
+    const showJapanese = document.getElementById("toggleJapanese").checked;
+    const showOtherLanguages = document.getElementById("toggleOther").checked;
 
     for (const entry of nextBatch) {
         const characterName = escapeHTML(entry.character.name);
@@ -100,20 +103,27 @@ function renderCharacterBatch() {
 
             const { name, image, lang } = vaInfoCache[vaMalId]; // reuses the saved object from the cache.
 
-            vaListHTML += `
-                <div class="d-flex align-items-center mt-2">
-                    <img src="${image}" alt="${name}" class="me-2 rounded" style="width: 40px; height: 40px; object-fit: cover; flex-shrink: 0;" loading="lazy">
-                    <div>
+            // Language filtering logic
+            const isEnglish = lang.toLowerCase() === "english";
+            const isJapanese = lang.toLowerCase() === "japanese";
+            const isOther = !isEnglish && !isJapanese;
+
+            if ((isEnglish && showEnglish) || (isJapanese && showJapanese) || (isOther && showOtherLanguages)) {
+                vaListHTML += `
+                    <div class="d-flex align-items-center mt-2">
+                        <img src="${image}" alt="${name}" class="me-2 rounded" style="width: 40px; height: 40px; object-fit: cover; flex-shrink: 0;" loading="lazy">
                         <div>
-                            <a href="#" class="va-link text-decoration-none" data-bs-toggle="modal" data-bs-target="#vaModal" 
-                                data-name="${name}" data-image="${image}" data-lang="${lang}" data-vamalid="${vaMalId}">
-                                <strong>${firstLastNameFormat(name)}</strong>
-                            </a>
+                            <div>
+                                <a href="#" class="va-link text-decoration-none" data-bs-toggle="modal" data-bs-target="#vaModal" 
+                                    data-name="${name}" data-image="${image}" data-lang="${lang}" data-vamalid="${vaMalId}">
+                                    <strong>${firstLastNameFormat(name)}</strong>
+                                </a>
+                            </div>
+                            <div class="va-language small">${lang}</div>
                         </div>
-                        <div class="va-language small">${lang}</div>
                     </div>
-                </div>
-            `;
+                `;
+            }
         }
 
         // Final character card

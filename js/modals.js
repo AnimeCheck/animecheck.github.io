@@ -168,6 +168,18 @@ document.getElementById("checkStorageBtn").addEventListener("click", () => {
 
 // DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
+    // Voice Actors languages
+    ["toggleEnglish", "toggleJapanese", "toggleOther"].forEach(id => {
+        document.getElementById(id).addEventListener("change", () => {
+            showToast({
+                message: "Your choice will apply the next time characters are fetched.",
+                type: "dark",
+                icon: "bi-info-circle",
+                delay: 5000
+            });
+        });
+    });
+
     // Privacy Blur toggle. Load setting from sessionStorage on page load
     isBlurEnabled = sessionStorage.getItem('privacyBlur') === 'true'; // to convert it to Boolean
     document.getElementById('privacyBlurToggle').checked = isBlurEnabled;
