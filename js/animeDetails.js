@@ -191,7 +191,7 @@ function openExtraStatistics(animeId) {
             const statsHTML = `
                 <h6 class="text-warning mb-2">Score Distribution</h6>
                 <div class="mb-4">${scoresHTML}</div>
-                <h6 class="text-warning mb-2">Stats</h6>
+                <h6 class="text-warning mb-2">Watch Stats</h6>
                 <ul class="list-group list-group-flush text-start">
                     <li class="list-group-item bg-dark text-light d-flex justify-content-between">
                         <span>Watching:</span>

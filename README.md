@@ -10,7 +10,7 @@ API by Jikan.
 - Airing Schedule anime list
 - Check Top 50 characters
 - Check Voice Actors Top 10 main role characters
-- Extra: Score Distribution and Stats
+- Extra statistics: Score Distribution and Watch Stats
 - Save characters
 - Toggle Eng/JP/Other languages for character cards
 - Privacy blur option
