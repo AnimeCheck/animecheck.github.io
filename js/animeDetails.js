@@ -150,7 +150,7 @@ function openExtraStatistics(animeId) {
         }
 
         // Show modal immediately with loading state
-        generalModal('Extra Statistics', `<span id="loadingStatsModal" class="text-center text-secondary py-3">Loading...</span>`);
+        generalModal('Extra Statistics', `<div id="loadingStatsModal" class="text-center text-secondary">Loading...</div>`);
 
         try {
             //console.log("openExtraStatistics fetching...");
@@ -169,11 +169,15 @@ function openExtraStatistics(animeId) {
                     return `
                         <div class="mb-2">
                             <div class="d-flex justify-content-between">
-                                <span class="small">Score ${score}</span>
-                                <span class="small text-end">${votes.toLocaleString()} votes [${percent}%]</span>
+                                <span class="font-monospace small">Score ${score}</span>
+                                <span class="font-monospace small text-end">${votes.toLocaleString()} votes</span>
                             </div>
-                            <div class="progress bg-secondary-subtle">
-                                <div class="progress-bar bg-info" role="progressbar" style="width: ${percent}%" aria-valuenow="${percent}" aria-valuemin="0" aria-valuemax="100"></div>
+                            <div class="progress position-relative bg-secondary-subtle">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: ${percent}%" aria-valuenow="${percent}" aria-valuemin="0" aria-valuemax="100">
+                                    <span class="position-absolute top-50 start-50 translate-middle text-white fw-bold small">
+                                        ${percent}%
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -181,38 +185,40 @@ function openExtraStatistics(animeId) {
 
             const statsHTML = `
                 <h6 class="text-warning mb-2">Score Distribution</h6>
-                <div class="mb-3">${scoresHTML}</div>
+                <div class="mb-4">${scoresHTML}</div>
                 <h6 class="text-warning mb-2">Stats</h6>
                 <ul class="list-group list-group-flush text-start">
                     <li class="list-group-item bg-dark text-light d-flex justify-content-between">
                         <span>Watching:</span>
-                        <b class="text-success">${stats.watching.toLocaleString()}</b>
+                        <b class="font-monospace text-success">${stats.watching.toLocaleString()}</b>
                     </li>
                     <li class="list-group-item bg-dark text-light d-flex justify-content-between">
                         <span>Completed:</span>
-                        <b class="text-primary">${stats.completed.toLocaleString()}</b>
+                        <b class="font-monospace text-primary">${stats.completed.toLocaleString()}</b>
                     </li>
                     <li class="list-group-item bg-dark text-light d-flex justify-content-between">
                         <span>On-Hold:</span>
-                        <b class="text-warning">${stats.on_hold.toLocaleString()}</b>
+                        <b class="font-monospace text-warning">${stats.on_hold.toLocaleString()}</b>
                     </li>
                     <li class="list-group-item bg-dark text-light d-flex justify-content-between">
                         <span>Dropped:</span>
-                        <b class="text-danger">${stats.dropped.toLocaleString()}</b>
+                        <b class="font-monospace text-danger">${stats.dropped.toLocaleString()}</b>
                     </li>
                     <li class="list-group-item bg-dark text-light d-flex justify-content-between">
                         <span>Plan to Watch:</span>
-                        <b class="text-secondary">${stats.plan_to_watch.toLocaleString()}</b>
+                        <b class="font-monospace text-secondary">${stats.plan_to_watch.toLocaleString()}</b>
                     </li>
                     <li class="list-group-item bg-dark text-light d-flex justify-content-between">
                         <span>Total:</span>
-                        <b>${stats.total.toLocaleString()}</b>
+                        <b class="font-monospace">${stats.total.toLocaleString()}</b>
                     </li>
                 </ul>
             `;
 
             // Update modal
-            document.getElementById('loadingStatsModal').innerHTML = statsHTML;
+            const loadingStatsModal = document.getElementById('loadingStatsModal');
+            loadingStatsModal.className = "";
+            loadingStatsModal.innerHTML = statsHTML;
             cachedStatsCache[animeId] = statsHTML; // Save to cache
         } catch (error) {
             console.error("Error fetching anime data:", error.message);
