@@ -161,27 +161,32 @@ function openExtraStatistics(animeId) {
             const data = await response.json();
             const stats = data.data;
             const scores = stats.scores;
+            let scoresHTML = "";
 
-            const scoresHTML = scores
-                .sort((a, b) => b.score - a.score) // sort descending: 10 to 1
-                .map(({ score, votes, percentage }) => {
-                    const percent = parseFloat(percentage);
-                    return `
-                        <div class="mb-2">
-                            <div class="d-flex justify-content-between">
-                                <span class="font-monospace small">Score ${score}</span>
-                                <span class="font-monospace small text-end">${votes.toLocaleString()} votes</span>
-                            </div>
-                            <div class="progress position-relative bg-secondary-subtle">
-                                <div class="progress-bar bg-info" role="progressbar" style="width: ${percent}%" aria-valuenow="${percent}" aria-valuemin="0" aria-valuemax="100">
-                                    <span class="position-absolute top-50 start-50 translate-middle text-white fw-bold small">
-                                        ${percent}%
-                                    </span>
+            if (!scores || scores.length === 0) {
+                scoresHTML = `<span class="text-secondary">Score Distribution not available.</span>`;
+            } else {
+                scoresHTML = scores
+                    .sort((a, b) => b.score - a.score) // sort descending: 10 to 1
+                    .map(({ score, votes, percentage }) => {
+                        const percent = parseFloat(percentage);
+                        return `
+                            <div class="mb-2">
+                                <div class="d-flex justify-content-between">
+                                    <span class="font-monospace small">Score ${score}</span>
+                                    <span class="font-monospace small text-end">${votes.toLocaleString()} votes</span>
+                                </div>
+                                <div class="progress position-relative bg-secondary-subtle">
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: ${percent}%" aria-valuenow="${percent}" aria-valuemin="0" aria-valuemax="100">
+                                        <span class="position-absolute top-50 start-50 translate-middle text-white fw-bold small">
+                                            ${percent}%
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    `;
-                }).join('');
+                        `;
+                    }).join('');
+            }
 
             const statsHTML = `
                 <h6 class="text-warning mb-2">Score Distribution</h6>
