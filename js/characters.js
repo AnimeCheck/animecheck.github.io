@@ -9,7 +9,7 @@ characterLoadToken = null;
 // Show More Characters variables
 let currentCharacterList = [];
 let charactersRenderedCount = 0;
-const batchSize = 50;  // or whatever number you want per batch
+const batchSize = 100;  // or whatever number you want per batch
 
 const vaInfoCache = {};
 async function getAnimeCharacters(animeId) {
