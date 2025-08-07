@@ -26,7 +26,7 @@ function renderAiringScheduleTabs() {
             Airing Schedule
         </h5>
 
-        <div id="airingDayButtons" class="d-flex flex-wrap gap-2 mb-4">
+        <div id="airingDayButtons" class="d-flex flex-wrap gap-2 my-4">
             ${buttonsHTML}
         </div>
 
