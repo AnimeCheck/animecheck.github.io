@@ -177,7 +177,7 @@ function openExtraStatistics(animeId) {
                                     <span class="font-monospace small text-end">${votes.toLocaleString()} votes</span>
                                 </div>
                                 <div class="progress position-relative bg-secondary-subtle">
-                                    <div class="progress-bar bg-info" role="progressbar" style="width: ${percent}%" aria-valuenow="${percent}" aria-valuemin="0" aria-valuemax="100">
+                                    <div class="progress-bar bg-primary" role="progressbar" style="width: ${percent}%" aria-valuenow="${percent}" aria-valuemin="0" aria-valuemax="100">
                                         <span class="position-absolute top-50 start-50 translate-middle text-white fw-bold small">
                                             ${percent}%
                                         </span>
