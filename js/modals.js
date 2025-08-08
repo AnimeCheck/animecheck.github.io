@@ -75,7 +75,6 @@ function toggleImageBlur(enabled) {
 document.getElementById('privacyBlurToggle').addEventListener('change', (event) => {
     // Listen for Privacy toggle changes
     isBlurEnabled = event.target.checked;
-    sessionStorage.setItem('privacyBlur', isBlurEnabled);
     toggleImageBlur(isBlurEnabled);
 });
 
@@ -166,8 +165,90 @@ document.getElementById("checkStorageBtn").addEventListener("click", () => {
     });
 });
 
+// Settings configuration saving and loading
+function saveConfig() {
+    const config = {
+        privacyBlurToggle: document.getElementById('privacyBlurToggle').checked,
+        toggleEnglish: document.getElementById('toggleEnglish').checked,
+        toggleJapanese: document.getElementById('toggleJapanese').checked,
+        toggleOther: document.getElementById('toggleOther').checked,
+        toggleClearTop50: document.getElementById('toggleClearTop50').checked,
+        toggleClearVAChars: document.getElementById('toggleClearVAChars').checked,
+        toggleClearSavedChars: document.getElementById('toggleClearSavedChars').checked,
+        isPrettify: document.getElementById('prettifyRadio').checked,
+    };
+    localStorage.setItem('userConfig', JSON.stringify(config));
+}
+
+function loadConfig() {
+    const saved = localStorage.getItem('userConfig');
+    if (!saved) return;
+
+    const config = JSON.parse(saved);
+
+    if (config.privacyBlurToggle !== undefined) {
+        document.getElementById('privacyBlurToggle').checked = config.privacyBlurToggle;
+        toggleImageBlur(config.privacyBlurToggle);
+    }
+    if (config.toggleEnglish !== undefined) {
+        document.getElementById('toggleEnglish').checked = config.toggleEnglish;
+    }
+    if (config.toggleJapanese !== undefined) {
+        document.getElementById('toggleJapanese').checked = config.toggleJapanese;
+    }
+    if (config.toggleOther !== undefined) {
+        document.getElementById('toggleOther').checked = config.toggleOther;
+    }
+    if (config.isPrettify !== undefined) {
+        document.getElementById('prettifyRadio').checked = config.isPrettify;
+        document.getElementById('minifyRadio').checked = !config.isPrettify;
+    }
+    if (config.toggleClearTop50 !== undefined) {
+        document.getElementById('toggleClearTop50').checked = config.toggleClearTop50;
+    }
+    if (config.toggleClearVAChars !== undefined) {
+        document.getElementById('toggleClearVAChars').checked = config.toggleClearVAChars;
+    }
+    if (config.toggleClearSavedChars !== undefined) {
+        document.getElementById('toggleClearSavedChars').checked = config.toggleClearSavedChars;
+    }
+}
+
+// Reset Config
+const toggleResetConfig = document.getElementById('toggleResetConfig');
+const resetConfigBtn = document.getElementById('resetConfigBtn');
+
+toggleResetConfig.addEventListener('change', () => {
+    resetConfigBtn.disabled = !toggleResetConfig.checked;
+});
+
+resetConfigBtn.addEventListener('click', () => {
+    localStorage.removeItem('userConfig');
+    location.reload(); // Reload page
+});
+
 // DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
+    loadConfig();
+
+    // Save config whenever any toggle changes
+    const checkboxes = [
+        'privacyBlurToggle', 
+        'toggleEnglish', 
+        'toggleJapanese', 
+        'toggleOther', 
+        'toggleClearTop50', 
+        'toggleClearVAChars', 
+        'toggleClearSavedChars'
+    ];
+    const radios = ['prettifyRadio', 'minifyRadio'];
+
+    [...checkboxes, ...radios].forEach(id => {
+        document.getElementById(id).addEventListener('change', () => {
+            saveConfig();
+        });
+    });
+
     // Voice Actors languages
     ["toggleEnglish", "toggleJapanese", "toggleOther"].forEach(id => {
         document.getElementById(id).addEventListener("change", () => {
@@ -181,7 +262,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Privacy Blur toggle. Load setting from sessionStorage on page load
-    isBlurEnabled = sessionStorage.getItem('privacyBlur') === 'true'; // to convert it to Boolean
+    const userConfig = JSON.parse(localStorage.getItem('userConfig') || '{}');
+    isBlurEnabled = userConfig.privacyBlurToggle === true; // to convert it to Boolean
     document.getElementById('privacyBlurToggle').checked = isBlurEnabled;
     toggleImageBlur(isBlurEnabled);
 
