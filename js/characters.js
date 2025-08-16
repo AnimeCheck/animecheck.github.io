@@ -25,7 +25,7 @@ async function getAnimeCharacters(animeId) {
     }
 
     const url = `https://api.jikan.moe/v4/anime/${animeId}/characters`;
-    console.log("Anime Characters URL: ", url);
+    //console.log("Anime Characters URL: ", url);
     try {
         const response = await throttledFetch(`https://api.jikan.moe/v4/anime/${animeId}/characters`);
         if (!response.ok) {
