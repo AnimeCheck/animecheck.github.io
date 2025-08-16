@@ -266,7 +266,10 @@ document.addEventListener('click', function (e) {
     const formattedName = firstLastNameFormat(name);
 
     // Update modal info
-    document.getElementById('vaModalLabel').innerHTML = `${formattedName} <span class="text-secondary">(${vaMalId})</span>`;
+    document.getElementById('vaModalLabel').innerHTML = `
+        <b>${formattedName}</b>
+        <a href="https://myanimelist.net/people/${vaMalId}" class="text-decoration-none" target="_blank" rel="noopener noreferrer">(${vaMalId})</a>
+    `;
     document.getElementById('vaModalName').textContent = formattedName;
     document.getElementById('vaModalImage').src = image;
     document.getElementById("vaModalImageLink").href = image;
