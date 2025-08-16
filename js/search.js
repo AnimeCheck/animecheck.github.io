@@ -55,12 +55,15 @@ searchInput.addEventListener('input', () => {
             }
         }, 10000);
 
-        fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=15`, {signal})
+        // For SFW option
+        const toggleSFW = document.getElementById("toggleSFW").checked;
+
+        fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=15&sfw=${toggleSFW}`, {signal})
             .then(res => res.json())
             .then(data => {
                 suggestions.innerHTML = ''; // To avoid a duplicated list when you enter a title and you press backspace.
                 selectedIndex = -1; // to reset state
-                
+                console.log(`Fetch URL: https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=15&sfw=${toggleSFW}`);
                 renderSuggestions(data.data, query);
 
                 // Prevent a case where the user spam a query of 2+ chars with no suggestions.

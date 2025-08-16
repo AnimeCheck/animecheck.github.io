@@ -218,6 +218,14 @@
 
                         <div class="tab-content" id="settingsTabContent">
                             <div class="tab-pane fade show active" id="general-tab-settings" role="tabpanel" aria-labelledby="general-tab" tabindex="0">
+                                <h5>Search</h5>
+                                <div class="d-flex flex-wrap mb-3">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="toggleSFW" checked>
+                                        <label class="form-check-label user-select-none me-3" for="toggleSFW">Safe Mode</label>
+                                    </div>
+                                </div>
+
                                 <h5>Characters</h5>
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <div>
@@ -319,7 +327,7 @@
                                 <div class="form-check form-switch mb-2">
                                     <input class="form-check-input" type="checkbox" role="switch" id="toggleClearVAChars">
                                     <label class="form-check-label user-select-none" for="toggleClearVAChars">
-                                        Clear all voice actors' characters
+                                        Clear all voice actors' fetches
                                         <span class="badge rounded-pill bg-secondary" id="vaCharSize">0 KB</span>
                                     </label>
                                     <div class="form-text text-secondary small user-select-none">

@@ -176,6 +176,7 @@ function saveConfig() {
         toggleClearVAChars: document.getElementById('toggleClearVAChars').checked,
         toggleClearSavedChars: document.getElementById('toggleClearSavedChars').checked,
         isPrettify: document.getElementById('prettifyRadio').checked,
+        toggleSFW: document.getElementById("toggleSFW").checked
     };
     localStorage.setItem('userConfig', JSON.stringify(config));
 }
@@ -212,6 +213,9 @@ function loadConfig() {
     if (config.toggleClearSavedChars !== undefined) {
         document.getElementById('toggleClearSavedChars').checked = config.toggleClearSavedChars;
     }
+    if (config.toggleSFW !== undefined) {
+        document.getElementById('toggleSFW').checked = config.toggleSFW;
+    }
 }
 
 // Reset Config
@@ -239,7 +243,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'toggleOther', 
         'toggleClearTop50', 
         'toggleClearVAChars', 
-        'toggleClearSavedChars'
+        'toggleClearSavedChars',
+        'toggleSFW'
     ];
     const radios = ['prettifyRadio', 'minifyRadio'];
 
@@ -249,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Voice Actors languages
+    // Toggling a Voice Actors language option will show a toast
     ["toggleEnglish", "toggleJapanese", "toggleOther"].forEach(id => {
         document.getElementById(id).addEventListener("change", () => {
             showToast({
