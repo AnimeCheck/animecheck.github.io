@@ -88,6 +88,9 @@ async function loadScheduleForDay(day) {
     const container = document.getElementById(`schedule-${day}`);
     if (!container) return;
 
+    // Show skeleton placeholder
+    showSkeleton(container);
+
     try {
         let allAnime = [];
         let page = 1;
@@ -133,6 +136,52 @@ async function loadScheduleForDay(day) {
     } catch (error) {
         container.innerHTML = `<div class="text-danger">Failed to load schedule for ${uppercaseFirstChar(day)}.</div>`;
     }
+}
+
+// Placeholder for loading
+function showSkeleton(container, count = 10) {
+    let skeleton = container.querySelector(".skeleton-wrapper");
+    if (!skeleton) {
+        skeleton = document.createElement("div");
+        skeleton.className = "skeleton-wrapper";
+        container.prepend(skeleton);
+    }
+
+    // Build skeleton HTML
+    let html = '<div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">';
+    for (let i = 0; i < count; i++) {
+        html += `
+            <div class="col">
+                <div class="card h-100 bg-dark text-light skeleton-card">
+                    <div class="anime-thumbnail bg-secondary placeholder-glow"></div>
+                    <div class="card-body">
+                        <h6 class="card-title placeholder-glow">
+                            <span class="bg-info placeholder col-7"></span>
+                        </h6>
+                        <div class="placeholder-glow">
+                            <span class="bg-light placeholder col-5"></span>
+                        </div>
+                        <div class="placeholder-glow mb-2">
+                            <span class="bg-primary placeholder col-2"></span>
+                        </div>
+                        <div class="mt-auto placeholder-glow d-flex justify-content-between">
+                            <span class="bg-secondary placeholder col-2"></span>
+                            <span class="bg-danger placeholder col-2"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    html += '</div>';
+
+    skeleton.innerHTML = html;
+    skeleton.style.display = "block";
+}
+
+function hideSkeleton(container) {
+    const skeleton = container.querySelector(".skeleton-wrapper");
+    if (skeleton) skeleton.style.display = "none";
 }
 
 // Convert anime list to HTML
@@ -192,6 +241,9 @@ const schedulePageDOM = {}; // For caching when changing page in a day
 function renderScheduleHTMLInto(day, animeList, currentPage = 1, lastVisiblePage = 1) {
     const container = document.getElementById(`schedule-${day}`);
     if (!container) return;
+
+    // Hide skeleton placeholder
+    hideSkeleton(container);
 
     // Hide all previously shown pages
     container.querySelectorAll('.schedule-page').forEach(div => {
