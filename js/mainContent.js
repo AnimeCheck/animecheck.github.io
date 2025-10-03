@@ -99,6 +99,7 @@ async function loadScheduleForDay(day) {
 
         while (hasNext) {
             const res = await throttledFetch(`${SCHEDULE_API_BASE}${day}?page=${page}`);
+            console.log(day, page, res.status); // <-- log status
             const data = await res.json();
             const animeList = data?.data || [];
 
@@ -135,7 +136,7 @@ async function loadScheduleForDay(day) {
         renderScheduleHTMLInto(day, pages[1], 1, lastVisiblePage);
 
     } catch (error) {
-        container.innerHTML = `<div class="text-danger">Failed to load schedule for ${uppercaseFirstChar(day)}.</div>`;
+        container.innerHTML = `<div class="text-danger">Failed to load schedule for ${uppercaseFirstChar(day)}...</div>`;
     }
 }
 
