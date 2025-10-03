@@ -98,9 +98,9 @@ async function loadScheduleForDay(day) {
         let seen = new Set();
 
         while (hasNext) {
-            // todayStr makes the fetch URL unique each day, so the response is cached for a day and refreshed automatically the next day.
-            const todayStr = new Date().toISOString().split('T')[0];
-            const res = await throttledFetch(`${SCHEDULE_API_BASE}${day}?page=${page}&_=${todayStr}`);
+            // minutesKey makes the fetch URL unique each 5 minutes, so the response is cached for 5 min and refreshed automatically the next 5 min.
+            const minutesKey = Math.floor(Date.now() / (1000 * 60 * 5));
+            const res = await throttledFetch(`${SCHEDULE_API_BASE}${day}?page=${page}&_=${minutesKey}`);
             const data = await res.json();
             const animeList = data?.data || [];
 
