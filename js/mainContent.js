@@ -95,14 +95,15 @@ async function loadScheduleForDay(day) {
         let allAnime = [];
         let page = 1;
         let hasNext = true;
+        let seen = new Set();
 
         while (hasNext) {
-            const res = await throttledFetch(`${SCHEDULE_API_BASE}${day}?page=${page}`);
+            const res = await throttledFetch(`${SCHEDULE_API_BASE}${day.toLowerCase()}?page=${page}`);
             const data = await res.json();
             const animeList = data?.data || [];
 
             // Deduplicate while collecting
-            const seen = new Set(allAnime.map(a => a.mal_id));
+            //const seen = new Set(allAnime.map(a => a.mal_id));
             for (const anime of animeList) {
                 if (!seen.has(anime.mal_id)) {
                     seen.add(anime.mal_id);
