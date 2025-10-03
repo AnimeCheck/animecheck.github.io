@@ -98,7 +98,7 @@ async function loadScheduleForDay(day) {
         let seen = new Set();
 
         while (hasNext) {
-            const res = await throttledFetch(`${SCHEDULE_API_BASE}${day.toLowerCase()}?page=${page}`);
+            const res = await throttledFetch(`${SCHEDULE_API_BASE}${day}?page=${page}`);
             const data = await res.json();
             const animeList = data?.data || [];
 
