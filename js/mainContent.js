@@ -85,7 +85,8 @@ function renderAiringScheduleTabs() {
 
 // Fetch and render schedule for a given day
 async function loadScheduleForDay(day) {
-    const container = document.getElementById(`schedule-${day}`);
+    const container = document.getElementById(`schedule-${day.toLowerCase()}`);
+    console.log(day, container);
     if (!container) return;
 
     // Show skeleton placeholder
@@ -98,8 +99,8 @@ async function loadScheduleForDay(day) {
         let seen = new Set();
 
         while (hasNext) {
-            const res = await throttledFetch(`${SCHEDULE_API_BASE}${day}?page=${page}`);
-            console.log(day, page, res.status); // <-- log status
+            const res = await throttledFetch(`${SCHEDULE_API_BASE}${day.toLowerCase()}?page=${page}`);
+            console.log(day, page, res.status);
             const data = await res.json();
             const animeList = data?.data || [];
 
