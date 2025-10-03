@@ -85,10 +85,9 @@ function renderAiringScheduleTabs() {
 
 // Fetch and render schedule for a given day
 async function loadScheduleForDay(day) {
-    const container = document.getElementById(`schedule-${day.toLowerCase()}`);
-    console.log(day, container);
+    const container = document.getElementById(`schedule-${day}`);
+    
     if (!container) return;
-
     // Show skeleton placeholder
     showSkeleton(container);
 
@@ -99,7 +98,7 @@ async function loadScheduleForDay(day) {
         let seen = new Set();
 
         while (hasNext) {
-            const res = await throttledFetch(`${SCHEDULE_API_BASE}${day.toLowerCase()}?page=${page}`);
+            const res = await throttledFetch(`${SCHEDULE_API_BASE}${day}?page=${page}&_=${Date.now()}`);
             console.log(day, page, res.status);
             const data = await res.json();
             const animeList = data?.data || [];
@@ -137,7 +136,7 @@ async function loadScheduleForDay(day) {
         renderScheduleHTMLInto(day, pages[1], 1, lastVisiblePage);
 
     } catch (error) {
-        container.innerHTML = `<div class="text-danger">Failed to load schedule for ${uppercaseFirstChar(day)}...</div>`;
+        container.innerHTML = `<div class="text-danger">Failed to load schedule for ${uppercaseFirstChar(day)}.</div>`;
     }
 }
 
