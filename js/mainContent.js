@@ -98,8 +98,9 @@ async function loadScheduleForDay(day) {
         let seen = new Set();
 
         while (hasNext) {
-            const res = await throttledFetch(`${SCHEDULE_API_BASE}${day}?page=${page}&_=${Date.now()}`);
-            console.log(day, page, res.status);
+            // todayStr makes the fetch URL unique each day, so the response is cached for a day and refreshed automatically the next day.
+            const todayStr = new Date().toISOString().split('T')[0];
+            const res = await throttledFetch(`${SCHEDULE_API_BASE}${day}?page=${page}&_=${todayStr}`);
             const data = await res.json();
             const animeList = data?.data || [];
 
