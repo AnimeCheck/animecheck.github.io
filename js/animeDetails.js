@@ -227,7 +227,11 @@ function openExtraStatistics(animeId) {
             cachedStatsCache[animeId] = statsHTML; // Save to cache
         } catch (error) {
             console.error("Error fetching anime data:", error.message);
-            generalModal('Error', `<span class="text-danger">Could not load statistics.</span>`);
+
+            const loadingStatsModal = document.getElementById("loadingStatsModal");
+            if (loadingStatsModal) {
+                loadingStatsModal.innerHTML = `<span class="text-danger">Could not load statistics.</span>`;
+            }
         }
     };
 }
