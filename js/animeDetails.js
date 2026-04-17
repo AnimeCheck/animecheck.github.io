@@ -65,7 +65,10 @@ async function getAnimeById(animeId) {
             <h5 class="mx-1 mb-3 d-flex align-items-center gap-2 fs-3 fs-md-2 fs-lg-1">
                 <i class="bi bi-info-circle"></i>
                 Anime Details
-                <i class="bi bi-x-circle ms-auto text-secondary hover-pointer hide-anime-details-icon" role="button" title="Clear anime details"></i>
+                <a href="https://myanimelist.net/anime/${animeId}" class="text-secondary" target="_blank" rel="noopener noreferrer">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                </a>
+                <i class="bi bi-x-square ms-auto text-danger hover-pointer hide-anime-details-icon" role="button" title="Clear anime details"></i>
             </h5>
             <div class="row mb-3 align-items-center">
                 <div class="col-md-2 text-center my-2">

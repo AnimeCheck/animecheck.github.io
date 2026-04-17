@@ -266,7 +266,7 @@ function renderSavedCharacters() {
             <i class="bi bi-star-fill"></i>
             Saved Characters 
             <span class="text-secondary small">(${savedChars.length})</span>
-            <i class="bi bi-eye-slash ms-auto text-secondary hover-pointer hide-saved-characters-icon" role="button" title="Hide saved characters"></i>
+            <i class="bi bi-eye-slash ms-auto text-danger hover-pointer hide-saved-characters-icon" role="button" title="Hide saved characters"></i>
         </h5>
     `;
 
