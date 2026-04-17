@@ -66,7 +66,7 @@ async function getAnimeById(animeId) {
                 <i class="bi bi-info-circle"></i>
                 Anime Details
                 <a href="https://myanimelist.net/anime/${animeId}" class="text-secondary" target="_blank" rel="noopener noreferrer">
-                    <i class="bi bi-box-arrow-up-right"></i>
+                    <i class="bi bi-box-arrow-up-right" title="Check on MyAnimeList"></i>
                 </a>
                 <i class="bi bi-x-square ms-auto text-danger hover-pointer hide-anime-details-icon" role="button" title="Clear anime details"></i>
             </h5>
