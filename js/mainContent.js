@@ -7,21 +7,6 @@ function renderAiringScheduleTabs() {
     const container = document.getElementById("mainContent");
     if (!container) return;
 
-    /*let newDate = new Date();
-    let localTime = newDate.toLocaleTimeString([], { 
-        hour: '2-digit', 
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false 
-    });
-    let japanTime = new Intl.DateTimeFormat([], {
-        timeZone: 'Asia/Tokyo',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-    }).format(newDate)*/
-
     const today = getTodayDayString();
     let buttonsHTML = "";
 
