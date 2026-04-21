@@ -7,6 +7,19 @@ function renderAiringScheduleTabs() {
     const container = document.getElementById("mainContent");
     if (!container) return;
 
+    let newDate = new Date();
+    let localTime = newDate.toLocaleTimeString([], { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        hour12: false 
+    });
+    let japanTime = new Intl.DateTimeFormat([], {
+        timeZone: 'Asia/Tokyo',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    }).format(newDate)
+
     const today = getTodayDayString();
     let buttonsHTML = "";
 
@@ -26,7 +39,19 @@ function renderAiringScheduleTabs() {
             Airing Schedule
         </h5>
 
-        <div id="airingDayButtons" class="d-flex flex-wrap gap-2 my-4">
+        <div class="fs-5">
+            <span class="text-nowrap font-monospace">
+                <i class="bi bi-clock me-1 text-primary"></i>
+                ${localTime} <span class="text-secondary">(Local)</span>
+            </span>
+            <span class="mx-2"></span>
+            <span class="text-nowrap font-monospace">
+                <i class="bi bi-clock me-1 text-primary"></i>
+                ${japanTime} <span class="text-secondary">(JST)</span>
+            </span>
+        </div>
+
+        <div id="airingDayButtons" class="d-flex flex-wrap gap-2 mt-2 mb-4">
             ${buttonsHTML}
         </div>
 
