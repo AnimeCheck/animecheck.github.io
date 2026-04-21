@@ -7,18 +7,20 @@ function renderAiringScheduleTabs() {
     const container = document.getElementById("mainContent");
     if (!container) return;
 
-    let newDate = new Date();
+    /*let newDate = new Date();
     let localTime = newDate.toLocaleTimeString([], { 
         hour: '2-digit', 
-        minute: '2-digit', 
+        minute: '2-digit',
+        second: '2-digit',
         hour12: false 
     });
     let japanTime = new Intl.DateTimeFormat([], {
         timeZone: 'Asia/Tokyo',
         hour: '2-digit',
         minute: '2-digit',
+        second: '2-digit',
         hour12: false
-    }).format(newDate)
+    }).format(newDate)*/
 
     const today = getTodayDayString();
     let buttonsHTML = "";
@@ -42,12 +44,14 @@ function renderAiringScheduleTabs() {
         <div class="fs-5 mb-3">
             <span class="text-nowrap font-monospace">
                 <i class="bi bi-clock me-1 text-primary"></i>
-                ${localTime} <span class="text-secondary">(Local)</span>
+                <span id="localTime">--:--:--</span>
+                <span class="text-secondary">(Local)</span>
             </span>
             <span class="mx-2"></span>
             <span class="text-nowrap font-monospace">
                 <i class="bi bi-clock me-1 text-primary"></i>
-                ${japanTime} <span class="text-secondary">(JST)</span>
+                <span id="japanTime">--:--:--</span>
+                <span class="text-secondary">(JST)</span>
             </span>
         </div>
 
@@ -107,6 +111,36 @@ function renderAiringScheduleTabs() {
         });
     });
 }
+
+// Update the local and Japan clocks
+function updateClocks() {
+    const localEl = document.getElementById("localTime");
+    const japanEl = document.getElementById("japanTime");
+    const now = new Date();
+
+    if (localEl) {
+        localEl.textContent = now.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false
+        });
+    }
+
+    if (japanEl) {
+        japanEl.textContent = new Intl.DateTimeFormat([], {
+            timeZone: "Asia/Tokyo",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false
+        }).format(now);
+    }
+}
+// run clocks immediately once
+updateClocks();
+// then keep updating every second
+setInterval(updateClocks, 1000);
 
 // Fetch and render schedule for a given day
 async function loadScheduleForDay(day) {
