@@ -269,7 +269,7 @@ function renderScheduleHTML(animeList) {
                         <div>
                             <span class="badge badge-airing bg-primary text-light small mb-1 rounded-pill text-wrap">${score}</span>
                         </div>
-                        <div class="mt-auto pt-2 small font-monospace text-warning">${time} (JST)</div>
+                        <div class="mt-auto pt-2 card-time font-monospace text-warning">${time} (JST)</div>
                         <div class="small d-flex justify-content-between align-items-center text-secondary">
                             <a href="${anime.url}" class="text-secondary" target="_blank" rel="noopener noreferrer">
                                 <i class="bi bi-box-arrow-up-right"></i>
