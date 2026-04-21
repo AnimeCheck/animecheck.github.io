@@ -34,12 +34,12 @@ function renderAiringScheduleTabs() {
     }
 
     container.innerHTML = `
-        <h5 class="mx-1 mb-3 d-flex align-items-center gap-2 fs-3 fs-md-2 fs-lg-1">
+        <h5 class="mx-1 mb-2 d-flex align-items-center gap-2 fs-3 fs-md-2 fs-lg-1">
             <i class="bi bi-broadcast"></i>
             Airing Schedule
         </h5>
 
-        <div class="fs-5">
+        <div class="fs-5 mb-3">
             <span class="text-nowrap font-monospace">
                 <i class="bi bi-clock me-1 text-primary"></i>
                 ${localTime} <span class="text-secondary">(Local)</span>
@@ -51,7 +51,7 @@ function renderAiringScheduleTabs() {
             </span>
         </div>
 
-        <div id="airingDayButtons" class="d-flex flex-wrap gap-2 mt-2 mb-4">
+        <div id="airingDayButtons" class="d-flex flex-wrap gap-2 mb-4">
             ${buttonsHTML}
         </div>
 
