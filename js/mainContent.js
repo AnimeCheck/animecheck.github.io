@@ -168,10 +168,10 @@ function showSkeleton(container, count = 10) {
                             <span class="bg-primary placeholder col-2"></span>
                         </div>
                         <div class="mt-auto">
-                            <span class="bg-light placeholder col-5"></span>
+                            <span class="bg-warning placeholder col-5"></span>
                         </div>
                         <div class="placeholder-glow d-flex justify-content-between">
-                            <span class="bg-secondary placeholder col-2"></span>
+                            <span class="bg-secondary placeholder col-1"></span>
                             <span class="bg-danger placeholder col-2"></span>
                         </div>
                     </div>
@@ -225,7 +225,7 @@ function renderScheduleHTML(animeList) {
                         <div>
                             <span class="badge badge-airing bg-primary text-light small mb-1 rounded-pill text-wrap">${score}</span>
                         </div>
-                        <div class="mt-auto pt-2 small font-monospace">${time} (JST)</div>
+                        <div class="mt-auto pt-2 small font-monospace text-warning">${time} (JST)</div>
                         <div class="small d-flex justify-content-between align-items-center text-secondary">
                             <a href="${anime.url}" class="text-secondary" target="_blank" rel="noopener noreferrer">
                                 <i class="bi bi-box-arrow-up-right"></i>
