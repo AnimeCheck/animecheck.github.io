@@ -45,6 +45,7 @@ function renderAiringScheduleTabs() {
         </div>
 
         <div id="airingScheduleContent">
+            <div id="schedule-error-msg"></div>
             <div id="schedule-${today}" class="schedule-day-content"></div>
         </div>
     `;
@@ -130,6 +131,7 @@ setInterval(updateClocks, 1000);
 // Fetch and render schedule for a given day
 async function loadScheduleForDay(day) {
     const container = document.getElementById(`schedule-${day}`);
+    const scheduleErrorMsg = document.getElementById(`schedule-error-msg`);
     
     if (!container) return;
     // Show skeleton placeholder
@@ -181,7 +183,8 @@ async function loadScheduleForDay(day) {
         renderScheduleHTMLInto(day, pages[1], 1, lastVisiblePage);
 
     } catch (error) {
-        container.innerHTML = `<div class="text-danger">Failed to load schedule for ${uppercaseFirstChar(day)}.</div>`;
+        scheduleErrorMsg.innerHTML = `<div class="text-danger mb-4">Failed to load schedule for ${uppercaseFirstChar(day)}.</div>`;
+        showSkeleton(container);
     }
 }
 
