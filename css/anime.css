@@ -252,6 +252,10 @@ a.page-link:not(.disabled):hover {
     .clockText {
         font-size: 0.9rem;
     }
+    .dayButtonStyle {
+        max-width: 50px;
+        font-size: 0.8rem;
+    }
 }
 
 @media (max-width: 450px) {
