@@ -26,7 +26,7 @@ function renderAiringScheduleTabs() {
             Airing Schedule
         </h5>
 
-        <div class="fs-5 mb-3">
+        <div class="fs-5 mb-3 user-select-none">
             <span class="text-nowrap font-monospace clockText">
                 <i class="bi bi-clock me-1 text-primary"></i>
                 <span id="localTime">--:--:--</span>

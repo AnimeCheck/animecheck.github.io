@@ -253,8 +253,8 @@ a.page-link:not(.disabled):hover {
         font-size: 0.9rem;
     }
     .dayButtonStyle {
-        max-width: 50px;
-        font-size: 0.8rem;
+        max-width: 32px;
+        font-size: 0.6rem;
     }
 }
 
