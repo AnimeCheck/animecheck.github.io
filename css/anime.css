@@ -254,7 +254,7 @@ a.page-link:not(.disabled):hover {
     }
     .dayButtonStyle {
         max-width: 2.4rem;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         text-overflow: ellipsis;
     }
 }
