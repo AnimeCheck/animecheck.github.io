@@ -13,7 +13,7 @@ function renderAiringScheduleTabs() {
     for (const day of DAYS_OF_WEEK) {
         const isActive = day === today ? " active" : "";
         buttonsHTML += `
-            <button class="btn btn-outline-primary btn-sm${isActive}"
+            <button class="btn btn-outline-primary btn-sm${isActive} fw-semibold dayButtonStyle"
                 data-day="${day}" type="button" style="letter-spacing: 0.1em;">
                 ${uppercaseFirstChar(day)}
             </button>
@@ -27,13 +27,13 @@ function renderAiringScheduleTabs() {
         </h5>
 
         <div class="fs-5 mb-3">
-            <span class="text-nowrap font-monospace">
+            <span class="text-nowrap font-monospace clockText">
                 <i class="bi bi-clock me-1 text-primary"></i>
                 <span id="localTime">--:--:--</span>
                 <span class="text-secondary">(Local)</span>
             </span>
             <span class="mx-2"></span>
-            <span class="text-nowrap font-monospace">
+            <span class="text-nowrap font-monospace clockText">
                 <i class="bi bi-clock me-1 text-primary"></i>
                 <span id="japanTime">--:--:--</span>
                 <span class="text-secondary">(JST)</span>

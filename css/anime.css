@@ -234,11 +234,23 @@ a.page-link:not(.disabled):hover {
     .extraContainer .bi-eye, .extraContainer .bi-eye-slash {
         font-size: 0.8rem;
     }
+    .clockText {
+        font-size: 1.0rem;
+    }
+    .dayButtonStyle {
+        max-width: 60px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 }
 
 @media (max-width: 576px) {
     .airing-fav {
         font-size: 0.9em;
+    }
+    .clockText {
+        font-size: 0.9rem;
     }
 }
 
