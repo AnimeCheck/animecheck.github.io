@@ -238,7 +238,7 @@ a.page-link:not(.disabled):hover {
         font-size: 1.0rem;
     }
     .dayButtonStyle {
-        max-width: 60px;
+        max-width: 4.0rem;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -253,8 +253,8 @@ a.page-link:not(.disabled):hover {
         font-size: 0.9rem;
     }
     .dayButtonStyle {
-        max-width: 32px;
-        font-size: 0.6rem;
+        max-width: 2.3rem;
+        font-size: 0.7rem;
     }
 }
 
