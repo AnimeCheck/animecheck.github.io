@@ -59,12 +59,14 @@ function clickableAnimeTitleToSearchInput() {
             const originalTitle = newEl.dataset.originalTitle?.trim();
             let titleToSearch = originalTitle || englishTitle;
             //let titleToSearch = englishTitle || originalTitle;
+            //console.log("titleToSearch:", titleToSearch);
 
             const input = document.getElementById('search');
+            if (!input) return;
             input.value = titleToSearch;
             input.dispatchEvent(new Event('input'));
-            //console.log("opening suggestion list");
 
+            //console.log("opening suggestion list.");
             const suggestions = document.getElementById('suggestions');
             if (!suggestions) return; // Avoid observing if suggestions container doesn't exist
 
@@ -72,31 +74,20 @@ function clickableAnimeTitleToSearchInput() {
             const observer = new MutationObserver(() => {
                 const firstSuggestion = suggestions.querySelector('.suggestion-item');
                 if (!firstSuggestion) return;
-                // If englishTitle is used before originalTitle
-                //const firstSuggestionTitle = firstSuggestion?.querySelector('strong')?.textContent.trim();
-                //console.log("firstSuggestionTitle:", firstSuggestionTitle);
 
-                /*if (input.value != firstSuggestionTitle) {
-                    input.value = originalTitle;
-                    input.dispatchEvent(new Event('input'));
-                    return;
-                }*/
+                firstSuggestion.classList.add('active');
 
-                if (firstSuggestion) {
-                    //console.log("highlighting first choice");
-                    // Add active class to highlight it
-                    firstSuggestion.classList.add('active');
-
-                    // Update your selectedIndex variable if you use it globally
-                    if (typeof selectedIndex !== 'undefined') {
-                        selectedIndex = 0;
-                    }
-                    observer.disconnect(); // Stop watching for changes. We only need to react once, not every time the list changes
-                    firstSuggestion.click();
+                // Update your selectedIndex variable if you use it globally
+                if (typeof selectedIndex !== 'undefined') {
+                    selectedIndex = 0;
                 }
+                observer.disconnect(); // Stop watching for changes. We only need to react once, not every time the list changes
+                firstSuggestion.click();
             });
             // Start observing the suggestions container
             observer.observe(suggestions, { childList: true });
+            // Safety timeout in case no suggestion ever appears
+            setTimeout(() => observer.disconnect(), 5000);
         });
     });
 }
