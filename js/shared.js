@@ -157,7 +157,9 @@ function showToast({ message = "", type = "dark", icon = "", delay = 4000, extra
         toastEl.className = `toast text-bg-${type} ${extraClasses}`;
 
         // Update message + icon
-        toastBody.innerHTML = icon ? `<i class="${icon} me-2"></i>${message}` : message;
+        toastBody.innerHTML = icon 
+            ? `<div class="d-flex align-items-center"><i class="${icon} me-2"></i><span>${message}</span></div>` 
+            : message;
 
         // Update close button color
         if (type === "warning") {
