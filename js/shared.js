@@ -69,11 +69,14 @@ function clickableAnimeTitleToSearchInput() {
             //console.log("opening suggestion list.");
             const suggestions = document.getElementById('suggestions');
             if (!suggestions) return; // Avoid observing if suggestions container doesn't exist
+            let suggestionFound = false;
 
             // MutationObserver to replace the setTimeout and it looks better
             const observer = new MutationObserver(() => {
                 const firstSuggestion = suggestions.querySelector('.suggestion-item');
                 if (!firstSuggestion) return;
+
+                suggestionFound = true;
 
                 firstSuggestion.classList.add('active');
 
@@ -87,7 +90,17 @@ function clickableAnimeTitleToSearchInput() {
             // Start observing the suggestions container
             observer.observe(suggestions, { childList: true });
             // Safety timeout in case no suggestion ever appears
-            setTimeout(() => observer.disconnect(), 2000);
+            setTimeout(() => {
+                observer.disconnect();
+                if (!suggestionFound) {
+                    showToast({
+                        message: "No anime details.<br> Or try to disable safe mode.",
+                        type: "warning",
+                        icon: "bi bi-exclamation-triangle-fill",
+                        delay: 5000,
+                    });
+                }
+            }, 2000);
         });
     });
 }
