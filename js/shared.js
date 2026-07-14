@@ -94,7 +94,7 @@ function clickableAnimeTitleToSearchInput() {
                 observer.disconnect();
                 if (!suggestionFound) {
                     showToast({
-                        message: "No anime details.<br> Try to disable safe mode and refresh.",
+                        message: "No anime details.<br> Try disable safe mode and refresh.",
                         type: "warning",
                         icon: "bi bi-exclamation-triangle-fill",
                         delay: 5000,
