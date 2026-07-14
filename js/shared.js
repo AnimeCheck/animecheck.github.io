@@ -87,7 +87,7 @@ function clickableAnimeTitleToSearchInput() {
             // Start observing the suggestions container
             observer.observe(suggestions, { childList: true });
             // Safety timeout in case no suggestion ever appears
-            setTimeout(() => observer.disconnect(), 3000);
+            setTimeout(() => observer.disconnect(), 2000);
         });
     });
 }
