@@ -3,7 +3,7 @@ describe('Visiting the web page', () => {
     cy.visit('/');
     cy.contains('Anime Check');
     cy.contains('Top 50 anime characters');
-    cy.contains('Data from Jikan API');
+    cy.contains('Data from Tenrai API');
     cy.get('input[placeholder="Search Anime..."]').should('exist').and('be.visible');
     cy.contains('Airing Schedule');
     cy.contains('Monday');

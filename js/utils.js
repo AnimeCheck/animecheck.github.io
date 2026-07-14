@@ -168,7 +168,7 @@ function showRateLimitToast() {
         lastRateLimitToast = now;
         
         showToast({
-            message: "Jikan API rate limit hit. Progressing slowly...",
+            message: "API rate limit hit. Progressing slowly...",
             type: "danger",
             icon: "bi bi-exclamation-triangle-fill"
         });

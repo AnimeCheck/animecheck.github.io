@@ -3,7 +3,7 @@
 
 Search anime, check characters, and view top voice actor main role characters. 
 
-API by Jikan.
+API by Tenrai.
 
 ## Features
 - Search anime
