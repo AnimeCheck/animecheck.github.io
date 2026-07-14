@@ -146,7 +146,7 @@ async function loadScheduleForDay(day) {
         while (hasNext) {
             // minutesKey makes the fetch URL unique each 5 minutes, so the response is cached for 5 min and refreshed automatically the next 5 min.
             const minutesKey = Math.floor(Date.now() / (1000 * 60 * 5));
-            const res = await throttledFetch(`${SCHEDULE_API_BASE}?filter=${day}&page=${page}`); // &_=${minutesKey}
+            const res = await throttledFetch(`${SCHEDULE_API_BASE}?filter=${day}&page=${page}&cache=${minutesKey}`); // &_=${minutesKey}
             if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
 
             const data = await res.json();
