@@ -58,7 +58,7 @@ searchInput.addEventListener('input', () => {
         // For SFW option
         const toggleSFW = document.getElementById("toggleSFW").checked;
 
-        fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=15&sfw=${toggleSFW}`, {signal})
+        fetch(`https://api.tenrai.org/v1/anime?q=${encodeURIComponent(query)}&limit=15&sfw=${toggleSFW}`, {signal})
             .then(res => res.json())
             .then(data => {
                 suggestions.innerHTML = ''; // To avoid a duplicated list when you enter a title and you press backspace.

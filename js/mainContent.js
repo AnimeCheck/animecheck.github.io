@@ -1,5 +1,5 @@
 const DAYS_OF_WEEK = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
-const SCHEDULE_API_BASE = "https://api.jikan.moe/v4/schedules/";
+const SCHEDULE_API_BASE = "https://api.tenrai.org/v1/schedules/";
 const scheduleCache = {}; // For caching when changing day
 
 // Render tab UI into #mainContent
@@ -146,7 +146,7 @@ async function loadScheduleForDay(day) {
         while (hasNext) {
             // minutesKey makes the fetch URL unique each 5 minutes, so the response is cached for 5 min and refreshed automatically the next 5 min.
             const minutesKey = Math.floor(Date.now() / (1000 * 60 * 5));
-            const res = await throttledFetch(`${SCHEDULE_API_BASE}${day}?page=${page}&_=${minutesKey}`);
+            const res = await throttledFetch(`${SCHEDULE_API_BASE}?filter=${day}&page=${page}`); // &_=${minutesKey}
             if (!res.ok) throw new Error(`Error ${res.status}: ${res.statusText}`);
 
             const data = await res.json();

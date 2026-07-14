@@ -2,7 +2,7 @@
 let characterLoadToken = null;
 
 async function getAnimeById(animeId) {
-    console.log(`Anime by id URL: https://api.jikan.moe/v4/anime/${animeId}`);
+    console.log(`Anime by id URL: https://api.tenrai.org/v1/anime/${animeId}`);
     // Show Anime Details
     document.getElementById("animeDetailsWrapper").classList.remove("d-none");
     document.getElementById("animeCharacters").classList.remove("d-none");
@@ -11,7 +11,7 @@ async function getAnimeById(animeId) {
     document.getElementById("viewSavedCharacters").classList.add("d-none");
 
     try {
-        const response = await throttledFetch(`https://api.jikan.moe/v4/anime/${animeId}`);
+        const response = await throttledFetch(`https://api.tenrai.org/v1/anime/${animeId}`);
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -157,7 +157,7 @@ function openExtraStatistics(animeId) {
 
         try {
             //console.log("openExtraStatistics fetching...");
-            const response = await throttledFetch(`https://api.jikan.moe/v4/anime/${animeId}/statistics`);
+            const response = await throttledFetch(`https://api.tenrai.org/v1/anime/${animeId}/statistics`);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }

@@ -24,10 +24,10 @@ async function getAnimeCharacters(animeId) {
         return;
     }
 
-    const url = `https://api.jikan.moe/v4/anime/${animeId}/characters`;
+    const url = `https://api.tenrai.org/v1/anime/${animeId}/characters`;
     //console.log("Anime Characters URL: ", url);
     try {
-        const response = await throttledFetch(`https://api.jikan.moe/v4/anime/${animeId}/characters`);
+        const response = await throttledFetch(`https://api.tenrai.org/v1/anime/${animeId}/characters`);
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }

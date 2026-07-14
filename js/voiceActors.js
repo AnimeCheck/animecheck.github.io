@@ -78,9 +78,9 @@ async function checkTopCharacters(vaMalId) {
 }
 
 async function getMainCharactersVoicedBy(vaId) {
-    console.log("Voiced Characters from VA: ", `https://api.jikan.moe/v4/people/${vaId}/voices`);
+    console.log("Voiced Characters from VA: ", `https://api.tenrai.org/v1/people/${vaId}/voices`);
     try {
-        const response = await throttledFetch(`https://api.jikan.moe/v4/people/${vaId}/voices`);
+        const response = await throttledFetch(`https://api.tenrai.org/v1/people/${vaId}/voices`);
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -136,10 +136,10 @@ async function getCharacterFavorites(charMalId, retry = 2) {
         StorageHelper.remove(`${FAV_OF_CHARACTER_KEY_PREFIX}${charMalId}`);
     }
 
-    //console.log("Characters Info URL: ", `https://api.jikan.moe/v4/characters/${charMalId}`);
+    //console.log("Characters Info URL: ", `https://api.tenrai.org/v1/characters/${charMalId}`);
     //console.log("Getting Character with favorites...");
     try {
-        const response = await throttledFetch(`https://api.jikan.moe/v4/characters/${charMalId}`);
+        const response = await throttledFetch(`https://api.tenrai.org/v1/characters/${charMalId}`);
         // Check for 429 Too Many Requests
         if (response.status === 429) {
             showRateLimitToast();

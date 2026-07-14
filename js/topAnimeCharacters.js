@@ -41,9 +41,9 @@ async function loadTopAnimeCharacters(forceRefresh = false) {
     `;
 
     try {
-        const res1 = await throttledFetch("https://api.jikan.moe/v4/characters?order_by=favorites&sort=desc&page=1");
+        const res1 = await throttledFetch("https://api.tenrai.org/v1/characters?order_by=favorites&sort=desc&page=1");
         const data1 = await res1.json();
-        const res2 = await throttledFetch("https://api.jikan.moe/v4/characters?order_by=favorites&sort=desc&page=2");
+        const res2 = await throttledFetch("https://api.tenrai.org/v1/characters?order_by=favorites&sort=desc&page=2");
         const data2 = await res2.json();
 
         const charactersData = [...data1.data, ...data2.data].slice(0, TOP50_COMPLETE_COUNT);
@@ -92,7 +92,7 @@ async function loadTopAnimeCharacters(forceRefresh = false) {
 
 async function getAnimeTitleOfCharacter(char, retry = 1) {
     try {
-        const res = await throttledFetch(`https://api.jikan.moe/v4/characters/${char.id}/anime`);
+        const res = await throttledFetch(`https://api.tenrai.org/v1/characters/${char.id}/anime`);
         if (res.status === 429) {
             showRateLimitToast(); // Inform the user
             await smartDelay();    // Wait and retry
